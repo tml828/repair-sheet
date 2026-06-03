@@ -60,7 +60,7 @@ h1{font-size:18px;font-weight:600;color:#111}
 .pt-btn.ao{background:#eff6ff;color:#1e40af}
 .pt-btn.at{background:#fffbeb;color:#92400e}
 .pt-sep{width:1px;background:#e0e0dc;flex-shrink:0}
-.del-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid #fca5a5;border-radius:8px;background:transparent;cursor:pointer;color:#dc2626;flex-shrink:0;transition:all .15s}
+.del-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid #fca5a5;border-radius:8px;background:#fef2f2;cursor:pointer;color:#dc2626;flex-shrink:0;transition:all .15s}
 .del-btn:hover{border-color:#fca5a5;color:#dc2626;background:#fef2f2}
 .del-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .add-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#aaa;cursor:pointer;padding:6px 2px;background:none;border:none;margin-top:4px;transition:color .12s;font-family:inherit}
@@ -75,9 +75,11 @@ h1{font-size:18px;font-weight:600;color:#111}
   .prop-grid{grid-template-columns:1fr}
   .summary{grid-template-columns:repeat(2,1fr)}
   .repair-row{flex-wrap:wrap}
-  .r-notes{width:100%}
-  .party-toggle{width:100%}
+  .r-desc{min-width:0;flex:1}
+  .r-notes{width:100%;order:3}
+  .party-toggle{width:100%;order:2}
   .pt-btn{flex:1;text-align:center}
+  .del-btn{order:1;flex-shrink:0}
 }
 </style>
 </head>
