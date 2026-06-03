@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Repair Sheet</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f0ed;color:#1a1a1a;min-height:100vh}
+.page{max-width:880px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.header{background:#fff;border-radius:16px;border:1px solid #e5e5e2;padding:1.5rem;margin-bottom:1rem}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem}
+.logo-icon{width:32px;height:32px;background:#1D9E75;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+h1{font-size:18px;font-weight:600;color:#111}
+.prop-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.prop-grid input{width:100%;font-size:14px;padding:9px 12px;border:1px solid #e0e0dc;border-radius:9px;background:#fafaf8;color:#1a1a1a;outline:none;transition:border-color .15s}
+.prop-grid input:focus{border-color:#1D9E75;background:#fff}
+.prop-grid input::placeholder{color:#bbb}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #e0e0dc;background:#fff;color:#444;transition:all .15s;font-family:inherit}
+.btn:hover{background:#f5f5f2;border-color:#ccc}
+.btn:active{transform:scale(0.98)}
+.btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.btn-green{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.btn-green:hover{background:#17896e;border-color:#17896e}
+.btn-red{border-color:#fecaca;color:#dc2626}
+.btn-red:hover{background:#fef2f2;border-color:#fca5a5}
+.desktop-only{display:inline-flex}
+.mobile-only{display:none}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
+.stat{background:#fff;border:1px solid #e5e5e2;border-radius:12px;padding:14px 16px}
+.stat-label{font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.stat-val{font-size:28px;font-weight:700;line-height:1}
+.sv-total{color:#111}.sv-c{color:#1D9E75}.sv-o{color:#2563eb}.sv-tbd{color:#d97706}
+.sections-wrap{display:flex;flex-direction:column;gap:6px}
+.section{background:#fff;border:1px solid #e5e5e2;border-radius:12px;overflow:hidden}
+.section.has-items{border-color:#a7f3d0}
+.sec-head{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;user-select:none;transition:background .12s}
+.sec-head:hover{background:#fafaf8}
+.sec-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.sec-emoji{font-size:17px;width:24px;text-align:center;flex-shrink:0;line-height:1}
+.sec-title{font-size:14px;font-weight:500;color:#111}
+.sec-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.sec-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;background:#f0f0ed;color:#888;border:1px solid #e5e5e2}
+.sec-badge.has{background:#ecfdf5;color:#065f46;border-color:#a7f3d0}
+.sec-chev{width:16px;height:16px;stroke:#ccc;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;transition:transform .18s}
+.sec-chev.open{transform:rotate(180deg)}
+.sec-body{border-top:1px solid #f0f0ed;padding:14px 16px;background:#fafaf8}
+.repair-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.r-num{font-size:11px;font-weight:600;color:#ccc;width:18px;flex-shrink:0;text-align:right}
+.r-desc{flex:1;min-width:0;font-size:13px;padding:8px 11px;border:1px solid #e0e0dc;border-radius:8px;background:#fff;color:#1a1a1a;outline:none;transition:border-color .15s}
+.r-desc:focus{border-color:#1D9E75}.r-desc::placeholder{color:#ccc}
+.r-notes{width:120px;flex-shrink:0;font-size:13px;padding:8px 11px;border:1px solid #e0e0dc;border-radius:8px;background:#fff;color:#1a1a1a;outline:none;transition:border-color .15s}
+.r-notes:focus{border-color:#1D9E75}.r-notes::placeholder{color:#ccc}
+.party-toggle{display:flex;border:1px solid #e0e0dc;border-radius:8px;overflow:hidden;flex-shrink:0;background:#fff}
+.pt-btn{padding:7px 10px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#aaa;transition:background .12s,color .12s;white-space:nowrap;font-family:inherit}
+.pt-btn:hover{background:#f5f5f2;color:#555}
+.pt-btn.ac{background:#ecfdf5;color:#065f46}
+.pt-btn.ao{background:#eff6ff;color:#1e40af}
+.pt-btn.at{background:#fffbeb;color:#92400e}
+.pt-sep{width:1px;background:#e0e0dc;flex-shrink:0}
+.del-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid #eee;border-radius:8px;background:transparent;cursor:pointer;color:#ddd;flex-shrink:0;transition:all .15s}
+.del-btn:hover{border-color:#fca5a5;color:#dc2626;background:#fef2f2}
+.del-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.add-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#aaa;cursor:pointer;padding:6px 2px;background:none;border:none;margin-top:4px;transition:color .12s;font-family:inherit}
+.add-btn:hover{color:#1D9E75}
+.add-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
+.empty-hint{font-size:13px;color:#ccc;padding:0 0 10px 30px;font-style:italic}
+.group-label{font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.8px;padding:1rem 2px 6px}
+.footer{text-align:center;font-size:12px;color:#bbb;margin-top:1.5rem;line-height:1.8}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+@media(max-width:768px){.desktop-only{display:none!important}.mobile-only{display:inline-flex!important}}
+@media(max-width:620px){
+  .prop-grid{grid-template-columns:1fr}
+  .summary{grid-template-columns:repeat(2,1fr)}
+  .repair-row{flex-wrap:wrap}
+  .r-notes{width:100%}
+  .party-toggle{width:100%}
+  .pt-btn{flex:1;text-align:center}
+}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="page">
+  <div class="header">
+    <div class="logo-row">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <h1>Property Repair Sheet</h1>
+    </div>
+    <div class="prop-grid">
+      <input id="propAddr" placeholder="Property address" />
+      <input id="propCity" placeholder="City, State, ZIP" />
+      <input id="propDate" placeholder="Date" />
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-green desktop-only" onclick="downloadPDF()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PDF sheet
+      </button>
+      <button class="btn desktop-only" onclick="downloadFile()">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Save working copy
+      </button>
+      <button class="btn btn-green mobile-only" onclick="shareSheet()">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share sheet
+      </button>
+      <button class="btn btn-red" onclick="clearAll()">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+        Clear all
+      </button>
+    </div>
+  </div>
+  <div class="summary">
+    <div class="stat"><div class="stat-label">Total repairs</div><div class="stat-val sv-total" id="sumTotal">0</div></div>
+    <div class="stat"><div class="stat-label">Contractor</div><div class="stat-val sv-c" id="sumC">0</div></div>
+    <div class="stat"><div class="stat-label">Owner</div><div class="stat-val sv-o" id="sumO">0</div></div>
+    <div class="stat"><div class="stat-label">TBD</div><div class="stat-val sv-tbd" id="sumTBD">0</div></div>
+  </div>
+  <div class="sections-wrap" id="sections"></div>
+  <div class="footer">Auto-saves in your browser &nbsp;&middot;&nbsp; Desktop: Download PDF or Save copy &nbsp;&middot;&nbsp; Mobile: Share sheet directly</div>
+</div>
+<script id="saved-state" type="application/json">{}</script>
+<script>
+var GROUPS = [
+  {label:"Exterior",sections:[
+    {id:"roof",        emoji:"&#127968;",title:"Roof"},
+    {id:"gutters",     emoji:"&#9928;",  title:"Gutters & downspouts"},
+    {id:"siding",      emoji:"&#129521;",title:"Siding & exterior walls"},
+    {id:"foundation",  emoji:"&#127959;",title:"Foundation"},
+    {id:"driveway",    emoji:"&#128663;",title:"Driveway & walkways"},
+    {id:"fencing",     emoji:"&#128679;",title:"Fencing & gates"},
+    {id:"landscaping", emoji:"&#127807;",title:"Landscaping & yard"},
+    {id:"deck",        emoji:"&#9728;",  title:"Deck / patio / porch"},
+    {id:"garage_ext",  emoji:"&#128682;",title:"Garage (exterior)"},
+    {id:"chimney",     emoji:"&#127962;",title:"Chimney"}
+  ]},
+  {label:"Interior - Rooms",sections:[
+    {id:"living",     emoji:"&#128715;",title:"Living room"},
+    {id:"dining",     emoji:"&#127869;",title:"Dining room"},
+    {id:"kitchen",    emoji:"&#127859;",title:"Kitchen"},
+    {id:"bed1",       emoji:"&#128719;",title:"Primary bedroom"},
+    {id:"bed2",       emoji:"&#128719;",title:"Bedroom 2"},
+    {id:"bed3",       emoji:"&#128719;",title:"Bedroom 3"},
+    {id:"bed4",       emoji:"&#128719;",title:"Bedroom 4"},
+    {id:"bath1",      emoji:"&#128703;",title:"Primary bathroom"},
+    {id:"bath2",      emoji:"&#128703;",title:"Bathroom 2"},
+    {id:"bath3",      emoji:"&#128703;",title:"Bathroom 3"},
+    {id:"laundry",    emoji:"&#129530;",title:"Laundry room"},
+    {id:"basement",   emoji:"&#11015;", title:"Basement"},
+    {id:"attic",      emoji:"&#11014;", title:"Attic"},
+    {id:"hallways",   emoji:"&#128694;",title:"Hallways & stairs"},
+    {id:"garage_int", emoji:"&#127359;",title:"Garage (interior)"}
+  ]},
+  {label:"Systems",sections:[
+    {id:"electrical",  emoji:"&#9889;",  title:"Electrical"},
+    {id:"plumbing",    emoji:"&#128167;",title:"Plumbing"},
+    {id:"hvac",        emoji:"&#10052;", title:"HVAC"},
+    {id:"water_heater",emoji:"&#128293;",title:"Water heater"},
+    {id:"insulation",  emoji:"&#129482;",title:"Insulation"},
+    {id:"windows",     emoji:"&#129695;",title:"Windows & doors"},
+    {id:"flooring",    emoji:"&#9632;",  title:"Flooring (general)"},
+    {id:"painting",    emoji:"&#127912;",title:"Painting (general)"}
+  ]},
+  {label:"Other",sections:[
+    {id:"permits",emoji:"&#128203;",title:"Permits & inspections"},
+    {id:"debris", emoji:"&#128465;",title:"Debris removal / cleanout"},
+    {id:"other",  emoji:"&#128204;",title:"Other / misc"}
+  ]}
+];
+
+var ALL_SECTIONS = [];
+for (var gi = 0; gi < GROUPS.length; gi++) {
+  for (var si = 0; si < GROUPS[gi].sections.length; si++) {
+    ALL_SECTIONS.push(GROUPS[gi].sections[si]);
+  }
+}
+
+var SK = "repairSheet_v3";
+var state = {address:"",city:"",date:"",open:{},repairs:{}};
+
+function load() {
+  try {
+    var tag = document.getElementById("saved-state");
+    if (tag && tag.textContent.trim() !== "{}") {
+      var embedded = JSON.parse(tag.textContent);
+      if (embedded && embedded.repairs) { state = embedded; }
+    }
+  } catch(e) {}
+  try {
+    var s = localStorage.getItem(SK);
+    if (s) {
+      var local = JSON.parse(s);
+      var lc = 0; var ec = 0;
+      var lk = Object.keys(local.repairs || {});
+      var ek = Object.keys(state.repairs || {});
+      for (var i=0;i<lk.length;i++) lc += (local.repairs[lk[i]]||[]).length;
+      for (var i=0;i<ek.length;i++) ec += (state.repairs[ek[i]]||[]).length;
+      if (lc >= ec) state = local;
+    }
+  } catch(e) {}
+  for (var i = 0; i < ALL_SECTIONS.length; i++) {
+    if (!state.repairs[ALL_SECTIONS[i].id]) state.repairs[ALL_SECTIONS[i].id] = [];
+  }
+}
+
+function save() {
+  state.address = document.getElementById("propAddr").value;
+  state.city    = document.getElementById("propCity").value;
+  state.date    = document.getElementById("propDate").value;
+  try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) {}
+  updateSummary();
+}
+
+function updateSummary() {
+  var total=0, c=0, o=0, tbd=0;
+  for (var i=0; i<ALL_SECTIONS.length; i++) {
+    var repairs = state.repairs[ALL_SECTIONS[i].id] || [];
+    for (var j=0; j<repairs.length; j++) {
+      if (repairs[j].desc.trim()) {
+        total++;
+        if (repairs[j].party === "C") c++;
+        else if (repairs[j].party === "O") o++;
+        else tbd++;
+      }
+    }
+  }
+  document.getElementById("sumTotal").textContent = total;
+  document.getElementById("sumC").textContent = c;
+  document.getElementById("sumO").textContent = o;
+  document.getElementById("sumTBD").textContent = tbd;
+}
+
+function addRepair(sid) {
+  if (!state.repairs[sid]) state.repairs[sid] = [];
+  state.repairs[sid].push({id: Date.now() + Math.random(), desc:"", party:"", notes:""});
+  save(); renderSection(sid);
+}
+
+function deleteRepair(sid, rid) {
+  var arr = state.repairs[sid] || [];
+  var out = [];
+  for (var i=0; i<arr.length; i++) { if (arr[i].id != rid) out.push(arr[i]); }
+  state.repairs[sid] = out;
+  save(); renderSection(sid);
+}
+
+function setParty(sid, rid, party) {
+  var arr = state.repairs[sid] || [];
+  for (var i=0; i<arr.length; i++) {
+    if (arr[i].id == rid) { arr[i].party = (arr[i].party === party) ? "" : party; break; }
+  }
+  save(); renderSection(sid);
+}
+
+function onDesc(sid, rid, val) {
+  var arr = state.repairs[sid] || [];
+  for (var i=0; i<arr.length; i++) { if (arr[i].id == rid) { arr[i].desc = val; break; } }
+  save();
+}
+
+function onNotes(sid, rid, val) {
+  var arr = state.repairs[sid] || [];
+  for (var i=0; i<arr.length; i++) { if (arr[i].id == rid) { arr[i].notes = val; break; } }
+  save();
+}
+
+function toggleSection(sid) {
+  state.open[sid] = !state.open[sid];
+  save(); renderSection(sid);
+}
+
+function esc(s) {
+  return (s || "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function makeSvg(paths) {
+  var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox","0 0 24 24");
+  svg.innerHTML = paths;
+  return svg;
+}
+
+function renderSection(sid) {
+  var sec = null;
+  for (var i=0; i<ALL_SECTIONS.length; i++) { if (ALL_SECTIONS[i].id === sid) { sec = ALL_SECTIONS[i]; break; } }
+  if (!sec) return;
+  var repairs = state.repairs[sid] || [];
+  var isOpen  = !!state.open[sid];
+  var count   = 0;
+  for (var i=0; i<repairs.length; i++) { if (repairs[i].desc.trim()) count++; }
+  var el = document.getElementById("sec-" + sid);
+  if (!el) return;
+
+  el.className = "section" + (count > 0 ? " has-items" : "");
+
+  var head = document.createElement("div");
+  head.className = "sec-head";
+  (function(s){ head.onclick = function(){ toggleSection(s); }; })(sid);
+
+  var left = document.createElement("div");
+  left.className = "sec-left";
+
+  var emojiSpan = document.createElement("span");
+  emojiSpan.className = "sec-emoji";
+  emojiSpan.innerHTML = sec.emoji;
+
+  var titleSpan = document.createElement("span");
+  titleSpan.className = "sec-title";
+  titleSpan.textContent = sec.title;
+
+  left.appendChild(emojiSpan);
+  left.appendChild(titleSpan);
+
+  var meta = document.createElement("div");
+  meta.className = "sec-meta";
+
+  var badge = document.createElement("span");
+  badge.className = "sec-badge" + (count > 0 ? " has" : "");
+  badge.textContent = count > 0 ? count + " item" + (count !== 1 ? "s" : "") : "empty";
+
+  var chev = makeSvg('<polyline points="6 9 12 15 18 9"/>');
+  chev.setAttribute("class", "sec-chev" + (isOpen ? " open" : ""));
+
+  meta.appendChild(badge);
+  meta.appendChild(chev);
+  head.appendChild(left);
+  head.appendChild(meta);
+
+  while (el.firstChild) el.removeChild(el.firstChild);
+  el.appendChild(head);
+
+  if (isOpen) {
+    var body = document.createElement("div");
+    body.className = "sec-body";
+
+    if (repairs.length === 0) {
+      var hint = document.createElement("p");
+      hint.className = "empty-hint";
+      hint.textContent = "No repairs added yet.";
+      body.appendChild(hint);
+    }
+
+    for (var ri=0; ri<repairs.length; ri++) {
+      (function(r, idx) {
+        var row = document.createElement("div");
+        row.className = "repair-row";
+
+        var num = document.createElement("span");
+        num.className = "r-num";
+        num.textContent = idx + 1;
+
+        var desc = document.createElement("input");
+        desc.className = "r-desc";
+        desc.placeholder = "Describe the repair...";
+        desc.value = r.desc;
+        (function(s,id){ desc.oninput = function(){ onDesc(s,id,desc.value); }; })(sid, r.id);
+
+        var toggle = document.createElement("div");
+        toggle.className = "party-toggle";
+
+        var btnC = document.createElement("button");
+        btnC.className = "pt-btn" + (r.party==="C" ? " ac" : "");
+        btnC.textContent = "Contractor";
+        (function(s,id){ btnC.onclick = function(){ setParty(s,id,"C"); }; })(sid, r.id);
+
+        var sep1 = document.createElement("div"); sep1.className = "pt-sep";
+
+        var btnO = document.createElement("button");
+        btnO.className = "pt-btn" + (r.party==="O" ? " ao" : "");
+        btnO.textContent = "Owner";
+        (function(s,id){ btnO.onclick = function(){ setParty(s,id,"O"); }; })(sid, r.id);
+
+        var sep2 = document.createElement("div"); sep2.className = "pt-sep";
+
+        var btnT = document.createElement("button");
+        btnT.className = "pt-btn" + (!r.party ? " at" : "");
+        btnT.textContent = "TBD";
+        (function(s,id){ btnT.onclick = function(){ setParty(s,id,""); }; })(sid, r.id);
+
+        toggle.appendChild(btnC); toggle.appendChild(sep1);
+        toggle.appendChild(btnO); toggle.appendChild(sep2);
+        toggle.appendChild(btnT);
+
+        var notes = document.createElement("input");
+        notes.className = "r-notes";
+        notes.placeholder = "Notes...";
+        notes.value = r.notes;
+        (function(s,id){ notes.oninput = function(){ onNotes(s,id,notes.value); }; })(sid, r.id);
+
+        var delBtn = document.createElement("button");
+        delBtn.className = "del-btn";
+        delBtn.title = "Remove";
+        var delSvg = makeSvg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>');
+        delBtn.appendChild(delSvg);
+        (function(s,id){ delBtn.onclick = function(){ deleteRepair(s,id); }; })(sid, r.id);
+
+        row.appendChild(num); row.appendChild(desc); row.appendChild(toggle);
+        row.appendChild(notes); row.appendChild(delBtn);
+        body.appendChild(row);
+      })(repairs[ri], ri);
+    }
+
+    var addBtn = document.createElement("button");
+    addBtn.className = "add-btn";
+    var addSvg = makeSvg('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>');
+    addBtn.appendChild(addSvg);
+    addBtn.appendChild(document.createTextNode(" Add repair"));
+    (function(s){ addBtn.onclick = function(){ addRepair(s); }; })(sid);
+    body.appendChild(addBtn);
+    el.appendChild(body);
+  }
+}
+
+function renderAll() {
+  var container = document.getElementById("sections");
+  while (container.firstChild) container.removeChild(container.firstChild);
+  for (var gi=0; gi<GROUPS.length; gi++) {
+    var lbl = document.createElement("div");
+    lbl.className = "group-label";
+    lbl.textContent = GROUPS[gi].label;
+    container.appendChild(lbl);
+    for (var si=0; si<GROUPS[gi].sections.length; si++) {
+      var div = document.createElement("div");
+      div.className = "section";
+      div.id = "sec-" + GROUPS[gi].sections[si].id;
+      container.appendChild(div);
+      renderSection(GROUPS[gi].sections[si].id);
+    }
+  }
+  updateSummary();
+}
+
+function clearAll() {
+  if (!confirm("Clear everything and start a new property?")) return;
+  for (var i=0; i<ALL_SECTIONS.length; i++) {
+    state.repairs[ALL_SECTIONS[i].id] = [];
+    state.open[ALL_SECTIONS[i].id] = false;
+  }
+  state.address = ""; state.city = ""; state.date = "";
+  document.getElementById("propAddr").value = "";
+  document.getElementById("propCity").value = "";
+  document.getElementById("propDate").value = "";
+  save(); renderAll();
+}
+
+function showToast(msg) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.opacity = "1";
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.style.opacity = "0"; }, 2500);
+}
+
+function buildText() {
+  var addr = state.address || "Unknown";
+  var city = state.city || "";
+  var date = state.date || "Unknown";
+  var lines = [
+    "PROPERTY REPAIR & JOB ASSIGNMENT SHEET",
+    "========================================",
+    "Address: " + addr + (city ? ", " + city : ""),
+    "Date:    " + date,
+    ""
+  ];
+  var totalC=0, totalO=0, totalTBD=0, totalAll=0, hasAny=false;
+  for (var gi=0; gi<GROUPS.length; gi++) {
+    var groupLines = [];
+    for (var si=0; si<GROUPS[gi].sections.length; si++) {
+      var sec = GROUPS[gi].sections[si];
+      var repairs = state.repairs[sec.id] || [];
+      var filled = [];
+      for (var ri=0; ri<repairs.length; ri++) { if (repairs[ri].desc.trim()) filled.push(repairs[ri]); }
+      if (!filled.length) continue;
+      hasAny = true;
+      for (var ri=0; ri<filled.length; ri++) {
+        var r = filled[ri];
+        totalAll++;
+        if (r.party==="C") totalC++; else if (r.party==="O") totalO++; else totalTBD++;
+        var party = r.party==="C" ? "Contractor" : r.party==="O" ? "Owner" : "TBD";
+        var prefix = ri===0 ? "[" + sec.title + "] " : "  ";
+        var notes = r.notes ? " [" + r.notes + "]" : "";
+        groupLines.push(prefix + r.desc + " -> " + party + notes);
+      }
+    }
+    if (groupLines.length) {
+      lines.push("-- " + GROUPS[gi].label.toUpperCase() + " --");
+      for (var li=0; li<groupLines.length; li++) lines.push(groupLines[li]);
+      lines.push("");
+    }
+  }
+  lines.push("----------------------------------------");
+  lines.push("Total: " + totalAll + "  |  Contractor: " + totalC + "  |  Owner: " + totalO + "  |  TBD: " + totalTBD);
+  return {text: lines.join("\n"), hasAny: hasAny, totalAll:totalAll, totalC:totalC, totalO:totalO, totalTBD:totalTBD};
+}
+
+function shareSheet() {
+  var addr = state.address || "Unknown";
+  var city = state.city || "";
+  var date = state.date || "Unknown";
+  var lines = ["PROPERTY REPAIR & JOB ASSIGNMENT SHEET"];
+  lines.push("========================================");
+  lines.push("Address: " + addr + (city ? ", " + city : ""));
+  lines.push("Date: " + date);
+  lines.push("");
+  var totalC=0, totalO=0, totalTBD=0, totalAll=0, hasAny=false;
+  for (var gi=0; gi<GROUPS.length; gi++) {
+    var groupLines = [];
+    for (var si=0; si<GROUPS[gi].sections.length; si++) {
+      var sec = GROUPS[gi].sections[si];
+      var repairs = state.repairs[sec.id] || [];
+      for (var ri=0; ri<repairs.length; ri++) {
+        var r = repairs[ri];
+        if (!r.desc.trim()) continue;
+        hasAny = true;
+        totalAll++;
+        if (r.party==="C") totalC++; else if (r.party==="O") totalO++; else totalTBD++;
+        var party = r.party==="C" ? "Contractor" : r.party==="O" ? "Owner" : "TBD";
+        var notes = r.notes ? " [" + r.notes + "]" : "";
+        groupLines.push(sec.title + ": " + r.desc + " -> " + party + notes);
+      }
+    }
+    if (groupLines.length) {
+      lines.push("-- " + GROUPS[gi].label.toUpperCase() + " --");
+      for (var li=0; li<groupLines.length; li++) lines.push(groupLines[li]);
+      lines.push("");
+    }
+  }
+  if (!hasAny) { alert("No repairs added yet."); return; }
+  lines.push("----------------------------------------");
+  lines.push("Total: " + totalAll + " | Contractor: " + totalC + " | Owner: " + totalO + " | TBD: " + totalTBD);
+  var text = lines.join("\n");
+
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.cssText = "position:fixed;opacity:0;top:0;left:0;width:1px;height:1px";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  var ok = false;
+  try { ok = document.execCommand("copy"); } catch(e) {}
+  document.body.removeChild(ta);
+
+  if (ok) {
+    showToast("Copied! Paste into a text or email.");
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast("Copied! Paste into a text or email.");
+    }).catch(function() {
+      showToast("Could not copy automatically.");
+    });
+  } else {
+    showToast("Could not copy automatically.");
+  }
+}
+
+
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(function(){ showToast("Copied to clipboard!"); })
+      .catch(function(){ legacyCopy(text); });
+  } else {
+    legacyCopy(text);
+  }
+}
+
+function legacyCopy(text) {
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.cssText = "position:fixed;opacity:0;top:0;left:0";
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand("copy"); showToast("Copied to clipboard!"); }
+  catch(e) { alert("Copy this:\n\n" + text.substring(0,300)); }
+  document.body.removeChild(ta);
+}
+
+function buildPDFHtml(d) {
+  var h = "";
+  h += "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">";
+  h += "<title>Repair Sheet</title>";
+  h += "<style>";
+  h += "*{box-sizing:border-box;margin:0;padding:0}";
+  h += "body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#1a1a1a;background:#fff;padding:40px}";
+  h += "@media print{body{padding:0}.no-print{display:none}@page{margin:.5in;size:letter}}";
+  h += ".print-btn{display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;padding:10px 20px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}";
+  h += ".doc-header{border-bottom:2px solid #1D9E75;padding-bottom:16px;margin-bottom:20px}";
+  h += ".doc-title{font-size:22px;font-weight:700;color:#111;margin-bottom:6px}";
+  h += ".doc-meta{font-size:13px;color:#555}";
+  h += ".cards{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}";
+  h += ".card{flex:1;min-width:80px;border:1px solid #e5e5e2;border-radius:8px;padding:12px;text-align:center}";
+  h += ".cnum{font-size:24px;font-weight:700}.clbl{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}";
+  h += "table{width:100%;border-collapse:collapse;border:1px solid #e0e0dc;font-size:13px}";
+  h += "thead th{background:#1a1a1a;color:#fff;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}";
+  h += ".doc-footer{margin-top:20px;font-size:11px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:12px}";
+  h += "</style></head><body>";
+  h += "<button class=\"print-btn no-print\" onclick=\"window.print()\">Save as PDF / Print</button>";
+  h += "<div class=\"doc-header\">";
+  h += "<div class=\"doc-title\">Property Repair &amp; Job Assignment Sheet</div>";
+  h += "<div class=\"doc-meta\"><strong>Address:</strong> " + esc(d.addr) + (d.city ? " &mdash; " + esc(d.city) : "") + "&nbsp;&nbsp;<strong>Date:</strong> " + esc(d.date) + "</div>";
+  h += "</div>";
+  h += "<div class=\"cards\">";
+  h += "<div class=\"card\"><div class=\"cnum\">" + d.totalAll + "</div><div class=\"clbl\">Total</div></div>";
+  h += "<div class=\"card\"><div class=\"cnum\" style=\"color:#065f46\">" + d.totalC + "</div><div class=\"clbl\">Contractor</div></div>";
+  h += "<div class=\"card\"><div class=\"cnum\" style=\"color:#1e40af\">" + d.totalO + "</div><div class=\"clbl\">Owner</div></div>";
+  h += "<div class=\"card\"><div class=\"cnum\" style=\"color:#92400e\">" + d.totalTBD + "</div><div class=\"clbl\">TBD</div></div>";
+  h += "</div>";
+  h += "<table><thead><tr>";
+  h += "<th style=\"width:150px\">Area</th><th>Repair / Task</th><th style=\"width:110px\">Assigned To</th><th style=\"width:150px\">Notes</th>";
+  h += "</tr></thead><tbody>";
+  h += d.rowsHtml;
+  h += "</tbody></table>";
+  var genDate = new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  h += "<div class=\"doc-footer\">Generated " + genDate + " &middot; Property Repair Sheet</div>";
+  h += "</body></html>";
+  return h;
+}
+
+function downloadPDF() {
+  var addr = state.address || "Unknown";
+  var city = state.city || "";
+  var date = state.date || "Unknown";
+  var totalC=0, totalO=0, totalTBD=0, totalAll=0;
+  var rowsHtml = "";
+
+  for (var gi=0; gi<GROUPS.length; gi++) {
+    var groupRows = "";
+    for (var si=0; si<GROUPS[gi].sections.length; si++) {
+      var sec = GROUPS[gi].sections[si];
+      var repairs = state.repairs[sec.id] || [];
+      var filled = [];
+      for (var ri=0; ri<repairs.length; ri++) { if (repairs[ri].desc.trim()) filled.push(repairs[ri]); }
+      if (!filled.length) continue;
+      for (var ri=0; ri<filled.length; ri++) {
+        var r = filled[ri];
+        totalAll++;
+        if (r.party==="C") totalC++; else if (r.party==="O") totalO++; else totalTBD++;
+        var partyLabel = r.party==="C" ? "Contractor" : r.party==="O" ? "Owner" : "TBD";
+        var partyColor = r.party==="C" ? "#065f46" : r.party==="O" ? "#1e40af" : "#92400e";
+        var partyBg    = r.party==="C" ? "#d1fae5" : r.party==="O" ? "#dbeafe" : "#fef3c7";
+        var notesCell  = r.notes
+          ? "<td style=\"font-size:11px;color:#666;padding:8px 10px;border-bottom:1px solid #f0f0f0\">" + esc(r.notes) + "</td>"
+          : "<td style=\"padding:8px 10px;border-bottom:1px solid #f0f0f0\"></td>";
+        var areaCell = ri===0
+          ? "<td rowspan=\"" + filled.length + "\" style=\"font-size:12px;font-weight:600;color:#444;padding:8px 10px;border-bottom:1px solid #e5e5e5;vertical-align:top;border-right:1px solid #e5e5e5\">" + esc(sec.title) + "</td>"
+          : "";
+        groupRows += "<tr>" + areaCell;
+        groupRows += "<td style=\"font-size:13px;padding:8px 10px;border-bottom:1px solid #f0f0f0\">" + esc(r.desc) + "</td>";
+        groupRows += "<td style=\"padding:8px 10px;border-bottom:1px solid #f0f0f0\">";
+        groupRows += "<span style=\"font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:" + partyBg + ";color:" + partyColor + "\">" + partyLabel + "</span>";
+        groupRows += "</td>" + notesCell + "</tr>";
+      }
+    }
+    if (groupRows) {
+      rowsHtml += "<tr><td colspan=\"4\" style=\"background:#f5f5f3;font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;padding:8px 10px;border-top:2px solid #e0e0dc\">" + GROUPS[gi].label + "</td></tr>";
+      rowsHtml += groupRows;
+    }
+  }
+
+  if (!totalAll) { alert("No repairs added yet."); return; }
+
+  var html = buildPDFHtml({addr:addr,city:city,date:date,totalAll:totalAll,totalC:totalC,totalO:totalO,totalTBD:totalTBD,rowsHtml:rowsHtml});
+  var safeName = (state.address || "property").replace(/[^a-z0-9]/gi,"_").replace(/_+/g,"_").substring(0,40);
+  var blob = new Blob([html], {type:"text/html;charset=utf-8"});
+  var a = document.createElement("a");
+  a.download = "repair_sheet_" + safeName + ".html";
+  a.href = URL.createObjectURL(blob);
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+}
+
+function downloadFile() {
+  var stateJson = JSON.stringify(state);
+  var tag = document.getElementById("saved-state");
+  var old = tag.textContent;
+  tag.textContent = stateJson;
+  var src = document.documentElement.outerHTML;
+  tag.textContent = old;
+  var safeName = (state.address || "property").replace(/[^a-z0-9]/gi,"_").replace(/_+/g,"_").substring(0,40);
+  var blob = new Blob([src], {type:"text/html;charset=utf-8"});
+  var a = document.createElement("a");
+  a.download = "repairs_" + safeName + ".html";
+  a.href = URL.createObjectURL(blob);
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+}
+
+load(); renderAll();
+document.getElementById("propAddr").value = state.address || "";
+document.getElementById("propCity").value  = state.city    || "";
+document.getElementById("propDate").value  = state.date    || "";
+document.getElementById("propAddr").addEventListener("input", save);
+document.getElementById("propCity").addEventListener("input", save);
+document.getElementById("propDate").addEventListener("input", save);
+</script>
+</body>
+</html>
