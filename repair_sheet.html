@@ -481,7 +481,7 @@ function buildText() {
         var r = filled[ri];
         totalAll++;
         if (r.party==="C") totalC++; else if (r.party==="O") totalO++; else totalTBD++;
-        var party = r.party==="C" ? "Contractor" : r.party==="O" ? "Owner" : "TBD";
+        var party = r.party==="C" ? "[CONTRACTOR]" : r.party==="O" ? "[OWNER]" : "[TBD]";
         var prefix = ri===0 ? "[" + sec.title + "] " : "  ";
         var notes = r.notes ? " [" + r.notes + "]" : "";
         groupLines.push(prefix + r.desc + " -> " + party + notes);
@@ -501,13 +501,16 @@ function buildText() {
 function shareSheet() {
   var addr = state.address || "Unknown";
   var city = state.city || "";
-  var date = state.date || "Unknown";
-  var lines = [];
-  lines.push("Property Repair & Job Assignment Sheet");
-  lines.push("Address: " + addr + (city ? ", " + city : ""));
-  lines.push("Date: " + (date !== "Unknown" ? date : ""));
-  lines.push("");
+  var date = state.date || "";
   var totalC=0, totalO=0, totalTBD=0, totalAll=0, hasAny=false;
+  var lines = [];
+
+  lines.push("PROPERTY REPAIR & JOB ASSIGNMENT SHEET");
+  lines.push("");
+  lines.push("Address: " + addr + (city ? ", " + city : ""));
+  if (date) lines.push("Date: " + date);
+  lines.push("");
+
   for (var gi=0; gi<GROUPS.length; gi++) {
     var groupLines = [];
     for (var si=0; si<GROUPS[gi].sections.length; si++) {
@@ -519,42 +522,69 @@ function shareSheet() {
         hasAny = true;
         totalAll++;
         if (r.party==="C") totalC++; else if (r.party==="O") totalO++; else totalTBD++;
-        var party = r.party==="C" ? "Contractor" : r.party==="O" ? "Owner" : "TBD";
+        var party = r.party==="C" ? "[CONTRACTOR]" : r.party==="O" ? "[OWNER]" : "[TBD]";
         var notes = r.notes ? " (" + r.notes + ")" : "";
-        groupLines.push(sec.title + ": " + r.desc + " - " + party + notes);
+        if (groupLines.length > 0) groupLines.push("  --------------------");
+        groupLines.push("  " + sec.title + ": " + r.desc + " - " + party + notes);
       }
     }
     if (groupLines.length) {
-      lines.push(GROUPS[gi].label);
-      for (var li=0; li<groupLines.length; li++) lines.push("  " + groupLines[li]);
+      lines.push(GROUPS[gi].label.toUpperCase());
+      for (var li=0; li<groupLines.length; li++) lines.push(groupLines[li]);
       lines.push("");
     }
   }
+
   if (!hasAny) { alert("No repairs added yet."); return; }
-  lines.push("Contractor: " + totalC + "  Owner: " + totalO + "  TBD: " + totalTBD);
+  lines.push("Contractor: " + totalC + "   Owner: " + totalO + "   TBD: " + totalTBD);
+  lines.push("Total repairs: " + totalAll);
+
   var text = lines.join("\n");
+  var subject = "Repair Sheet - " + addr;
 
-  var ta = document.createElement("textarea");
-  ta.value = text;
-  ta.style.cssText = "position:fixed;opacity:0;top:0;left:0;width:1px;height:1px";
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  var ok = false;
-  try { ok = document.execCommand("copy"); } catch(e) {}
-  document.body.removeChild(ta);
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:flex-end";
 
-  if (ok) {
-    showToast("Copied! Paste into a text or email.");
-  } else if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(function() {
-      showToast("Copied! Paste into a text or email.");
-    }).catch(function() {
-      showToast("Could not copy automatically.");
-    });
-  } else {
-    showToast("Could not copy automatically.");
+  var sheet = document.createElement("div");
+  sheet.style.cssText = "background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;display:flex;flex-direction:column;gap:10px";
+
+  var title = document.createElement("div");
+  title.style.cssText = "font-size:17px;font-weight:700;color:#111;margin-bottom:2px";
+  title.textContent = "Send Repair Sheet";
+
+  var sub = document.createElement("div");
+  sub.style.cssText = "font-size:13px;color:#888;margin-bottom:6px";
+  sub.textContent = addr + (city ? ", " + city : "") + "   |   " + totalAll + " repairs";
+
+  function makeBtn(label, color, fn) {
+    var b = document.createElement("button");
+    b.textContent = label;
+    b.style.cssText = "width:100%;padding:15px;background:" + color + ";color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit";
+    b.onclick = function() { document.body.removeChild(overlay); fn(); };
+    return b;
   }
+
+  var emailBtn = makeBtn("Email", "#1D9E75", function() {
+    window.location.href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(text);
+  });
+
+  var smsBtn = makeBtn("Text message", "#2563eb", function() {
+    window.location.href = "sms:?&body=" + encodeURIComponent(text);
+  });
+
+  var cancelBtn = document.createElement("button");
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.style.cssText = "width:100%;padding:14px;background:transparent;color:#888;border:1px solid #e0e0dc;border-radius:12px;font-size:15px;cursor:pointer;font-family:inherit;margin-top:4px";
+  cancelBtn.onclick = function() { document.body.removeChild(overlay); };
+
+  sheet.appendChild(title);
+  sheet.appendChild(sub);
+  sheet.appendChild(emailBtn);
+  sheet.appendChild(smsBtn);
+  sheet.appendChild(cancelBtn);
+  overlay.appendChild(sheet);
+  overlay.onclick = function(e) { if (e.target===overlay) document.body.removeChild(overlay); };
+  document.body.appendChild(overlay);
 }
 
 
