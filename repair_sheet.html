@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Apex Repair Sheet</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f0ed;color:#1a1a1a;min-height:100vh}
@@ -232,7 +231,19 @@ h1{font-size:18px;font-weight:600;color:#111}
 <script>
 var SB_URL = 'https://ehlipciasutoderxgptx.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVobGlwY2lhc3V0b2RlcnhncHR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzOTkyMDEsImV4cCI6MjA5NDk3NTIwMX0.KH17B9nCj0lmk9flt3991JXk9Egiz76QgR7qTljirpk';
-var sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+function sbFetch(method, path, body) {
+  return fetch(SB_URL + '/rest/v1/' + path, {
+    method: method,
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': method === 'POST' ? 'return=representation' : ''
+    },
+    body: body ? JSON.stringify(body) : undefined
+  }).then(function(r){ return r.json(); });
+}
 
 var GROUPS = [
   {label:"Exterior",sections:[
@@ -1103,24 +1114,30 @@ function sendToContractor() {
   html += '<script>var done=new Array(' + wtData.items.length + ').fill(false);function toggle(i){done[i]=!done[i];var c=document.getElementById("c"+i);var cb=document.getElementById("cb"+i);if(done[i]){c.style.borderColor="#1D9E75";c.style.opacity=".6";cb.innerHTML="✓";cb.style.background="#1D9E75";cb.style.borderColor="#1D9E75";cb.style.color="#fff";}else{c.style.borderColor="#e0e0dc";c.style.opacity="1";cb.innerHTML="";cb.style.background="#fff";cb.style.borderColor="#e0e0dc";}var n=done.filter(Boolean).length;document.getElementById("fill").style.width=Math.round(n/done.length*100)+"%";document.getElementById("lbl").textContent=n+" / "+done.length+" done";}function zoom(src){var lb=document.getElementById("lightbox");document.getElementById("lbimg").src=src;lb.style.display="flex";}<\/script>';
   html += '</body></html>';
 
-  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
-  var file = new File([blob], 'checklist.html', {type:'text/html'});
-
-  if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
-    navigator.share({files:[file], title:'Contractor Checklist — ' + addr}).catch(function(){ fallbackShare(blob, addr); });
-  } else {
-    fallbackShare(blob, addr);
-  }
+  // Save to Supabase and share a live link
+  showToast('Saving…');
+  sbFetch('POST', 'walkthroughs', {
+    address: wtData.addr || '',
+    city: wtData.city || '',
+    date: wtData.date || '',
+    items: wtData.items
+  }).then(function(res) {
+    if (!res || !res[0] || !res[0].id) { showToast('Save failed — check connection'); return; }
+    var link = 'https://tml828.github.io/repair-sheet/repair_sheet.html?wt=' + res[0].id;
+    if (navigator.share) {
+      navigator.share({ title: 'Contractor Checklist', url: link }).catch(function(){ copyLink(link); });
+    } else {
+      copyLink(link);
+    }
+  }).catch(function(e){ showToast('Error: ' + e.message); });
 }
 
-function fallbackShare(blob, addr) {
-  var a = document.createElement('a');
-  a.download = 'checklist.html';
-  a.href = URL.createObjectURL(blob);
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
-  showToast('Saved — send the file to your contractor');
+function copyLink(link) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(function(){ showToast('Link copied — send to contractor!'); });
+  } else {
+    prompt('Send this link to your contractor:', link);
+  }
 }
 
 function copyToClipboardAndToast(link) {
@@ -1139,12 +1156,12 @@ function loadContractorView(wtId) {
   document.getElementById('wtBottomBar').style.display = 'none';
   document.getElementById('contractor-view').style.display = 'block';
 
-  sb.from('walkthroughs').select('*').eq('id', wtId).single().then(function(res) {
-    if (res.error || !res.data) {
+  sbFetch('GET', 'walkthroughs?id=eq.' + wtId + '&limit=1').then(function(res) {
+    if (!res || !res[0]) {
       document.getElementById('cv-items').innerHTML = '<div class="wt-empty">Checklist not found.</div>';
       return;
     }
-    var d = res.data;
+    var d = res[0];
     var meta = document.getElementById('cv-meta');
     meta.innerHTML = '<strong>' + esc(d.address || '') + '</strong>' + (d.city ? ' — ' + esc(d.city) : '') + (d.date ? '<br><span style="color:#aaa">' + esc(d.date) + '</span>' : '');
     renderContractorItems(d.items || [], wtId);
@@ -1234,10 +1251,9 @@ function toggleContractorDone(item, wtId, allItems) {
     if (lbl) lbl.textContent = item.done ? 'Done' : 'Mark done';
   }
   updateCvProgress(allItems);
-  sb.from('walkthroughs').update({ items: allItems }).eq('id', wtId).then(function(res) {
-    if (res.error) showToast('Save failed — check connection');
-    else showToast(item.done ? 'Marked done!' : 'Unmarked');
-  });
+  sbFetch('PATCH', 'walkthroughs?id=eq.' + wtId, { items: allItems }).then(function(){
+    showToast(item.done ? 'Marked done!' : 'Unmarked');
+  }).catch(function(){ showToast('Save failed — check connection'); });
 }
 
 function updateCvProgress(items) {
