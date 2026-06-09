@@ -83,7 +83,7 @@ h1{font-size:18px;font-weight:600;color:#111}
 }
 /* TABS */
 .tab-bar{max-width:880px;margin:0 auto;padding:1.25rem 1.25rem 0;display:flex;gap:4px}
-.tab-btn{padding:10px 22px;font-size:14px;font-weight:600;border:none;border-radius:10px 10px 0 0;cursor:pointer;font-family:inherit;background:#e0e0dc;color:#888;transition:all .15s}
+.tab-btn{padding:14px 28px;font-size:15px;font-weight:600;border:none;border-radius:10px 10px 0 0;cursor:pointer;font-family:inherit;background:#e0e0dc;color:#888;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-width:120px}
 .tab-btn.active{background:#fff;color:#1D9E75;box-shadow:0 -2px 0 #1D9E75 inset}
 .tab-btn:hover:not(.active){background:#d5d5d0;color:#555}
 .tab-content{display:none}.tab-content.active{display:block}
@@ -197,7 +197,7 @@ h1{font-size:18px;font-weight:600;color:#111}
   <div class="footer" style="margin-top:1.5rem;margin-bottom:5rem">Apex Homes LLC &nbsp;&middot;&nbsp; Auto-saves in your browser</div>
 </div>
 <!-- Sticky bottom bar -->
-<div style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5e2;padding:12px 16px;display:flex;gap:10px;z-index:100;box-shadow:0 -4px 16px rgba(0,0,0,0.08)">
+<div id="wtBottomBar" style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5e2;padding:12px 16px;display:none;gap:10px;z-index:100;box-shadow:0 -4px 16px rgba(0,0,0,0.08)">
   <button class="btn btn-green" style="flex:1;justify-content:center" onclick="sendToContractor()">
     <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     Send to Contractor
@@ -823,6 +823,8 @@ function switchTab(tab) {
   var btns = document.querySelectorAll(".tab-btn");
   btns[0].classList.toggle("active", tab==="sheet");
   btns[1].classList.toggle("active", tab==="walkthrough");
+  var bar = document.getElementById("wtBottomBar");
+  if (bar) bar.style.display = tab==="walkthrough" ? "flex" : "none";
   if (tab==="walkthrough") renderWalkthrough();
 }
 
@@ -1042,7 +1044,7 @@ function toggleWtDone(itemId) {
 }
 
 function sendToContractor() {
-  if (!wtData.items.length) { alert("No items added yet. Click \"Add item\" to start your walkthrough."); return; }
+  if (!wtData.items.length) { alert('No items added yet. Click "Add item" to start your walkthrough.'); return; }
   var addr = wtData.addr || "Unknown property";
   var city = wtData.city || "";
   var date = wtData.date || "";
@@ -1059,7 +1061,7 @@ function sendToContractor() {
     var uid = "item"+i;
     rows += '<div id="card-'+uid+'" style="background:#fff;border:1px solid '+(it.done?"#a7f3d0":"#e5e5e2")+';border-radius:12px;padding:16px;margin-bottom:10px;'+(it.done?"opacity:.55":"")+'">';
     rows += '<div style="display:flex;align-items:flex-start;gap:14px">';
-    rows += '<div id="cb-'+uid+'" class="cb" data-done="'+(it.done?"1":"")'" onclick="toggleDone(\''+uid+'\')" style="width:32px;height:32px;border-radius:8px;border:2px solid '+(it.done?"#1D9E75":"#e0e0dc")+';cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:'+(it.done?"#1D9E75":"#fff")+';margin-top:2px;-webkit-tap-highlight-color:transparent;touch-action:manipulation">'+(it.done?'<span style=\'color:#fff;font-size:16px;font-weight:700;line-height:1\'>✓</span>':'')+"</div>";
+    rows += '<div id="cb-'+uid+'" class="cb" data-done="'+(it.done?"1":""+'" onclick="toggleDone(\''+uid+'\')" style="width:32px;height:32px;border-radius:8px;border:2px solid '+(it.done?"#1D9E75":"#e0e0dc")+';cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:'+(it.done?"#1D9E75":"#fff")+';margin-top:2px;-webkit-tap-highlight-color:transparent;touch-action:manipulation">'+(it.done?'<span style=\'color:#fff;font-size:16px;font-weight:700;line-height:1\'>✓</span>':'')+"</div>";
     rows += '<div style="flex:1">';
     rows += '<div style="font-size:11px;font-weight:700;color:#1D9E75;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Item '+(i+1)+'</div>';
     rows += '<div style="font-size:15px;font-weight:600;color:#111;margin-bottom:6px">'+(it.desc?esc(it.desc):'<em style="color:#aaa">No description</em>')+'</div>';
