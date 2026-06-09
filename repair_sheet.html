@@ -83,7 +83,7 @@ h1{font-size:18px;font-weight:600;color:#111}
 }
 /* TABS */
 .tab-bar{max-width:880px;margin:0 auto;padding:1.25rem 1.25rem 0;display:flex;gap:4px}
-.tab-btn{padding:10px 22px;font-size:14px;font-weight:600;border:none;border-radius:10px 10px 0 0;cursor:pointer;font-family:inherit;background:#e0e0dc;color:#888;transition:all .15s}
+.tab-btn{padding:14px 28px;font-size:15px;font-weight:600;border:none;border-radius:10px 10px 0 0;cursor:pointer;font-family:inherit;background:#e0e0dc;color:#888;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-width:120px}
 .tab-btn.active{background:#fff;color:#1D9E75;box-shadow:0 -2px 0 #1D9E75 inset}
 .tab-btn:hover:not(.active){background:#d5d5d0;color:#555}
 .tab-content{display:none}.tab-content.active{display:block}
@@ -197,7 +197,7 @@ h1{font-size:18px;font-weight:600;color:#111}
   <div class="footer" style="margin-top:1.5rem;margin-bottom:5rem">Apex Homes LLC &nbsp;&middot;&nbsp; Auto-saves in your browser</div>
 </div>
 <!-- Sticky bottom bar -->
-<div style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5e2;padding:12px 16px;display:flex;gap:10px;z-index:100;box-shadow:0 -4px 16px rgba(0,0,0,0.08)">
+<div id="wtBottomBar" style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5e2;padding:12px 16px;display:none;gap:10px;z-index:100;box-shadow:0 -4px 16px rgba(0,0,0,0.08)">
   <button class="btn btn-green" style="flex:1;justify-content:center" onclick="sendToContractor()">
     <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     Send to Contractor
@@ -823,6 +823,8 @@ function switchTab(tab) {
   var btns = document.querySelectorAll(".tab-btn");
   btns[0].classList.toggle("active", tab==="sheet");
   btns[1].classList.toggle("active", tab==="walkthrough");
+  var bar = document.getElementById("wtBottomBar");
+  if (bar) bar.style.display = tab==="walkthrough" ? "flex" : "none";
   if (tab==="walkthrough") renderWalkthrough();
 }
 
