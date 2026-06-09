@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Property Repair Sheet</title>
+<title>Apex Repair Sheet</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f0ed;color:#1a1a1a;min-height:100vh}
@@ -81,15 +81,58 @@ h1{font-size:18px;font-weight:600;color:#111}
   .pt-btn{flex:1;text-align:center}
   .del-btn{order:1;flex-shrink:0}
 }
+/* TABS */
+.tab-bar{max-width:880px;margin:0 auto;padding:1.25rem 1.25rem 0;display:flex;gap:4px}
+.tab-btn{padding:10px 22px;font-size:14px;font-weight:600;border:none;border-radius:10px 10px 0 0;cursor:pointer;font-family:inherit;background:#e0e0dc;color:#888;transition:all .15s}
+.tab-btn.active{background:#fff;color:#1D9E75;box-shadow:0 -2px 0 #1D9E75 inset}
+.tab-btn:hover:not(.active){background:#d5d5d0;color:#555}
+.tab-content{display:none}.tab-content.active{display:block}
+/* WALKTHROUGH */
+.wt-header{background:#fff;border-radius:16px;border:1px solid #e5e5e2;padding:1.5rem;margin-bottom:1rem}
+.wt-title-row{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.wt-title{font-size:18px;font-weight:600;color:#111}
+.wt-subtitle{font-size:13px;color:#888;margin-bottom:1rem}
+.wt-actions{display:flex;gap:8px;flex-wrap:wrap}
+.wt-items{display:flex;flex-direction:column;gap:10px}
+.wt-item{background:#fff;border:1px solid #e5e5e2;border-radius:12px;overflow:hidden}
+.wt-item.done{border-color:#a7f3d0;opacity:.7}
+.wt-item-head{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.wt-check{width:22px;height:22px;border-radius:6px;border:2px solid #e0e0dc;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#fff}
+.wt-check.checked{background:#1D9E75;border-color:#1D9E75}
+.wt-check.checked::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
+.wt-item-info{flex:1;min-width:0}
+.wt-item-area{font-size:11px;font-weight:600;color:#1D9E75;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.wt-item-desc{font-size:14px;font-weight:500;color:#111}
+.wt-item-party{font-size:11px;color:#888;margin-top:2px}
+.wt-item-body{border-top:1px solid #f0f0ed;padding:12px 16px;background:#fafaf8;display:flex;flex-direction:column;gap:10px}
+.wt-photos{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.wt-photo-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;flex-shrink:0}
+.wt-photo-thumb img{width:100%;height:100%;object-fit:cover}
+.wt-photo-del{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(0,0,0,.55);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;line-height:1}
+.wt-add-photo{width:80px;height:80px;border:2px dashed #e0e0dc;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:#bbb;font-size:11px;gap:4px;transition:border-color .15s;background:#fff;flex-shrink:0}
+.wt-add-photo:hover{border-color:#1D9E75;color:#1D9E75}
+.wt-add-photo svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.wt-note{width:100%;font-size:13px;padding:8px 11px;border:1px solid #e0e0dc;border-radius:8px;background:#fff;color:#1a1a1a;outline:none;resize:vertical;min-height:60px;font-family:inherit;transition:border-color .15s}
+.wt-note:focus{border-color:#1D9E75}
+.wt-empty{background:#fff;border:1px solid #e5e5e2;border-radius:12px;padding:40px;text-align:center;color:#bbb;font-size:14px}
+.wt-progress{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.wt-prog-bar{flex:1;height:8px;background:#f0f0ed;border-radius:4px;overflow:hidden}
+.wt-prog-fill{height:100%;background:#1D9E75;border-radius:4px;transition:width .3s}
+.wt-prog-label{font-size:13px;font-weight:600;color:#1D9E75;white-space:nowrap}
 </style>
 </head>
 <body>
 <div id="toast"></div>
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('sheet')">Apex Repair Sheet</button>
+  <button class="tab-btn" onclick="switchTab('walkthrough')">Walkthrough</button>
+</div>
+<div id="tab-sheet" class="tab-content active">
 <div class="page">
   <div class="header">
     <div class="logo-row">
       <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <h1>Property Repair Sheet</h1>
+      <h1>Apex Repair Sheet</h1>
     </div>
     <div class="prop-grid">
       <input id="propAddr" placeholder="Property address" />
@@ -124,6 +167,37 @@ h1{font-size:18px;font-weight:600;color:#111}
   <div class="sections-wrap" id="sections"></div>
   <div class="footer">Auto-saves in your browser &nbsp;&middot;&nbsp; Desktop: Download PDF or Save copy &nbsp;&middot;&nbsp; Mobile: Share sheet directly</div>
 </div>
+</div><!-- /tab-sheet -->
+
+<div id="tab-walkthrough" class="tab-content">
+<div class="page">
+  <div class="wt-header">
+    <div class="wt-title-row">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="wt-title">Walkthrough</span>
+    </div>
+    <div class="wt-subtitle">Take photos and add notes for each repair. Send the checklist to your contractor when done.</div>
+    <div class="wt-progress"><div class="wt-prog-bar"><div class="wt-prog-fill" id="wtProgFill" style="width:0%"></div></div><span class="wt-prog-label" id="wtProgLabel">0 / 0 done</span></div>
+    <div class="wt-actions">
+      <button class="btn btn-green desktop-only" onclick="sendToContractor()">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send to Contractor
+      </button>
+      <button class="btn btn-green mobile-only" onclick="sendToContractor()">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send to Contractor
+      </button>
+      <button class="btn" onclick="renderWalkthrough()">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+        Refresh list
+      </button>
+    </div>
+  </div>
+  <div class="wt-items" id="wtItems"></div>
+  <div class="footer" style="margin-top:1.5rem">Check off repairs as the contractor completes them</div>
+</div>
+</div><!-- /tab-walkthrough -->
+
 <script id="saved-state" type="application/json">{}</script>
 <script>
 var GROUPS = [
@@ -728,6 +802,290 @@ document.getElementById("propDate").value  = state.date    || "";
 document.getElementById("propAddr").addEventListener("input", save);
 document.getElementById("propCity").addEventListener("input", save);
 document.getElementById("propDate").addEventListener("input", save);
+
+// TAB SWITCHING
+function switchTab(tab) {
+  var tabs = ["sheet","walkthrough"];
+  for (var i=0; i<tabs.length; i++) {
+    document.getElementById("tab-"+tabs[i]).classList.toggle("active", tabs[i]===tab);
+  }
+  var btns = document.querySelectorAll(".tab-btn");
+  btns[0].classList.toggle("active", tab==="sheet");
+  btns[1].classList.toggle("active", tab==="walkthrough");
+  if (tab==="walkthrough") renderWalkthrough();
+}
+
+// WALKTHROUGH STATE
+var wtState = {}; // {repairId: {done, note, photos:[dataUrl,...]}}
+
+function getWtItem(id) {
+  if (!wtState[id]) wtState[id] = {done:false, note:"", photos:[]};
+  return wtState[id];
+}
+
+function saveWt() {
+  try { localStorage.setItem("apexWalkthrough", JSON.stringify(wtState)); } catch(e) {}
+}
+
+function loadWt() {
+  try {
+    var s = localStorage.getItem("apexWalkthrough");
+    if (s) wtState = JSON.parse(s);
+  } catch(e) {}
+}
+
+function getAllRepairs() {
+  var out = [];
+  for (var gi=0; gi<GROUPS.length; gi++) {
+    for (var si=0; si<GROUPS[gi].sections.length; si++) {
+      var sec = GROUPS[gi].sections[si];
+      var repairs = state.repairs[sec.id] || [];
+      for (var ri=0; ri<repairs.length; ri++) {
+        if (repairs[ri].desc.trim()) {
+          out.push({sec:sec, repair:repairs[ri]});
+        }
+      }
+    }
+  }
+  return out;
+}
+
+function renderWalkthrough() {
+  var all = getAllRepairs();
+  var container = document.getElementById("wtItems");
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  if (!all.length) {
+    var empty = document.createElement("div");
+    empty.className = "wt-empty";
+    empty.textContent = "No repairs found. Add repairs in the Apex Repair Sheet tab first.";
+    container.appendChild(empty);
+    updateWtProgress(0,0);
+    return;
+  }
+
+  var doneCount = 0;
+  for (var i=0; i<all.length; i++) {
+    var wt = getWtItem(all[i].repair.id);
+    if (wt.done) doneCount++;
+    container.appendChild(buildWtItem(all[i].sec, all[i].repair));
+  }
+  updateWtProgress(doneCount, all.length);
+}
+
+function updateWtProgress(done, total) {
+  var pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById("wtProgFill").style.width = pct + "%";
+  document.getElementById("wtProgLabel").textContent = done + " / " + total + " done";
+}
+
+function buildWtItem(sec, repair) {
+  var wt = getWtItem(repair.id);
+  var item = document.createElement("div");
+  item.className = "wt-item" + (wt.done ? " done" : "");
+  item.id = "wt-" + repair.id;
+
+  // Head
+  var head = document.createElement("div");
+  head.className = "wt-item-head";
+
+  var check = document.createElement("div");
+  check.className = "wt-check" + (wt.done ? " checked" : "");
+  (function(r){ check.onclick = function(){ toggleWtDone(r.id); }; })(repair);
+
+  var info = document.createElement("div");
+  info.className = "wt-item-info";
+
+  var area = document.createElement("div");
+  area.className = "wt-item-area";
+  area.textContent = sec.title;
+
+  var desc = document.createElement("div");
+  desc.className = "wt-item-desc";
+  desc.textContent = repair.desc;
+
+  var partyTxt = repair.party==="C" ? "Contractor" : repair.party==="O" ? "Owner" : "TBD";
+  var party = document.createElement("div");
+  party.className = "wt-item-party";
+  party.textContent = partyTxt + (repair.notes ? "  ·  " + repair.notes : "");
+
+  info.appendChild(area); info.appendChild(desc); info.appendChild(party);
+  head.appendChild(check); head.appendChild(info);
+  item.appendChild(head);
+
+  // Body
+  var body = document.createElement("div");
+  body.className = "wt-item-body";
+
+  // Photos
+  var photosWrap = document.createElement("div");
+  photosWrap.className = "wt-photos";
+  photosWrap.id = "wt-photos-" + repair.id;
+
+  renderWtPhotos(photosWrap, repair.id);
+
+  // Add photo button
+  var addPhoto = document.createElement("label");
+  addPhoto.className = "wt-add-photo";
+  addPhoto.innerHTML = '<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 0 2-2l1-3h16l1 3a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Photo';
+  var fileInput = document.createElement("input");
+  fileInput.type = "file"; fileInput.accept = "image/*"; fileInput.capture = "environment";
+  fileInput.style.display = "none";
+  (function(rid, pw){ fileInput.onchange = function(){ handleWtPhoto(rid, this, pw); }; })(repair.id, photosWrap);
+  addPhoto.appendChild(fileInput);
+  photosWrap.appendChild(addPhoto);
+
+  // Note
+  var note = document.createElement("textarea");
+  note.className = "wt-note";
+  note.placeholder = "Add notes for contractor...";
+  note.value = wt.note;
+  (function(rid){ note.oninput = function(){ getWtItem(rid).note = note.value; saveWt(); }; })(repair.id);
+
+  body.appendChild(photosWrap);
+  body.appendChild(note);
+  item.appendChild(body);
+  return item;
+}
+
+function renderWtPhotos(container, repairId) {
+  var wt = getWtItem(repairId);
+  var addBtn = container.querySelector("label");
+  var thumbs = container.querySelectorAll(".wt-photo-thumb");
+  for (var i=0; i<thumbs.length; i++) container.removeChild(thumbs[i]);
+
+  for (var i=0; i<wt.photos.length; i++) {
+    (function(idx, dataUrl) {
+      var thumb = document.createElement("div");
+      thumb.className = "wt-photo-thumb";
+      var img = document.createElement("img");
+      img.src = dataUrl;
+      var del = document.createElement("button");
+      del.className = "wt-photo-del";
+      del.innerHTML = "&#10005;";
+      del.onclick = function(e) {
+        e.stopPropagation();
+        getWtItem(repairId).photos.splice(idx, 1);
+        saveWt();
+        renderWtPhotos(container, repairId);
+      };
+      thumb.appendChild(img); thumb.appendChild(del);
+      if (addBtn) container.insertBefore(thumb, addBtn);
+      else container.appendChild(thumb);
+    })(i, wt.photos[i]);
+  }
+}
+
+function handleWtPhoto(repairId, input, photosWrap) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement("canvas");
+      var max = 800;
+      var w = img.width, h = img.height;
+      if (w > max || h > max) {
+        if (w > h) { h = Math.round(h*max/w); w = max; }
+        else { w = Math.round(w*max/h); h = max; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      var dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+      getWtItem(repairId).photos.push(dataUrl);
+      saveWt();
+      renderWtPhotos(photosWrap, repairId);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value = "";
+}
+
+function toggleWtDone(repairId) {
+  var wt = getWtItem(repairId);
+  wt.done = !wt.done;
+  saveWt();
+  var item = document.getElementById("wt-" + repairId);
+  if (item) {
+    item.className = "wt-item" + (wt.done ? " done" : "");
+    var check = item.querySelector(".wt-check");
+    if (check) check.className = "wt-check" + (wt.done ? " checked" : "");
+  }
+  var all = getAllRepairs();
+  var done = 0;
+  for (var i=0; i<all.length; i++) { if (getWtItem(all[i].repair.id).done) done++; }
+  updateWtProgress(done, all.length);
+}
+
+function sendToContractor() {
+  var all = getAllRepairs();
+  if (!all.length) { alert("No repairs to send. Add repairs in the Apex Repair Sheet tab first."); return; }
+  var addr = state.address || "Unknown property";
+  var city = state.city || "";
+  var date = state.date || "";
+  var doneCount = 0;
+  for (var i=0; i<all.length; i++) { if (getWtItem(all[i].repair.id).done) doneCount++; }
+
+  var rows = "";
+  for (var i=0; i<all.length; i++) {
+    var sec = all[i].sec; var r = all[i].repair;
+    var wt = getWtItem(r.id);
+    var photos = "";
+    for (var p=0; p<wt.photos.length; p++) {
+      photos += '<img src="' + wt.photos[p] + '" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #e0e0dc">';
+    }
+    var partyLabel = r.party==="C" ? "Contractor" : r.party==="O" ? "Owner" : "TBD";
+    var partyColor = r.party==="C" ? "#065f46" : r.party==="O" ? "#1e40af" : "#92400e";
+    var partyBg    = r.party==="C" ? "#d1fae5" : r.party==="O" ? "#dbeafe" : "#fef3c7";
+    var isDone = wt.done;
+    rows += '<div style="background:#fff;border:1px solid '+(isDone?"#a7f3d0":"#e5e5e2")+';border-radius:12px;padding:16px;margin-bottom:10px;'+(isDone?"opacity:.6":"")+'">';
+    rows += '<div style="display:flex;align-items:flex-start;gap:14px">';
+    rows += '<div class="cb" data-id="'+r.id+'" onclick="toggleDone(this)" style="width:24px;height:24px;border-radius:6px;border:2px solid '+(isDone?"#1D9E75":"#e0e0dc")+';cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:'+(isDone?"#1D9E75":"#fff")+';margin-top:2px">'+(isDone?'<span style="color:#fff;font-size:14px;font-weight:700">✓</span>':'')+'</div>';
+    rows += '<div style="flex:1">';
+    rows += '<div style="font-size:11px;font-weight:700;color:#1D9E75;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">'+esc(sec.title)+'</div>';
+    rows += '<div style="font-size:15px;font-weight:600;color:#111;margin-bottom:4px">'+esc(r.desc)+'</div>';
+    rows += '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:'+partyBg+';color:'+partyColor+'">'+partyLabel+'</span>';
+    if (r.notes) rows += '<span style="font-size:12px;color:#888;margin-left:8px">'+esc(r.notes)+'</span>';
+    if (wt.note) rows += '<div style="margin-top:8px;font-size:13px;color:#444;background:#fafaf8;border-radius:6px;padding:8px 10px;border:1px solid #f0f0ed"><strong>Note:</strong> '+esc(wt.note)+'</div>';
+    if (photos) rows += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">'+photos+'</div>';
+    rows += '</div></div></div>';
+  }
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
+  html += '<title>Contractor Checklist — '+esc(addr)+'</title>';
+  html += '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f0ed;color:#1a1a1a;padding:20px}';
+  html += '.wrap{max-width:680px;margin:0 auto}.header{background:#fff;border-radius:16px;border:1px solid #e5e5e2;padding:20px;margin-bottom:12px}';
+  html += '.prog{height:8px;background:#f0f0ed;border-radius:4px;overflow:hidden;margin:10px 0}';
+  html += '.prog-fill{height:100%;background:#1D9E75;border-radius:4px;transition:width .3s}';
+  html += '</style></head><body>';
+  html += '<div class="wrap">';
+  html += '<div class="header">';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:32px;height:32px;background:#1D9E75;border-radius:8px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><strong style="font-size:18px">Contractor Checklist</strong></div>';
+  html += '<div style="font-size:14px;color:#555"><strong>Property:</strong> '+esc(addr)+(city?" — "+esc(city):"")+"</div>";
+  if (date) html += '<div style="font-size:13px;color:#888;margin-top:2px">Date: '+esc(date)+'</div>';
+  html += '<div class="prog"><div class="prog-fill" id="progFill" style="width:'+Math.round(doneCount/all.length*100)+'%"></div></div>';
+  html += '<div style="font-size:13px;font-weight:600;color:#1D9E75" id="progLabel">'+doneCount+' / '+all.length+' completed</div>';
+  html += '</div>';
+  html += rows;
+  html += '<div style="text-align:center;font-size:12px;color:#bbb;margin-top:16px;padding-bottom:40px">Check off items as you complete them &nbsp;·&nbsp; Apex Repair Sheet</div>';
+  html += '</div>';
+  html += '<script>function toggleDone(el){var isDone=el.classList.toggle("done-cb");el.style.background=isDone?"#1D9E75":"#fff";el.style.borderColor=isDone?"#1D9E75":"#e0e0dc";el.innerHTML=isDone?"<span style=\'color:#fff;font-size:14px;font-weight:700\'>✓</span>":"";var parent=el.closest("div[style]");if(parent){parent.style.opacity=isDone?"0.6":"1";parent.style.borderColor=isDone?"#a7f3d0":"#e5e5e2";}var all=document.querySelectorAll(".cb"),done=0;all.forEach(function(c){if(c.classList.contains("done-cb"))done++;});document.getElementById("progFill").style.width=Math.round(done/all.length*100)+"%";document.getElementById("progLabel").textContent=done+" / "+all.length+" completed";}<\/script>';
+  html += '</body></html>';
+
+  var safeName = (state.address||"property").replace(/[^a-z0-9]/gi,"_").replace(/_+/g,"_").substring(0,30);
+  var blob = new Blob([html],{type:"text/html;charset=utf-8"});
+  var a = document.createElement("a");
+  a.download = "contractor_checklist_"+safeName+".html";
+  a.href = URL.createObjectURL(blob);
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  showToast("Checklist saved — email or text it to your contractor!");
+}
+
+loadWt();
 </script>
 </body>
 </html>
