@@ -232,7 +232,7 @@ h1{font-size:18px;font-weight:600;color:#111}
 <script>
 var SB_URL = 'https://ehlipciasutoderxgptx.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVobGlwY2lhc3V0b2RlcnhncHR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzOTkyMDEsImV4cCI6MjA5NDk3NTIwMX0.KH17B9nCj0lmk9flt3991JXk9Egiz76QgR7qTljirpk';
-var sb = supabase.createClient(SB_URL, SB_KEY);
+var sb = window.supabase.createClient(SB_URL, SB_KEY);
 
 var GROUPS = [
   {label:"Exterior",sections:[
