@@ -242,7 +242,12 @@ function sbFetch(method, path, body) {
       'Prefer': method === 'POST' ? 'return=representation' : ''
     },
     body: body ? JSON.stringify(body) : undefined
-  }).then(function(r){ return r.json(); });
+  }).then(function(r){
+    return r.json().then(function(data){
+      if (!r.ok) { alert('Supabase error: ' + JSON.stringify(data)); }
+      return data;
+    });
+  });
 }
 
 var GROUPS = [
