@@ -1,0 +1,27 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - claude/pensive-albattani-2yf1im
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/pensive-albattani-2yf1im
+
+      - name: Push to main
+        run: |
+          git config user.email "noreply@anthropic.com"
+          git config user.name "Claude"
+          git fetch origin main
+          git checkout main
+          git checkout claude/pensive-albattani-2yf1im -- repair_sheet.html
+          git commit -m "Auto-deploy from claude branch" || echo "Nothing to commit"
+          git push origin main
