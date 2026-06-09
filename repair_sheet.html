@@ -82,10 +82,11 @@ h1{font-size:18px;font-weight:600;color:#111}
   .del-btn{order:1;flex-shrink:0}
 }
 /* TABS */
-.tab-bar{max-width:880px;margin:0 auto;padding:1.25rem 1.25rem 0;display:flex;gap:4px;position:sticky;top:0;z-index:50;background:#f0f0ed}
-.tab-btn{padding:16px 0;font-size:15px;font-weight:600;border:none;border-radius:10px 10px 0 0;cursor:pointer;font-family:inherit;background:#e0e0dc;color:#888;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;flex:1;text-align:center}
-.tab-btn.active{background:#fff;color:#1D9E75;box-shadow:0 -2px 0 #1D9E75 inset}
-.tab-btn:hover:not(.active){background:#d5d5d0;color:#555}
+.tab-bar{max-width:100%;margin:0;padding:0;display:flex;gap:0;position:fixed;top:0;left:0;right:0;z-index:200;background:#f0f0ed;border-bottom:1px solid #e0e0dc}
+.tab-btn{padding:16px 0;font-size:15px;font-weight:600;border:none;border-radius:0;cursor:pointer;font-family:inherit;background:#f0f0ed;color:#888;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;flex:1;text-align:center}
+.tab-btn.active{background:#fff;color:#1D9E75;box-shadow:0 -3px 0 #1D9E75 inset}
+.tab-btn:hover:not(.active){background:#e5e5e2;color:#555}
+.tab-spacer{height:56px}
 .tab-content{display:none}.tab-content.active{display:block}
 /* WALKTHROUGH */
 .wt-header{background:#fff;border-radius:16px;border:1px solid #e5e5e2;padding:1.5rem;margin-bottom:1rem}
@@ -130,6 +131,7 @@ h1{font-size:18px;font-weight:600;color:#111}
   <button class="tab-btn active" onclick="switchTab('sheet')">Repair Sheet</button>
   <button class="tab-btn" onclick="switchTab('walkthrough')">Walkthrough</button>
 </div>
+<div class="tab-spacer"></div>
 <div id="tab-sheet" class="tab-content active">
 <div class="page">
   <div class="header">
