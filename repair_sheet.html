@@ -82,8 +82,8 @@ h1{font-size:18px;font-weight:600;color:#111}
   .del-btn{order:1;flex-shrink:0}
 }
 /* TABS */
-.tab-bar{max-width:880px;margin:0 auto;padding:1.25rem 1.25rem 0;display:flex;gap:4px}
-.tab-btn{padding:14px 28px;font-size:15px;font-weight:600;border:none;border-radius:10px 10px 0 0;cursor:pointer;font-family:inherit;background:#e0e0dc;color:#888;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-width:120px}
+.tab-bar{max-width:880px;margin:0 auto;padding:1.25rem 1.25rem 0;display:flex;gap:4px;position:sticky;top:0;z-index:50;background:#f0f0ed}
+.tab-btn{padding:16px 0;font-size:15px;font-weight:600;border:none;border-radius:10px 10px 0 0;cursor:pointer;font-family:inherit;background:#e0e0dc;color:#888;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;flex:1;text-align:center}
 .tab-btn.active{background:#fff;color:#1D9E75;box-shadow:0 -2px 0 #1D9E75 inset}
 .tab-btn:hover:not(.active){background:#d5d5d0;color:#555}
 .tab-content{display:none}.tab-content.active{display:block}
@@ -990,7 +990,8 @@ function renderWtPhotos(container, itemId) {
     (function(idx, dataUrl) {
       var thumb = document.createElement("div");
       thumb.className = "wt-photo-thumb";
-      var img = document.createElement("img"); img.src = dataUrl;
+      var img = document.createElement("img"); img.src = dataUrl; img.style.cursor="zoom-in";
+      (function(src){ img.onclick = function(){ openLightbox(src); }; })(dataUrl);
       var del = document.createElement("button");
       del.className = "wt-photo-del"; del.innerHTML = "&#10005;";
       del.onclick = function(e) {
@@ -1114,6 +1115,17 @@ function fallbackDownload(blob, safeName) {
   document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
   showToast("Checklist saved — send the file to your contractor!");
+}
+
+function openLightbox(src) {
+  var o = document.createElement("div");
+  o.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out";
+  var i = document.createElement("img");
+  i.src = src;
+  i.style.cssText = "max-width:95vw;max-height:90vh;border-radius:8px;box-shadow:0 4px 40px rgba(0,0,0,.6)";
+  o.appendChild(i);
+  o.onclick = function(){ document.body.removeChild(o); };
+  document.body.appendChild(o);
 }
 
 loadWt();
