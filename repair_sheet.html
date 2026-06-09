@@ -1128,10 +1128,11 @@ function sendToContractor() {
     date: wtData.date || '',
     items: wtData.items
   }).then(function(res) {
-    if (!res || !res[0] || !res[0].id) { showToast('Save failed — check connection'); return; }
-    wtData.supabaseId = res[0].id;
+    var id = res && (Array.isArray(res) ? (res[0] && res[0].id) : res.id);
+    if (!id) { showToast('Save failed — check connection'); return; }
+    wtData.supabaseId = id;
     saveWt();
-    var link = 'https://tml828.github.io/repair-sheet/repair_sheet.html?wt=' + res[0].id;
+    var link = 'https://tml828.github.io/repair-sheet/repair_sheet.html?wt=' + id;
     if (navigator.share) {
       navigator.share({ title: 'Contractor Checklist', url: link }).catch(function(){ copyLink(link); });
     } else {
