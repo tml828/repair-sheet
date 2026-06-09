@@ -1069,22 +1069,58 @@ function toggleWtDone(itemId) {
 
 function sendToContractor() {
   if (!wtData.items.length) { alert('No items added yet. Click "Add item" to start your walkthrough.'); return; }
-  showToast("Saving to cloud…");
-  sb.from('walkthroughs').insert({
-    address: wtData.addr || '',
-    city: wtData.city || '',
-    date: wtData.date || '',
-    items: wtData.items
-  }).select('id').single().then(function(res) {
-    if (res.error) { alert('Error: ' + res.error.message); return; }
-    var link = window.location.origin + window.location.pathname + '?wt=' + res.data.id;
-    if (navigator.share) {
-      navigator.share({ title: 'Contractor Checklist — ' + (wtData.addr || 'Property'), url: link })
-        .catch(function() { copyToClipboardAndToast(link); });
-    } else {
-      copyToClipboardAndToast(link);
+
+  // Build standalone HTML page with photos embedded and working checkboxes
+  var addr = wtData.addr || 'Property';
+  var rows = '';
+  for (var i = 0; i < wtData.items.length; i++) {
+    var it = wtData.items[i];
+    var photos = '';
+    for (var p = 0; p < it.photos.length; p++) {
+      photos += '<img src="' + it.photos[p] + '" onclick="zoom(this.src)" style="width:100px;height:100px;object-fit:cover;border-radius:8px;cursor:zoom-in;border:1px solid #e0e0dc">';
     }
-  });
+    rows += '<div id="c' + i + '" onclick="toggle(' + i + ')" style="background:#fff;border:2px solid #e0e0dc;border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;-webkit-tap-highlight-color:transparent">';
+    rows += '<div style="display:flex;align-items:flex-start;gap:12px">';
+    rows += '<div id="cb' + i + '" style="width:28px;height:28px;border-radius:7px;border:2px solid #e0e0dc;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-top:2px;background:#fff"></div>';
+    rows += '<div style="flex:1">';
+    rows += '<div style="font-size:11px;font-weight:700;color:#1D9E75;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Item ' + (i+1) + '</div>';
+    rows += '<div style="font-size:15px;font-weight:600;color:#111;margin-bottom:6px">' + esc(it.desc || '(No description)') + '</div>';
+    if (it.note) rows += '<div style="font-size:13px;color:#555;background:#f5f5f5;padding:8px;border-radius:6px;margin-bottom:8px">' + esc(it.note) + '</div>';
+    if (photos) rows += '<div style="display:flex;flex-wrap:wrap;gap:6px" onclick="event.stopPropagation()">' + photos + '</div>';
+    rows += '</div></div></div>';
+  }
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Checklist — ' + esc(addr) + '</title>';
+  html += '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,sans-serif;background:#f0f0ed;padding:16px}h2{font-size:18px;margin-bottom:4px}p{font-size:13px;color:#888;margin-bottom:12px}.prog{height:8px;background:#e0e0dc;border-radius:4px;overflow:hidden;margin:10px 0 4px}.fill{height:100%;background:#1D9E75;border-radius:4px;transition:width .3s}.done{border-color:#1D9E75 !important;opacity:.6}.done #cb{background:#1D9E75;border-color:#1D9E75;color:#fff}</style></head><body>';
+  html += '<div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:12px">';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:30px;height:30px;background:#1D9E75;border-radius:8px;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><strong style="font-size:17px">Contractor Checklist</strong></div>';
+  html += '<div style="font-size:14px;color:#444"><strong>' + esc(addr) + '</strong>' + (wtData.city ? ' — ' + esc(wtData.city) : '') + '</div>';
+  html += '<div class="prog"><div class="fill" id="fill" style="width:0%"></div></div>';
+  html += '<div style="font-size:13px;font-weight:600;color:#1D9E75" id="lbl">0 / ' + wtData.items.length + ' done</div>';
+  html += '</div>' + rows;
+  html += '<p style="text-align:center;margin-top:16px;color:#bbb">Tap items to check off &nbsp;·&nbsp; Apex Homes LLC</p>';
+  html += '<div id="lightbox" onclick="this.style.display=\'none\'" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center"><img id="lbimg" style="max-width:95vw;max-height:90vh;border-radius:8px"></div>';
+  html += '<script>var done=new Array(' + wtData.items.length + ').fill(false);function toggle(i){done[i]=!done[i];var c=document.getElementById("c"+i);var cb=document.getElementById("cb"+i);if(done[i]){c.style.borderColor="#1D9E75";c.style.opacity=".6";cb.innerHTML="✓";cb.style.background="#1D9E75";cb.style.borderColor="#1D9E75";cb.style.color="#fff";}else{c.style.borderColor="#e0e0dc";c.style.opacity="1";cb.innerHTML="";cb.style.background="#fff";cb.style.borderColor="#e0e0dc";}var n=done.filter(Boolean).length;document.getElementById("fill").style.width=Math.round(n/done.length*100)+"%";document.getElementById("lbl").textContent=n+" / "+done.length+" done";}function zoom(src){var lb=document.getElementById("lightbox");document.getElementById("lbimg").src=src;lb.style.display="flex";}<\/script>';
+  html += '</body></html>';
+
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var file = new File([blob], 'checklist.html', {type:'text/html'});
+
+  if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+    navigator.share({files:[file], title:'Contractor Checklist — ' + addr}).catch(function(){ fallbackShare(blob, addr); });
+  } else {
+    fallbackShare(blob, addr);
+  }
+}
+
+function fallbackShare(blob, addr) {
+  var a = document.createElement('a');
+  a.download = 'checklist.html';
+  a.href = URL.createObjectURL(blob);
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
+  showToast('Saved — send the file to your contractor');
 }
 
 function copyToClipboardAndToast(link) {
