@@ -859,7 +859,8 @@ function switchTab(tab) {
   btns[1].classList.toggle("active", tab==="walkthrough");
   var bar = document.getElementById("wtBottomBar");
   if (bar) bar.style.display = tab==="walkthrough" ? "flex" : "none";
-  if (tab==="walkthrough") renderWalkthrough();
+  localStorage.setItem("apexLastTab", tab);
+  if (tab==="walkthrough") { syncFromSupabase(); }
 }
 
 // WALKTHROUGH STATE — standalone, not connected to repair sheet
@@ -1123,6 +1124,8 @@ function sendToContractor() {
     items: wtData.items
   }).then(function(res) {
     if (!res || !res[0] || !res[0].id) { showToast('Save failed — check connection'); return; }
+    wtData.supabaseId = res[0].id;
+    saveWt();
     var link = 'https://tml828.github.io/repair-sheet/repair_sheet.html?wt=' + res[0].id;
     if (navigator.share) {
       navigator.share({ title: 'Contractor Checklist', url: link }).catch(function(){ copyLink(link); });
@@ -1281,7 +1284,31 @@ function openLightbox(src) {
   document.body.appendChild(o);
 }
 
+function syncFromSupabase() {
+  if (!wtData.supabaseId) { renderWalkthrough(); return; }
+  showToast('Syncing…');
+  sbFetch('GET', 'walkthroughs?id=eq.' + wtData.supabaseId + '&limit=1').then(function(res) {
+    if (res && res[0] && res[0].items) {
+      var remoteItems = res[0].items;
+      for (var i=0; i<wtData.items.length; i++) {
+        for (var j=0; j<remoteItems.length; j++) {
+          if (wtData.items[i].id == remoteItems[j].id) {
+            wtData.items[i].done = remoteItems[j].done;
+            break;
+          }
+        }
+      }
+      saveWt();
+    }
+    renderWalkthrough();
+  }).catch(function(){ renderWalkthrough(); });
+}
+
 loadWt();
+
+// Restore last active tab
+var lastTab = localStorage.getItem("apexLastTab");
+if (lastTab === "walkthrough") switchTab("walkthrough");
 
 // Check if opening as contractor
 var wtParam = new URLSearchParams(window.location.search).get('wt');
