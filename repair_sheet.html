@@ -97,9 +97,12 @@ h1{font-size:18px;font-weight:600;color:#111}
 .wt-item{background:#fff;border:1px solid #e5e5e2;border-radius:12px;overflow:hidden}
 .wt-item.done{border-color:#a7f3d0;opacity:.7}
 .wt-item-head{display:flex;align-items:center;gap:12px;padding:14px 16px}
-.wt-check{width:22px;height:22px;border-radius:6px;border:2px solid #e0e0dc;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#fff}
+.wt-check-wrap{display:flex;align-items:center;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.wt-check{width:28px;height:28px;border-radius:8px;border:2px solid #e0e0dc;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#fff}
 .wt-check.checked{background:#1D9E75;border-color:#1D9E75}
-.wt-check.checked::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
+.wt-check.checked::after{content:"✓";color:#fff;font-size:15px;font-weight:700}
+.wt-check-label{font-size:12px;font-weight:600;color:#bbb;transition:color .15s}
+.wt-check-wrap:has(.checked) .wt-check-label{color:#1D9E75}
 .wt-item-info{flex:1;min-width:0}
 .wt-item-area{font-size:11px;font-weight:600;color:#1D9E75;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
 .wt-item-desc{font-size:14px;font-weight:500;color:#111}
@@ -899,9 +902,16 @@ function buildWtItem(item, idx) {
   var head = document.createElement("div");
   head.className = "wt-item-head";
 
+  var checkWrap = document.createElement("div");
+  checkWrap.className = "wt-check-wrap";
   var check = document.createElement("div");
   check.className = "wt-check" + (item.done ? " checked" : "");
-  (function(id){ check.onclick = function(){ toggleWtDone(id); }; })(item.id);
+  var checkLbl = document.createElement("span");
+  checkLbl.className = "wt-check-label";
+  checkLbl.textContent = item.done ? "Done" : "Mark done";
+  checkWrap.appendChild(check);
+  checkWrap.appendChild(checkLbl);
+  (function(id){ checkWrap.onclick = function(){ toggleWtDone(id); }; })(item.id);
 
   var info = document.createElement("div");
   info.className = "wt-item-info";
@@ -921,7 +931,7 @@ function buildWtItem(item, idx) {
   }; })(item.id);
 
   info.appendChild(num); info.appendChild(desc);
-  head.appendChild(check); head.appendChild(info);
+  head.appendChild(checkWrap); head.appendChild(info);
 
   var delBtn = document.createElement("button");
   delBtn.className = "del-btn";
@@ -1022,6 +1032,8 @@ function toggleWtDone(itemId) {
     el.className = "wt-item" + (item.done ? " done" : "");
     var check = el.querySelector(".wt-check");
     if (check) check.className = "wt-check" + (item.done ? " checked" : "");
+    var lbl = el.querySelector(".wt-check-label");
+    if (lbl) lbl.textContent = item.done ? "Done" : "Mark done";
   }
   updateWtProgress();
 }
