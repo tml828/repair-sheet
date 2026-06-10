@@ -233,19 +233,22 @@ var SB_URL = 'https://ehlipciasutoderxgptx.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVobGlwY2lhc3V0b2RlcnhncHR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzOTkyMDEsImV4cCI6MjA5NDk3NTIwMX0.KH17B9nCj0lmk9flt3991JXk9Egiz76QgR7qTljirpk';
 
 function sbFetch(method, path, body) {
+  var headers = {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json'
+  };
+  if (method === 'POST') headers['Prefer'] = 'return=representation';
   return fetch(SB_URL + '/rest/v1/' + path, {
     method: method,
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': method === 'POST' ? 'return=representation' : ''
-    },
+    headers: headers,
     body: body ? JSON.stringify(body) : undefined
   }).then(function(r){
-    return r.json().then(function(data){
-      if (!r.ok) { alert('Supabase error: ' + JSON.stringify(data)); }
-      return data;
+    // PATCH returns 204 with empty body — r.json() would throw, so parse text safely
+    return r.text().then(function(t){
+      var data = null;
+      try { data = t ? JSON.parse(t) : null; } catch(e) {}
+      return { ok: r.ok, status: r.status, data: data };
     });
   });
 }
@@ -327,16 +330,31 @@ function load() {
       if (lc >= ec) state = local;
     }
   } catch(e) {}
+  if (!state.repairs) state.repairs = {};
+  if (!state.open) state.open = {};
   for (var i = 0; i < ALL_SECTIONS.length; i++) {
     if (!state.repairs[ALL_SECTIONS[i].id]) state.repairs[ALL_SECTIONS[i].id] = [];
+    // normalize rows so a missing field from an old save can never crash a render
+    var arr = state.repairs[ALL_SECTIONS[i].id];
+    for (var j = 0; j < arr.length; j++) {
+      arr[j].desc  = (typeof arr[j].desc  === "string") ? arr[j].desc  : "";
+      arr[j].notes = (typeof arr[j].notes === "string") ? arr[j].notes : "";
+      arr[j].party = (typeof arr[j].party === "string") ? arr[j].party : "";
+    }
   }
+}
+
+function storageWarn() {
+  if (storageWarn._shown) return;
+  storageWarn._shown = true;
+  alert("Storage is full — your latest changes are NOT being saved on this device. Delete some photos or old data, or send the walkthrough to free it up.");
 }
 
 function save() {
   state.address = document.getElementById("propAddr").value;
   state.city    = document.getElementById("propCity").value;
   state.date    = document.getElementById("propDate").value;
-  try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) {}
+  try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) { storageWarn(); }
   updateSummary();
 }
 
@@ -876,7 +894,7 @@ function saveWt() {
   wtData.addr = document.getElementById("wtAddr").value;
   wtData.city = document.getElementById("wtCity").value;
   wtData.date = document.getElementById("wtDate").value;
-  try { localStorage.setItem("apexWalkthrough", JSON.stringify(wtData)); } catch(e) {}
+  try { localStorage.setItem("apexWalkthrough", JSON.stringify(wtData)); } catch(e) { storageWarn(); }
   updateWtProgress();
 }
 
@@ -885,6 +903,20 @@ function loadWt() {
     var s = localStorage.getItem("apexWalkthrough");
     if (s) { var d = JSON.parse(s); if (d && d.items) wtData = d; }
   } catch(e) {}
+  // normalize so old saves can never crash a render
+  if (!wtData.items) wtData.items = [];
+  for (var i = 0; i < wtData.items.length; i++) {
+    var it = wtData.items[i];
+    it.desc   = (typeof it.desc === "string") ? it.desc : "";
+    it.note   = (typeof it.note === "string") ? it.note : "";
+    it.done   = !!it.done;
+    it.doneAt = it.doneAt || 0;
+    if (!Array.isArray(it.photos)) it.photos = [];
+  }
+  // restore the header inputs — without this the next save() wipes them
+  document.getElementById("wtAddr").value = wtData.addr || "";
+  document.getElementById("wtCity").value = wtData.city || "";
+  document.getElementById("wtDate").value = wtData.date || "";
 }
 
 function addWtItem() {
@@ -906,6 +938,7 @@ function deleteWtItem(id) {
 function clearWalkthrough() {
   if (!confirm("Clear all walkthrough items?")) return;
   wtData.items = [];
+  wtData.supabaseId = null; // next Send creates a NEW checklist instead of wiping the old one
   wtData.addr = ""; wtData.city = ""; wtData.date = "";
   document.getElementById("wtAddr").value = "";
   document.getElementById("wtCity").value = "";
@@ -1067,14 +1100,16 @@ function handleWtPhoto(itemId, input, photosWrap) {
 }
 
 function toggleWtDone(itemId) {
+  var item = null;
   for(var j=0;j<wtData.items.length;j++){
-    if(wtData.items[j].id==itemId){ wtData.items[j].done=!wtData.items[j].done; break; }
+    if(wtData.items[j].id==itemId){ item = wtData.items[j]; break; }
   }
+  if (!item) return;
+  item.done = !item.done;
+  item.doneAt = Date.now();
   saveWt();
   var el = document.getElementById("wt-"+itemId);
-  var item = null;
-  for(var j=0;j<wtData.items.length;j++){ if(wtData.items[j].id==itemId){ item=wtData.items[j]; break; } }
-  if (el && item) {
+  if (el) {
     el.className = "wt-item" + (item.done ? " done" : "");
     var check = el.querySelector(".wt-check");
     if (check) check.className = "wt-check" + (item.done ? " checked" : "");
@@ -1082,78 +1117,105 @@ function toggleWtDone(itemId) {
     if (lbl) lbl.textContent = item.done ? "Done" : "Mark done";
   }
   updateWtProgress();
+  // keep the shared checklist in sync so the contractor sees owner check-offs too
+  if (wtData.supabaseId) {
+    sbFetch('PATCH', 'walkthroughs?id=eq.' + wtData.supabaseId, { items: wtData.items }).then(function(res){
+      if (!res.ok) showToast('Cloud sync failed — will retry next time');
+    }).catch(function(){ showToast('Offline — change saved on this device only'); });
+  }
 }
 
 function sendToContractor() {
   if (!wtData.items.length) { alert('No items added yet. Click "Add item" to start your walkthrough.'); return; }
-
-  // Build standalone HTML page with photos embedded and working checkboxes
-  var addr = wtData.addr || 'Property';
-  var rows = '';
-  for (var i = 0; i < wtData.items.length; i++) {
-    var it = wtData.items[i];
-    var photos = '';
-    for (var p = 0; p < it.photos.length; p++) {
-      photos += '<img src="' + it.photos[p] + '" onclick="zoom(this.src)" style="width:100px;height:100px;object-fit:cover;border-radius:8px;cursor:zoom-in;border:1px solid #e0e0dc">';
-    }
-    rows += '<div id="c' + i + '" onclick="toggle(' + i + ')" style="background:#fff;border:2px solid #e0e0dc;border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;-webkit-tap-highlight-color:transparent">';
-    rows += '<div style="display:flex;align-items:flex-start;gap:12px">';
-    rows += '<div id="cb' + i + '" style="width:28px;height:28px;border-radius:7px;border:2px solid #e0e0dc;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-top:2px;background:#fff"></div>';
-    rows += '<div style="flex:1">';
-    rows += '<div style="font-size:11px;font-weight:700;color:#1D9E75;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Item ' + (i+1) + '</div>';
-    rows += '<div style="font-size:15px;font-weight:600;color:#111;margin-bottom:6px">' + esc(it.desc || '(No description)') + '</div>';
-    if (it.note) rows += '<div style="font-size:13px;color:#555;background:#f5f5f5;padding:8px;border-radius:6px;margin-bottom:8px">' + esc(it.note) + '</div>';
-    if (photos) rows += '<div style="display:flex;flex-wrap:wrap;gap:6px" onclick="event.stopPropagation()">' + photos + '</div>';
-    rows += '</div></div></div>';
-  }
-
-  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Checklist — ' + esc(addr) + '</title>';
-  html += '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,sans-serif;background:#f0f0ed;padding:16px}h2{font-size:18px;margin-bottom:4px}p{font-size:13px;color:#888;margin-bottom:12px}.prog{height:8px;background:#e0e0dc;border-radius:4px;overflow:hidden;margin:10px 0 4px}.fill{height:100%;background:#1D9E75;border-radius:4px;transition:width .3s}.done{border-color:#1D9E75 !important;opacity:.6}.done #cb{background:#1D9E75;border-color:#1D9E75;color:#fff}</style></head><body>';
-  html += '<div style="background:#fff;border-radius:14px;padding:16px;margin-bottom:12px">';
-  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:30px;height:30px;background:#1D9E75;border-radius:8px;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><strong style="font-size:17px">Contractor Checklist</strong></div>';
-  html += '<div style="font-size:14px;color:#444"><strong>' + esc(addr) + '</strong>' + (wtData.city ? ' — ' + esc(wtData.city) : '') + '</div>';
-  html += '<div class="prog"><div class="fill" id="fill" style="width:0%"></div></div>';
-  html += '<div style="font-size:13px;font-weight:600;color:#1D9E75" id="lbl">0 / ' + wtData.items.length + ' done</div>';
-  html += '</div>' + rows;
-  html += '<p style="text-align:center;margin-top:16px;color:#bbb">Tap items to check off &nbsp;·&nbsp; Apex Homes LLC</p>';
-  html += '<div id="lightbox" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center"><span id="lbclose" style="position:absolute;top:16px;right:20px;color:#fff;font-size:30px;font-weight:700;cursor:pointer;line-height:1">&#10005;</span><img id="lbimg" style="max-width:95vw;max-height:85vh;border-radius:8px"></div>';
-  html += '<script>var done=new Array(' + wtData.items.length + ').fill(false);function toggle(i){done[i]=!done[i];var c=document.getElementById("c"+i);var cb=document.getElementById("cb"+i);if(done[i]){c.style.borderColor="#1D9E75";c.style.opacity=".6";cb.innerHTML="✓";cb.style.background="#1D9E75";cb.style.borderColor="#1D9E75";cb.style.color="#fff";}else{c.style.borderColor="#e0e0dc";c.style.opacity="1";cb.innerHTML="";cb.style.background="#fff";cb.style.borderColor="#e0e0dc";}var n=done.filter(Boolean).length;document.getElementById("fill").style.width=Math.round(n/done.length*100)+"%";document.getElementById("lbl").textContent=n+" / "+done.length+" done";}function zoom(src){var lb=document.getElementById("lightbox");document.getElementById("lbimg").src=src;lb.style.display="flex";}document.getElementById("lbclose").onclick=function(){document.getElementById("lightbox").style.display="none";};<\/script>';
-  html += '</body></html>';
-
-  // Save to Supabase and share a live link
   showToast('Saving…');
-  sbFetch('POST', 'walkthroughs', {
+  var payload = {
     address: wtData.addr || '',
     city: wtData.city || '',
     date: wtData.date || '',
     items: wtData.items
-  }).then(function(res) {
-    var id = res && (Array.isArray(res) ? (res[0] && res[0].id) : res.id);
-    if (!id) { showToast('Save failed — check connection'); return; }
+  };
+  // Re-sending updates the SAME checklist so the contractor's existing link stays live
+  var req = wtData.supabaseId
+    ? sbFetch('PATCH', 'walkthroughs?id=eq.' + wtData.supabaseId, payload).then(function(res){
+        if (!res.ok) { wtData.supabaseId = null; return sbFetch('POST', 'walkthroughs', payload); }
+        return res;
+      })
+    : sbFetch('POST', 'walkthroughs', payload);
+
+  req.then(function(res) {
+    if (!res.ok) {
+      alert('Could not save to cloud (' + res.status + '). ' + (res.data && res.data.message ? res.data.message : 'Check your connection and try again.'));
+      return;
+    }
+    var id = wtData.supabaseId || (res.data && res.data[0] && res.data[0].id);
+    if (!id) { alert('Could not save to cloud — no ID returned. Try again.'); return; }
     wtData.supabaseId = id;
     saveWt();
-    var link = 'https://tml828.github.io/repair-sheet/repair_sheet.html?wt=' + id;
+    showShareModal('https://tml828.github.io/repair-sheet/repair_sheet.html?wt=' + id);
+  }).catch(function(){
+    alert('No connection — could not save to cloud. Your walkthrough is still saved on this device; try again when you have signal.');
+  });
+}
+
+// Buttons inside the modal are fresh user gestures, so iOS allows share/clipboard from them
+function showShareModal(link) {
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:9998;display:flex;align-items:flex-end';
+  var sheet = document.createElement('div');
+  sheet.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;display:flex;flex-direction:column;gap:10px';
+
+  var title = document.createElement('div');
+  title.style.cssText = 'font-size:17px;font-weight:700;color:#111';
+  title.textContent = 'Checklist saved — send the link';
+
+  function makeBtn(label, color, fn) {
+    var b = document.createElement('button');
+    b.textContent = label;
+    b.style.cssText = 'width:100%;padding:15px;background:' + color + ';color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent';
+    b.onclick = fn;
+    return b;
+  }
+  function close() { if (overlay.parentNode) document.body.removeChild(overlay); }
+
+  var textBtn = makeBtn('Text message', '#2563eb', function() {
+    close();
+    window.location.href = 'sms:?&body=' + encodeURIComponent('Repair checklist: ' + link);
+  });
+  var shareBtn = makeBtn('Share…', '#1D9E75', function() {
+    close();
     if (navigator.share) {
-      navigator.share({ title: 'Contractor Checklist', url: link }).catch(function(){ copyLink(link); });
+      navigator.share({ title: 'Contractor Checklist', url: link }).catch(function(){});
     } else {
       copyLink(link);
     }
-  }).catch(function(e){ showToast('Error: ' + e.message); });
+  });
+  var copyBtn = makeBtn('Copy link', '#444', function() {
+    copyLink(link);
+    close();
+  });
+  var cancel = document.createElement('button');
+  cancel.textContent = 'Close';
+  cancel.style.cssText = 'width:100%;padding:14px;background:transparent;color:#888;border:1px solid #e0e0dc;border-radius:12px;font-size:15px;cursor:pointer;font-family:inherit';
+  cancel.onclick = close;
+
+  sheet.appendChild(title);
+  sheet.appendChild(textBtn);
+  sheet.appendChild(shareBtn);
+  sheet.appendChild(copyBtn);
+  sheet.appendChild(cancel);
+  overlay.appendChild(sheet);
+  overlay.onclick = function(e){ if (e.target === overlay) close(); };
+  document.body.appendChild(overlay);
 }
 
 function copyLink(link) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(link).then(function(){ showToast('Link copied — send to contractor!'); });
+  function manual() { prompt('Copy this link and send it to your contractor:', link); }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link)
+      .then(function(){ showToast('Link copied — send to contractor!'); })
+      .catch(manual);
   } else {
-    prompt('Send this link to your contractor:', link);
-  }
-}
-
-function copyToClipboardAndToast(link) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(link).then(function(){ showToast('Link copied! Send it to your contractor.'); });
-  } else {
-    prompt('Copy this link and send to contractor:', link);
+    manual();
   }
 }
 
@@ -1166,14 +1228,16 @@ function loadContractorView(wtId) {
   document.getElementById('contractor-view').style.display = 'block';
 
   sbFetch('GET', 'walkthroughs?id=eq.' + wtId + '&limit=1').then(function(res) {
-    if (!res || !res[0]) {
+    if (!res.ok || !res.data || !res.data[0]) {
       document.getElementById('cv-items').innerHTML = '<div class="wt-empty">Checklist not found.</div>';
       return;
     }
-    var d = res[0];
+    var d = res.data[0];
     var meta = document.getElementById('cv-meta');
     meta.innerHTML = '<strong>' + esc(d.address || '') + '</strong>' + (d.city ? ' — ' + esc(d.city) : '') + (d.date ? '<br><span style="color:#aaa">' + esc(d.date) + '</span>' : '');
     renderContractorItems(d.items || [], wtId);
+  }).catch(function(){
+    document.getElementById('cv-items').innerHTML = '<div class="wt-empty">No connection — could not load the checklist. Check your signal and reload.</div>';
   });
 }
 
@@ -1251,18 +1315,34 @@ function buildContractorItem(item, idx, wtId, allItems) {
 
 function toggleContractorDone(item, wtId, allItems) {
   item.done = !item.done;
-  var el = document.getElementById('cv-' + item.id);
-  if (el) {
-    el.className = 'wt-item' + (item.done ? ' done' : '');
-    var check = el.querySelector('.wt-check');
-    if (check) check.className = 'wt-check' + (item.done ? ' checked' : '');
-    var lbl = el.querySelector('.wt-check-label');
-    if (lbl) lbl.textContent = item.done ? 'Done' : 'Mark done';
-  }
+  item.doneAt = Date.now();
+  refreshCvItem(item);
   updateCvProgress(allItems);
-  sbFetch('PATCH', 'walkthroughs?id=eq.' + wtId, { items: allItems }).then(function(){
-    showToast(item.done ? 'Marked done!' : 'Unmarked');
-  }).catch(function(){ showToast('Save failed — check connection'); });
+  sbFetch('PATCH', 'walkthroughs?id=eq.' + wtId, { items: allItems }).then(function(res){
+    if (res.ok) {
+      showToast(item.done ? 'Marked done!' : 'Unmarked');
+    } else {
+      revertCvToggle(item, allItems);
+    }
+  }).catch(function(){ revertCvToggle(item, allItems); });
+}
+
+// If the save didn't reach the server, undo the checkmark so the UI never lies
+function revertCvToggle(item, allItems) {
+  item.done = !item.done;
+  refreshCvItem(item);
+  updateCvProgress(allItems);
+  showToast('No connection — change NOT saved. Try again.');
+}
+
+function refreshCvItem(item) {
+  var el = document.getElementById('cv-' + item.id);
+  if (!el) return;
+  el.className = 'wt-item' + (item.done ? ' done' : '');
+  var check = el.querySelector('.wt-check');
+  if (check) check.className = 'wt-check' + (item.done ? ' checked' : '');
+  var lbl = el.querySelector('.wt-check-label');
+  if (lbl) lbl.textContent = item.done ? 'Done' : 'Mark done';
 }
 
 function updateCvProgress(items) {
@@ -1292,19 +1372,26 @@ function openLightbox(src) {
 
 function syncFromSupabase() {
   if (!wtData.supabaseId) { renderWalkthrough(); return; }
-  showToast('Syncing…');
   sbFetch('GET', 'walkthroughs?id=eq.' + wtData.supabaseId + '&limit=1').then(function(res) {
-    if (res && res[0] && res[0].items) {
-      var remoteItems = res[0].items;
+    if (res.ok && res.data && res.data[0] && res.data[0].items) {
+      var remoteItems = res.data[0].items;
+      var changed = false;
       for (var i=0; i<wtData.items.length; i++) {
+        var local = wtData.items[i];
         for (var j=0; j<remoteItems.length; j++) {
-          if (wtData.items[i].id == remoteItems[j].id) {
-            wtData.items[i].done = remoteItems[j].done;
+          var remote = remoteItems[j];
+          if (local.id == remote.id && local.done !== remote.done) {
+            // newest change wins — owner check-offs are no longer clobbered by stale remote data
+            if ((remote.doneAt || 0) > (local.doneAt || 0)) {
+              local.done = remote.done;
+              local.doneAt = remote.doneAt || 0;
+              changed = true;
+            }
             break;
           }
         }
       }
-      saveWt();
+      if (changed) saveWt();
     }
     renderWalkthrough();
   }).catch(function(){ renderWalkthrough(); });
@@ -1312,14 +1399,14 @@ function syncFromSupabase() {
 
 loadWt();
 
-// Restore last active tab
-var lastTab = localStorage.getItem("apexLastTab");
-if (lastTab === "walkthrough") switchTab("walkthrough");
-
-// Check if opening as contractor
+// Contractor link takes priority over everything else
 var wtParam = new URLSearchParams(window.location.search).get('wt');
 if (wtParam) {
   loadContractorView(wtParam);
+} else {
+  // Restore last active tab
+  var lastTab = localStorage.getItem("apexLastTab");
+  if (lastTab === "walkthrough") switchTab("walkthrough");
 }
 </script>
 </body>
