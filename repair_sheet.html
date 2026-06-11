@@ -269,7 +269,14 @@ h1{font-size:18px;font-weight:600;color:#111}
 <div id="tab-orders" class="tab-content">
 <div class="page" style="padding-bottom:2rem">
 
-  <div id="odKeyBanner" style="display:none"></div>
+  <div id="odKeyBanner" class="od-key-banner" style="display:none">
+    <div class="od-key-banner-title">&#128273; Add your Anthropic API key to enable AI item detection</div>
+    <div class="od-key-banner-row">
+      <input id="odApiKeyInput" class="od-key-inp" type="password" placeholder="sk-ant-api03-..." />
+      <button class="od-key-save" onclick="saveOdApiKey()">Save key</button>
+    </div>
+    <div style="font-size:11px;color:#92400e">Saved only in your browser — only sent to Anthropic when you tap Analyze.</div>
+  </div>
 
   <!-- Property tabs -->
   <div class="od-prop-tabs" id="odPropTabs"></div>
@@ -1575,7 +1582,13 @@ function toggleOdPurchased(pic, itemId) {
   saveOd(); renderOrders();
 }
 
-function saveOdApiKey() {}
+function saveOdApiKey() {
+  var val = document.getElementById("odApiKeyInput").value.trim();
+  if (!val) return;
+  try { localStorage.setItem("apexAnthropicKey", val); } catch(e) {}
+  document.getElementById("odKeyBanner").style.display = "none";
+  showToast("API key saved");
+}
 
 function getOdApiKey() {
   try { return localStorage.getItem("apexAnthropicKey") || ""; } catch(e) { return ""; }
@@ -1659,7 +1672,7 @@ function renderOrders() {
   while (panelsWrap.firstChild) panelsWrap.removeChild(panelsWrap.firstChild);
 
   // show/hide API key banner
-  document.getElementById("odKeyBanner").style.display = "none";
+  document.getElementById("odKeyBanner").style.display = getOdApiKey() ? "none" : "block";
 
   // Build property tabs
   for (var i=0; i<odData.properties.length; i++) {
@@ -1705,7 +1718,7 @@ function renderOrders() {
   addrInp.placeholder = "Property address";
   addrInp.value = activeProp.addr;
   addrInp.id = "odpa-" + activeProp.id;
-  (function(p){ addrInp.oninput = function(){ p.addr=addrInp.value; saveOd(); renderOrders(); }; })(activeProp);
+  (function(p){ addrInp.oninput = function(){ p.addr=addrInp.value; saveOd(); }; })(activeProp);
   var delPropBtn = document.createElement("button");
   delPropBtn.className = "del-btn";
   delPropBtn.title = "Delete property";
