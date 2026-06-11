@@ -959,10 +959,9 @@ function switchTab(tab) {
   }
   var bar = document.getElementById("wtBottomBar");
   if (bar) bar.style.display = tab==="walkthrough" ? "flex" : "none";
-  var obar = document.getElementById("odBottomBar");
-  if (obar) obar.style.display = tab==="orders" ? "flex" : "none";
   localStorage.setItem("apexLastTab", tab);
   if (tab==="walkthrough") { syncFromSupabase(); }
+  if (tab==="orders") { renderOrders(); }
 }
 
 // WALKTHROUGH STATE — standalone, not connected to repair sheet
@@ -1302,8 +1301,10 @@ function copyLink(link) {
 // CONTRACTOR VIEW
 function loadContractorView(wtId) {
   document.querySelector('.tab-bar').style.display = 'none';
+  document.querySelector('.tab-spacer').style.display = 'none';
   document.getElementById('tab-sheet').style.display = 'none';
   document.getElementById('tab-walkthrough').style.display = 'none';
+  document.getElementById('tab-orders').style.display = 'none';
   document.getElementById('wtBottomBar').style.display = 'none';
   document.getElementById('contractor-view').style.display = 'block';
 
@@ -1510,7 +1511,10 @@ function loadOd() {
       }
     }
   }
-  if (!odData.activePropId && odData.properties.length) odData.activePropId = odData.properties[0].id;
+  // ensure activePropId always points to an existing property
+  var validProp = false;
+  for (var i=0; i<odData.properties.length; i++) { if (odData.properties[i].id == odData.activePropId) { validProp=true; break; } }
+  if (!validProp) odData.activePropId = odData.properties.length ? odData.properties[0].id : null;
 }
 
 function applyCloudOrders() {
@@ -1640,8 +1644,7 @@ function analyzeOdPic(prop, pic) {
   })
   .catch(function(){
     if (btn) { btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic'; }
-    showToast("AI error — check your API key");
-    showToast("AI error — check connection and try again");
+    showToast("AI error — check connection and API key");
   });
 }
 
@@ -1718,7 +1721,10 @@ function renderOrders() {
   addrInp.placeholder = "Property address";
   addrInp.value = activeProp.addr;
   addrInp.id = "odpa-" + activeProp.id;
-  (function(p){ addrInp.oninput = function(){ p.addr=addrInp.value; saveOd(); }; })(activeProp);
+  (function(p){
+    addrInp.oninput = function(){ p.addr=addrInp.value; saveOd(); };
+    addrInp.onblur  = function(){ renderOrders(); }; // refresh tab label after typing is done
+  })(activeProp);
   var delPropBtn = document.createElement("button");
   delPropBtn.className = "del-btn";
   delPropBtn.title = "Delete property";
