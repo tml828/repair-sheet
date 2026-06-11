@@ -132,8 +132,6 @@ h1{font-size:18px;font-weight:600;color:#F5F2E9;letter-spacing:.3px}
 .wt-prog-fill{height:100%;background:linear-gradient(90deg,#C9A032,#E9C964);border-radius:4px;transition:width .3s}
 .wt-prog-label{font-size:13px;font-weight:600;color:#E9C964;white-space:nowrap}
 /* ORDERS */
-.od-prop-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:1rem;padding-bottom:2px}
-.od-prop-tabs::-webkit-scrollbar{display:none}
 .od-add-prop-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border:2px dashed rgba(212,175,55,.55);border-radius:14px;background:rgba(212,175,55,.07);color:#E9C964;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:12px;-webkit-tap-highlight-color:transparent}
 .od-prop-card{background:#17171B;border:1px solid #2B2B33;border-radius:14px;overflow:hidden;margin-bottom:10px}
 .od-prop-card-head{display:flex;align-items:center;gap:10px;padding:13px 16px;background:#1D1D22;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -143,21 +141,8 @@ h1{font-size:18px;font-weight:600;color:#F5F2E9;letter-spacing:.3px}
 .od-prop-card-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .od-prop-addr-inp{flex:1;font-size:15px;font-weight:700;border:none;background:transparent;color:#F5F2E9;outline:none;font-family:inherit;min-width:0}
 .od-prop-addr-inp::placeholder{color:#5C5A52;font-weight:400}
-.od-prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.od-room-card{background:#17171B;border:1px solid #2B2B33;border-radius:14px;overflow:hidden;margin-bottom:10px}
-.od-room-card-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid #232329;background:#1D1D22}
-.od-room-name-inp{flex:1;font-size:14px;font-weight:700;border:none;background:transparent;color:#F5F2E9;outline:none;font-family:inherit}
-.od-room-name-inp::placeholder{color:#5C5A52;font-weight:400}
-.od-room-card-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-.od-upload-zone{display:flex;align-items:center;gap:12px}
 .od-upload-btn{display:flex;align-items:center;gap:7px;padding:11px 14px;border:2px dashed rgba(212,175,55,.55);border-radius:10px;background:rgba(212,175,55,.07);color:#E9C964;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;-webkit-tap-highlight-color:transparent}
 .od-upload-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.od-design-thumb{position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid #2B2B33;cursor:zoom-in}
-.od-design-thumb img{width:100%;height:100%;object-fit:cover}
-.od-design-thumb-del{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(0,0,0,.65);border-radius:50%;border:none;cursor:pointer;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;line-height:1}
-.od-ai-btn{flex:1;padding:9px 14px;background:linear-gradient(135deg,#E9C964,#C9A032);color:#141414;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;-webkit-tap-highlight-color:transparent}
-.od-ai-btn:disabled{opacity:.5;cursor:not-allowed}
-.od-ai-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .od-items-list{display:flex;flex-direction:column;gap:7px}
 .od-item-row{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid #232329;border-radius:10px;background:#131316}
 .od-item-row.purchased{border-color:rgba(212,175,55,.45);background:rgba(212,175,55,.06)}
@@ -172,7 +157,6 @@ h1{font-size:18px;font-weight:600;color:#F5F2E9;letter-spacing:.3px}
 .od-item-meta input{flex:1;min-width:0;font-size:12px;padding:5px 9px;border:1px solid #2B2B33;border-radius:7px;background:#17171B;color:#CFCDC4;outline:none;font-family:inherit;color-scheme:dark}
 .od-item-meta input:focus{border-color:#D4AF37}
 .od-add-item-link{align-self:flex-start;font-size:13px;font-weight:700;color:#E9C964;background:none;border:none;cursor:pointer;padding:2px 0;font-family:inherit;-webkit-tap-highlight-color:transparent}
-.od-add-room-btn{display:flex;align-items:center;gap:6px;padding:10px 14px;border:2px dashed #3A3A44;border-radius:12px;background:transparent;color:#6B6962;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;justify-content:center;-webkit-tap-highlight-color:transparent}
 .od-key-banner{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.4);border-radius:12px;padding:14px 16px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
 .od-key-banner-title{font-size:13px;font-weight:700;color:#E9C964}
 .od-key-banner-row{display:flex;gap:8px}
@@ -681,47 +665,6 @@ function showToast(msg) {
   t._timer = setTimeout(function(){ t.style.opacity = "0"; }, 2500);
 }
 
-function buildText() {
-  var addr = state.address || "Unknown";
-  var city = state.city || "";
-  var date = state.date || "Unknown";
-  var lines = [
-    "PROPERTY REPAIR & JOB ASSIGNMENT SHEET",
-    "========================================",
-    "Address: " + addr + (city ? ", " + city : ""),
-    "Date:    " + date,
-    ""
-  ];
-  var totalC=0, totalO=0, totalTBD=0, totalAll=0, hasAny=false;
-  for (var gi=0; gi<GROUPS.length; gi++) {
-    var groupLines = [];
-    for (var si=0; si<GROUPS[gi].sections.length; si++) {
-      var sec = GROUPS[gi].sections[si];
-      var repairs = state.repairs[sec.id] || [];
-      var filled = [];
-      for (var ri=0; ri<repairs.length; ri++) { if (repairs[ri].desc.trim()) filled.push(repairs[ri]); }
-      if (!filled.length) continue;
-      hasAny = true;
-      for (var ri=0; ri<filled.length; ri++) {
-        var r = filled[ri];
-        totalAll++;
-        if (r.party==="C") totalC++; else if (r.party==="O") totalO++; else totalTBD++;
-        var party = r.party==="C" ? "[CONTRACTOR]" : r.party==="O" ? "[OWNER]" : "[TBD]";
-        var prefix = ri===0 ? "[" + sec.title + "] " : "  ";
-        var notes = r.notes ? " [" + r.notes + "]" : "";
-        groupLines.push(prefix + r.desc + " -> " + party + notes);
-      }
-    }
-    if (groupLines.length) {
-      lines.push("-- " + GROUPS[gi].label.toUpperCase() + " --");
-      for (var li=0; li<groupLines.length; li++) lines.push(groupLines[li]);
-      lines.push("");
-    }
-  }
-  lines.push("----------------------------------------");
-  lines.push("Total: " + totalAll + "  |  Contractor: " + totalC + "  |  Owner: " + totalO + "  |  TBD: " + totalTBD);
-  return {text: lines.join("\n"), hasAny: hasAny, totalAll:totalAll, totalC:totalC, totalO:totalO, totalTBD:totalTBD};
-}
 
 function shareSheet() {
   var addr = state.address || "Unknown";
@@ -1531,10 +1474,6 @@ function applyCloudOrders() {
   renderOrders();
 }
 
-function getActiveProp() {
-  for (var i=0; i<odData.properties.length; i++) if (odData.properties[i].id == odData.activePropId) return odData.properties[i];
-  return null;
-}
 
 function addOdProperty() {
   var id = Date.now() + Math.random();
@@ -1579,7 +1518,6 @@ function handleOdUpload(prop, input) {
 function deleteOdPic(prop, picId) {
   if (!confirm("Delete this pic and all its items?")) return;
   prop.pics = prop.pics.filter(function(x){ return x.id != picId; });
-  if (prop.activePicId == picId) prop.activePicId = prop.pics.length ? prop.pics[0].id : null;
   saveOd(); renderOrders();
 }
 
@@ -1626,7 +1564,7 @@ function analyzeOdPic(prop, pic) {
   if (!key) {
     pic.roomName = pic.roomName || "New pic";
     saveOd(); renderOrders();
-    showToast("Add your API key (yellow banner) to auto-detect items");
+    showToast("Add your API key (gold banner on Orders tab) to auto-detect items");
     return;
   }
   var lbl = document.getElementById("od-room-"+pic.id);
@@ -1638,6 +1576,7 @@ function analyzeOdPic(prop, pic) {
   // measure the pic so the AI can return pixel bounding boxes
   var meas = new Image();
   meas.onload = function() { odAiRequest(prop, pic, base64, mediaType, meas.width, meas.height); };
+  meas.onerror = function() { aiFail(pic, "Could not read the photo — try uploading again"); };
   meas.src = pic.photo;
 }
 
@@ -1653,7 +1592,7 @@ function odAiRequest(prop, pic, base64, mediaType, imgW, imgH) {
     },
     body: JSON.stringify({
       model:"claude-opus-4-8",
-      max_tokens:2048,
+      max_tokens:4096,
       messages:[{role:"user", content:[
         {type:"image", source:{type:"base64", media_type:mediaType, data:base64}},
         {type:"text", text:"This is an interior design spec sheet or mood board. The image is exactly " + imgW + " pixels wide and " + imgH + " pixels tall. Find every distinct purchasable item (furniture, lighting, rugs, hardware, accessories). If the same item appears more than once in the image (duplicates, pairs, or the same product shown again), include it only ONCE — one box for the clearest instance. Reply with ONLY this JSON, no other text or markdown fences: {\"room\":\"<room name, e.g. Kitchen, Master Bedroom — use 'Design' if unclear>\",\"items\":[{\"box\":[x1,y1,x2,y2]}]} where each box is the tight pixel bounding box around one item's picture in the image (x1,y1 = top-left, x2,y2 = bottom-right)."}
@@ -1674,6 +1613,7 @@ function odAiRequest(prop, pic, base64, mediaType, imgW, imgH) {
     pic.roomName = (typeof parsed.room === "string" && parsed.room.trim()) ? parsed.room.trim() : "Design";
     var img = new Image();
     img.onload = function() {
+      if (!odPicStillExists(prop, pic)) return; // deleted while analyzing
       var added = 0;
       for (var i=0; i<parsed.items.length; i++) {
         var crop = cropOdItem(img, parsed.items[i].box);
@@ -1690,6 +1630,11 @@ function odAiRequest(prop, pic, base64, mediaType, imgW, imgH) {
   .catch(function(){
     aiFail(pic, "AI error — check connection and API key");
   });
+}
+
+function odPicStillExists(prop, pic) {
+  if (odData.properties.indexOf(prop) === -1) return false;
+  return prop.pics.indexOf(pic) !== -1;
 }
 
 function cropOdItem(img, box) {
@@ -1976,12 +1921,10 @@ function cloudPullMerge(done) {
 }
 
 function applyCloudSheet() {
-  if (!state.repairs) state.repairs = {};
-  if (!state.open) state.open = {};
-  for (var i=0; i<ALL_SECTIONS.length; i++) {
-    if (!state.repairs[ALL_SECTIONS[i].id]) state.repairs[ALL_SECTIONS[i].id] = [];
-  }
+  // persist, then run load() so cloud data gets the exact same normalization
+  // as a local save — a malformed row from another device can never crash a render
   try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) {}
+  load();
   document.getElementById("propAddr").value = state.address || "";
   document.getElementById("propCity").value = state.city || "";
   document.getElementById("propDate").value = state.date || "";
@@ -1990,14 +1933,13 @@ function applyCloudSheet() {
 function applyCloudWalkthrough() {
   if (!wtData.items) wtData.items = [];
   try { localStorage.setItem("apexWalkthrough", JSON.stringify(wtData)); } catch(e) {}
-  document.getElementById("wtAddr").value = wtData.addr || "";
-  document.getElementById("wtCity").value = wtData.city || "";
-  document.getElementById("wtDate").value = wtData.date || "";
+  loadWt(); // normalizes items + restores header inputs
   renderWalkthrough();
 }
 function applyCloudOrders() {
-  if (!odData.properties) odData.properties = [];
+  if (!Array.isArray(odData.properties)) odData.properties = [];
   try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) {}
+  loadOd(); // normalizes properties/pics/items
   renderOrders();
 }
 
@@ -2080,15 +2022,15 @@ function openSyncModal() {
     codeBox.textContent = cloudMeta.id;
     sheet.appendChild(codeBox);
     makeBtn("Copy sync code", "#D4AF37", "#141414", function(){ copyText(cloudMeta.id); });
-    makeBtn("Sync now", "#143d2e", "#fff", function(){ cloudPullMerge(function(){ showToast("Up to date"); }); });
-    makeBtn("Stop syncing on this device", "#fee2e2", "#b91c1c", stopCloudSync);
+    makeBtn("Sync now", "#2B2B33", "#F5F2E9", function(){ cloudPullMerge(function(){ showToast("Up to date"); }); });
+    makeBtn("Stop syncing on this device", "rgba(248,113,113,.12)", "#F87171", stopCloudSync);
   } else {
     title.textContent = "Cloud Sync";
     sub.textContent = "Sync the Repair Sheet, Walkthrough, and Orders across your devices.";
     makeBtn("Turn on sync (this is my first device)", "#D4AF37", "#141414", startCloudSync);
-    makeBtn("I have a code from another device", "#143d2e", "#fff", joinCloudSync);
+    makeBtn("I have a code from another device", "#2B2B33", "#F5F2E9", joinCloudSync);
   }
-  makeBtn("Close", "#f0f0ed", "#555", function(){});
+  makeBtn("Close", "transparent", "#9C9A90", function(){});
 
   overlay.appendChild(sheet);
   document.body.appendChild(overlay);

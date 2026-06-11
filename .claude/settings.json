@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // \"\"' | grep -q 'repair_sheet\\.html' && echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"repair_sheet.html was modified. Before ending the task, check whether CLAUDE.md is now stale (architecture, data shapes, localStorage keys, features, gotchas) and update it in the same commit.\"}}' || true"
+          }
+        ]
+      }
+    ]
+  }
+}
