@@ -125,49 +125,50 @@ h1{font-size:18px;font-weight:600;color:#111}
 .wt-prog-fill{height:100%;background:#1D9E75;border-radius:4px;transition:width .3s}
 .wt-prog-label{font-size:13px;font-weight:600;color:#1D9E75;white-space:nowrap}
 /* ORDERS */
-.od-prop-bar{background:#fff;border-radius:16px;border:1px solid #e5e5e2;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;gap:12px}
-.od-prop-addr{flex:1;font-size:15px;font-weight:500;padding:9px 12px;border:1px solid #e0e0dc;border-radius:10px;background:#fff;color:#1a1a1a;outline:none;font-family:inherit}
-.od-prop-addr:focus{border-color:#1D9E75}
-.od-room-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;margin-bottom:1rem}
-.od-room-tabs::-webkit-scrollbar{display:none}
-.od-rtab{flex-shrink:0;padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;border:2px solid #e0e0dc;background:#fff;color:#888;cursor:pointer;font-family:inherit;transition:all .15s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
-.od-rtab.active{background:#143d2e;border-color:#143d2e;color:#fff}
-.od-rtab-add{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:13px;font-weight:600;border:2px dashed #1D9E75;background:transparent;color:#1D9E75;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
-.od-room-panel{background:#fff;border:1px solid #e5e5e2;border-radius:16px;overflow:hidden;display:none}
-.od-room-panel.active{display:block}
-.od-room-top{padding:16px;border-bottom:1px solid #f0f0ed;display:flex;flex-direction:column;gap:12px}
-.od-room-name-row{display:flex;align-items:center;gap:10px}
-.od-room-name{flex:1;font-size:16px;font-weight:700;border:none;background:transparent;color:#111;outline:none;font-family:inherit}
-.od-room-name::placeholder{color:#ccc}
-.od-ai-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.od-design-pic{position:relative;width:90px;height:90px;border-radius:10px;overflow:hidden;flex-shrink:0;border:1px solid #e0e0dc;cursor:pointer}
-.od-design-pic img{width:100%;height:100%;object-fit:cover}
-.od-design-pic-del{position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(0,0,0,.6);border-radius:50%;border:none;cursor:pointer;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
-.od-upload-label{width:90px;height:90px;border:2px dashed #1D9E75;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:#1D9E75;font-size:11px;font-weight:600;gap:4px;background:#f6fdf9;flex-shrink:0}
-.od-upload-label svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.od-analyze-btn{flex:1;min-width:120px;padding:10px 14px;background:#4f46e5;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
-.od-analyze-btn:disabled{opacity:.5;cursor:not-allowed}
-.od-analyze-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.od-items-wrap{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
-.od-row{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid #f0f0ed;border-radius:10px;background:#fafaf8}
-.od-row.purchased{border-color:#a7f3d0;background:#f0fdf7}
-.od-row.purchased .od-name{text-decoration:line-through;color:#aaa}
-.od-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
-.od-name{width:100%;font-size:14px;font-weight:500;padding:7px 10px;border:1px solid #e0e0dc;border-radius:8px;background:#fff;color:#1a1a1a;outline:none;font-family:inherit}
-.od-name:focus{border-color:#1D9E75}
-.od-meta{display:flex;gap:6px}
-.od-meta input{flex:1;min-width:0;font-size:12px;padding:6px 9px;border:1px solid #e0e0dc;border-radius:8px;background:#fff;color:#555;outline:none;font-family:inherit}
-.od-meta input:focus{border-color:#1D9E75}
-.od-buy-check{width:26px;height:26px;border-radius:8px;border:2px solid #e0e0dc;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;transition:all .15s;margin-top:1px}
+.od-prop-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:1rem;padding-bottom:2px}
+.od-prop-tabs::-webkit-scrollbar{display:none}
+.od-ptab{flex-shrink:0;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;border:2px solid #e0e0dc;background:#fff;color:#777;cursor:pointer;font-family:inherit;transition:all .15s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.od-ptab.active{background:#143d2e;border-color:#143d2e;color:#fff}
+.od-ptab-add{flex-shrink:0;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;border:2px dashed #1D9E75;background:transparent;color:#1D9E75;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.od-prop-panel{display:none}.od-prop-panel.active{display:block}
+.od-prop-head{background:#fff;border:1px solid #e5e5e2;border-radius:14px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.od-prop-addr-inp{flex:1;font-size:15px;font-weight:600;border:none;background:transparent;color:#111;outline:none;font-family:inherit;min-width:0}
+.od-prop-addr-inp::placeholder{color:#ccc;font-weight:400}
+.od-prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.od-room-card{background:#fff;border:1px solid #e5e5e2;border-radius:14px;overflow:hidden;margin-bottom:10px}
+.od-room-card-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid #f0f0ed;background:#fafaf8}
+.od-room-name-inp{flex:1;font-size:14px;font-weight:700;border:none;background:transparent;color:#111;outline:none;font-family:inherit}
+.od-room-name-inp::placeholder{color:#ccc;font-weight:400}
+.od-room-card-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.od-upload-zone{display:flex;align-items:center;gap:12px}
+.od-upload-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;border:2px dashed #1D9E75;border-radius:10px;background:#f6fdf9;color:#1D9E75;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.od-upload-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.od-design-thumb{position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid #e0e0dc;cursor:zoom-in}
+.od-design-thumb img{width:100%;height:100%;object-fit:cover}
+.od-design-thumb-del{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(0,0,0,.6);border-radius:50%;border:none;cursor:pointer;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;line-height:1}
+.od-ai-btn{flex:1;padding:9px 14px;background:#4f46e5;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;-webkit-tap-highlight-color:transparent}
+.od-ai-btn:disabled{opacity:.5;cursor:not-allowed}
+.od-ai-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.od-items-list{display:flex;flex-direction:column;gap:7px}
+.od-item-row{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid #f0f0ed;border-radius:10px;background:#fafaf8}
+.od-item-row.purchased{border-color:#bbf7d0;background:#f0fdf7}
+.od-item-row.purchased .od-item-name{text-decoration:line-through;color:#9ca3af}
+.od-buy-check{width:26px;height:26px;border-radius:7px;border:2px solid #d1d5db;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;transition:all .15s;margin-top:1px}
 .od-buy-check.checked{background:#1D9E75;border-color:#1D9E75}
-.od-buy-check.checked::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
-.od-add-item-btn{align-self:flex-start;margin:0 16px 16px;font-size:13px;font-weight:600;color:#1D9E75;background:none;border:none;cursor:pointer;padding:0;font-family:inherit;-webkit-tap-highlight-color:transparent}
-.od-room-progress{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid #f0f0ed;background:#fafaf8}
-.od-room-prog-bar{flex:1;height:6px;background:#f0f0ed;border-radius:3px;overflow:hidden}
-.od-room-prog-fill{height:100%;background:#1D9E75;border-radius:3px;transition:width .3s}
-.od-room-prog-label{font-size:12px;font-weight:600;color:#1D9E75;white-space:nowrap}
-.od-api-hint{font-size:12px;color:#f59e0b;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-top:4px}
-.od-api-hint a{color:#d97706;text-decoration:underline;cursor:pointer}
+.od-buy-check.checked::after{content:"✓";color:#fff;font-size:13px;font-weight:800}
+.od-item-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.od-item-name{width:100%;font-size:14px;padding:6px 9px;border:1px solid #e0e0dc;border-radius:7px;background:#fff;color:#111;outline:none;font-family:inherit}
+.od-item-name:focus{border-color:#1D9E75}
+.od-item-meta{display:flex;gap:6px}
+.od-item-meta input{flex:1;min-width:0;font-size:12px;padding:5px 9px;border:1px solid #e0e0dc;border-radius:7px;background:#fff;color:#555;outline:none;font-family:inherit}
+.od-item-meta input:focus{border-color:#1D9E75}
+.od-add-item-link{align-self:flex-start;font-size:13px;font-weight:700;color:#1D9E75;background:none;border:none;cursor:pointer;padding:2px 0;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.od-add-room-btn{display:flex;align-items:center;gap:6px;padding:10px 14px;border:2px dashed #d1d5db;border-radius:12px;background:transparent;color:#9ca3af;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;justify-content:center;-webkit-tap-highlight-color:transparent}
+.od-key-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:14px 16px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
+.od-key-banner-title{font-size:13px;font-weight:700;color:#92400e}
+.od-key-banner-row{display:flex;gap:8px}
+.od-key-inp{flex:1;font-size:13px;padding:8px 11px;border:1px solid #fde68a;border-radius:8px;outline:none;font-family:inherit;background:#fff}
+.od-key-save{padding:8px 14px;background:#d97706;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -261,41 +262,23 @@ h1{font-size:18px;font-weight:600;color:#111}
 <div id="tab-orders" class="tab-content">
 <div class="page" style="padding-bottom:2rem">
 
-  <!-- Property header -->
-  <div class="od-prop-bar">
-    <div class="logo-icon" style="flex-shrink:0"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-    <input id="odAddr" class="od-prop-addr" placeholder="Property address" oninput="saveOd()" />
-    <button class="btn btn-red" style="flex-shrink:0;padding:8px 12px" onclick="clearOrders()">
-      <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
-      Clear
-    </button>
-  </div>
-
-  <!-- Overall progress -->
-  <div class="wt-progress" style="margin-bottom:1rem">
-    <div class="wt-prog-bar"><div class="wt-prog-fill" id="odProgFill" style="width:0%"></div></div>
-    <span class="wt-prog-label" id="odProgLabel">0 / 0 purchased</span>
-  </div>
-
-  <!-- Room tabs row -->
-  <div class="od-room-tabs" id="odRoomTabs">
-    <button class="od-rtab-add" onclick="addOdRoom()">+ Add room</button>
-  </div>
-
-  <!-- Room panels (one per room, shown/hidden via tab) -->
-  <div id="odRoomPanels"></div>
-
-  <!-- AI key hint -->
-  <div id="odApiHint" class="od-api-hint" style="display:none">
-    To use AI item detection, paste your Anthropic API key:
-    <div style="display:flex;gap:8px;margin-top:6px">
-      <input id="odApiKeyInput" type="password" placeholder="sk-ant-..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #fde68a;border-radius:8px;outline:none;font-family:inherit"/>
-      <button onclick="saveOdApiKey()" style="padding:6px 12px;background:#d97706;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>
+  <!-- AI Key banner (shown when no key set) -->
+  <div id="odKeyBanner" class="od-key-banner" style="display:none">
+    <div class="od-key-banner-title">&#128273; Add your Anthropic API key to enable AI item detection</div>
+    <div class="od-key-banner-row">
+      <input id="odApiKeyInput" class="od-key-inp" type="password" placeholder="sk-ant-api03-..." />
+      <button class="od-key-save" onclick="saveOdApiKey()">Save key</button>
     </div>
-    <div style="margin-top:4px;font-size:11px;color:#92400e">Key is saved only in your browser — never sent anywhere except Anthropic.</div>
+    <div style="font-size:11px;color:#92400e">Saved only in your browser — only sent to Anthropic when you tap "Analyze".</div>
   </div>
 
-  <div class="footer" style="margin-top:1.5rem">Apex Homes LLC &nbsp;&middot;&nbsp; Auto-saves in your browser</div>
+  <!-- Property tabs -->
+  <div class="od-prop-tabs" id="odPropTabs"></div>
+
+  <!-- Property panels -->
+  <div id="odPropPanels"></div>
+
+  <div class="footer" style="margin-top:1rem">Apex Homes LLC &nbsp;&middot;&nbsp; Auto-saves in your browser</div>
 </div>
 </div><!-- /tab-orders -->
 
@@ -1488,124 +1471,116 @@ function syncFromSupabase() {
   }).catch(function(){ renderWalkthrough(); });
 }
 
-// ORDERS — room-tabbed purchase tracker with AI item detection
-var odData = {addr:"", rooms:[], activeRoomId: null};
-// room: {id, name, photo:dataUrl|null, items:[{id,name,purchased,store,date}]}
+// ORDERS — multi-property, room-per-pic, AI item detection
+// odData.properties: [{id, addr, activePicId, pics:[{id, photo, roomName, items:[{id,name,purchased,store,date}]}]}]
+var odData = {properties:[], activePropId:null};
 
 function saveOd() {
-  odData.addr = document.getElementById("odAddr").value;
   try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) { storageWarn(); }
-  updateOdProgress();
   cloudMark("orders");
 }
 
 function loadOd() {
   try {
     var s = localStorage.getItem("apexOrders");
-    if (s) { var d = JSON.parse(s); if (d && d.rooms) odData = d; }
+    if (s) { var d = JSON.parse(s); if (d) odData = d; }
   } catch(e) {}
-  if (!odData.rooms) odData.rooms = [];
-  for (var i=0; i<odData.rooms.length; i++) {
-    var r = odData.rooms[i];
-    r.name  = (typeof r.name  === "string") ? r.name  : "";
-    r.photo = (typeof r.photo === "string") ? r.photo : null;
-    if (!Array.isArray(r.items)) r.items = [];
-    for (var j=0; j<r.items.length; j++) {
-      var it = r.items[j];
-      it.name      = (typeof it.name  === "string") ? it.name  : "";
-      it.store     = (typeof it.store === "string") ? it.store : "";
-      it.date      = (typeof it.date  === "string") ? it.date  : "";
-      it.purchased = !!it.purchased;
+  if (!Array.isArray(odData.properties)) odData.properties = [];
+  for (var i=0; i<odData.properties.length; i++) {
+    var p = odData.properties[i];
+    p.addr = (typeof p.addr === "string") ? p.addr : "";
+    if (!Array.isArray(p.pics)) p.pics = [];
+    for (var j=0; j<p.pics.length; j++) {
+      var pic = p.pics[j];
+      pic.roomName = (typeof pic.roomName === "string") ? pic.roomName : "";
+      pic.photo    = (typeof pic.photo    === "string") ? pic.photo    : null;
+      if (!Array.isArray(pic.items)) pic.items = [];
+      for (var k=0; k<pic.items.length; k++) {
+        var it = pic.items[k];
+        it.name      = (typeof it.name  === "string") ? it.name  : "";
+        it.store     = (typeof it.store === "string") ? it.store : "";
+        it.date      = (typeof it.date  === "string") ? it.date  : "";
+        it.purchased = !!it.purchased;
+      }
     }
   }
-  if (!odData.activeRoomId && odData.rooms.length) odData.activeRoomId = odData.rooms[0].id;
-  document.getElementById("odAddr").value = odData.addr || "";
+  if (!odData.activePropId && odData.properties.length) odData.activePropId = odData.properties[0].id;
 }
 
-function updateOdProgress() {
-  var total = 0, done = 0;
-  for (var i=0; i<odData.rooms.length; i++) {
-    total += odData.rooms[i].items.length;
-    done  += odData.rooms[i].items.filter(function(x){ return x.purchased; }).length;
-  }
-  var pct = total ? Math.round(done/total*100) : 0;
-  document.getElementById("odProgFill").style.width = pct + "%";
-  document.getElementById("odProgLabel").textContent = done + " / " + total + " purchased";
-}
-
-function addOdRoom() {
-  var id = Date.now() + Math.random();
-  odData.rooms.push({id:id, name:"", photo:null, items:[]});
-  odData.activeRoomId = id;
-  saveOd();
-  renderOrders();
-  var el = document.getElementById("odn-"+id);
-  if (el) { el.focus(); }
-}
-
-function deleteOdRoom(id) {
-  if (!confirm("Delete this room and all its items?")) return;
-  odData.rooms = odData.rooms.filter(function(x){ return x.id != id; });
-  if (odData.activeRoomId == id) odData.activeRoomId = odData.rooms.length ? odData.rooms[0].id : null;
-  saveOd();
+function applyCloudOrders() {
+  if (!odData.properties) odData.properties = [];
+  try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) {}
   renderOrders();
 }
 
-function clearOrders() {
-  if (!confirm("Clear the whole order list?")) return;
-  odData = {addr:"", rooms:[], activeRoomId:null};
-  document.getElementById("odAddr").value = "";
-  saveOd();
-  renderOrders();
-}
-
-function findOdRoom(id) {
-  for (var i=0; i<odData.rooms.length; i++) if (odData.rooms[i].id == id) return odData.rooms[i];
+function getActiveProp() {
+  for (var i=0; i<odData.properties.length; i++) if (odData.properties[i].id == odData.activePropId) return odData.properties[i];
   return null;
 }
 
-function switchOdRoom(id) {
-  odData.activeRoomId = id;
-  renderOrders();
-}
-
-function addOdItem(roomId) {
-  var room = findOdRoom(roomId); if (!room) return;
+function addOdProperty() {
   var id = Date.now() + Math.random();
-  room.items.push({id:id, name:"", purchased:false, store:"", date:""});
+  odData.properties.push({id:id, addr:"", pics:[], activePicId:null});
+  odData.activePropId = id;
   saveOd();
   renderOrders();
+  var el = document.getElementById("odpa-"+id);
+  if (el) el.focus();
+}
+
+function deleteOdProperty(id) {
+  if (!confirm("Delete this property and all its rooms/items?")) return;
+  odData.properties = odData.properties.filter(function(x){ return x.id != id; });
+  if (odData.activePropId == id) odData.activePropId = odData.properties.length ? odData.properties[0].id : null;
+  saveOd(); renderOrders();
+}
+
+function addOdPic(prop) {
+  var id = Date.now() + Math.random();
+  prop.pics.push({id:id, roomName:"", photo:null, items:[]});
+  prop.activePicId = id;
+  saveOd(); renderOrders();
+  var el = document.getElementById("odrn-"+id);
+  if (el) el.focus();
+}
+
+function deleteOdPic(prop, picId) {
+  if (!confirm("Delete this room pic and all its items?")) return;
+  prop.pics = prop.pics.filter(function(x){ return x.id != picId; });
+  if (prop.activePicId == picId) prop.activePicId = prop.pics.length ? prop.pics[0].id : null;
+  saveOd(); renderOrders();
+}
+
+function addOdItem(prop, pic) {
+  var id = Date.now() + Math.random();
+  pic.items.push({id:id, name:"", purchased:false, store:"", date:""});
+  saveOd(); renderOrders();
   var el = document.getElementById("odi-"+id);
   if (el) el.focus();
 }
 
-function deleteOdItem(roomId, itemId) {
-  var room = findOdRoom(roomId); if (!room) return;
-  room.items = room.items.filter(function(x){ return x.id != itemId; });
-  saveOd();
-  renderOrders();
+function deleteOdItem(pic, itemId) {
+  pic.items = pic.items.filter(function(x){ return x.id != itemId; });
+  saveOd(); renderOrders();
 }
 
-function toggleOdPurchased(roomId, itemId) {
-  var room = findOdRoom(roomId); if (!room) return;
-  for (var j=0; j<room.items.length; j++) {
-    if (room.items[j].id == itemId) {
-      room.items[j].purchased = !room.items[j].purchased;
-      if (room.items[j].purchased && !room.items[j].date) {
-        room.items[j].date = new Date().toISOString().slice(0,10);
-      }
+function toggleOdPurchased(pic, itemId) {
+  for (var j=0; j<pic.items.length; j++) {
+    if (pic.items[j].id == itemId) {
+      pic.items[j].purchased = !pic.items[j].purchased;
+      if (pic.items[j].purchased && !pic.items[j].date)
+        pic.items[j].date = new Date().toISOString().slice(0,10);
       break;
     }
   }
-  saveOd();
-  renderOrders();
+  saveOd(); renderOrders();
 }
 
 function saveOdApiKey() {
   var val = document.getElementById("odApiKeyInput").value.trim();
   if (!val) return;
   try { localStorage.setItem("apexAnthropicKey", val); } catch(e) {}
-  document.getElementById("odApiHint").style.display = "none";
+  document.getElementById("odKeyBanner").style.display = "none";
   showToast("API key saved");
 }
 
@@ -1613,260 +1588,277 @@ function getOdApiKey() {
   try { return localStorage.getItem("apexAnthropicKey") || ""; } catch(e) { return ""; }
 }
 
-function analyzeOdPhoto(roomId) {
-  var room = findOdRoom(roomId); if (!room || !room.photo) return;
+function analyzeOdPic(prop, pic) {
+  if (!pic.photo) return;
   var key = getOdApiKey();
   if (!key) {
-    document.getElementById("odApiHint").style.display = "block";
-    document.getElementById("odApiHint").scrollIntoView({block:"nearest"});
+    document.getElementById("odKeyBanner").style.display = "block";
+    document.getElementById("odKeyBanner").scrollIntoView({block:"nearest"});
     return;
   }
-  var btn = document.getElementById("od-analyze-"+roomId);
-  if (btn) { btn.disabled = true; btn.textContent = "Analyzing…"; }
+  var btn = document.getElementById("od-ai-"+pic.id);
+  if (btn) { btn.disabled = true; btn.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> Analyzing…'; }
 
-  var base64 = room.photo.split(",")[1];
-  var mediaType = room.photo.startsWith("data:image/png") ? "image/png" : "image/jpeg";
+  var base64 = pic.photo.split(",")[1];
+  var mediaType = pic.photo.startsWith("data:image/png") ? "image/png" : "image/jpeg";
 
   fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-allow-browser": "true",
-      "content-type": "application/json"
+    method:"POST",
+    headers:{
+      "x-api-key":key,
+      "anthropic-version":"2023-06-01",
+      "anthropic-dangerous-allow-browser":"true",
+      "content-type":"application/json"
     },
     body: JSON.stringify({
-      model: "claude-opus-4-8",
-      max_tokens: 1024,
-      messages: [{
-        role: "user",
-        content: [
-          {type:"image", source:{type:"base64", media_type:mediaType, data:base64}},
-          {type:"text", text:"This is an interior design spec sheet or mood board for a room. List every distinct item or product that would need to be ordered/purchased. Output ONLY a plain numbered list, one item per line, no extra text. Be specific (e.g. 'Linen sofa — cream' not just 'sofa'). Include furniture, lighting, rugs, hardware, decor, and any other purchasable items visible or called out."}
-        ]
-      }]
+      model:"claude-opus-4-8",
+      max_tokens:1024,
+      messages:[{role:"user", content:[
+        {type:"image", source:{type:"base64", media_type:mediaType, data:base64}},
+        {type:"text", text:"This is an interior design spec sheet or mood board. List every distinct item that needs to be ordered/purchased. Output ONLY a plain numbered list, one item per line, no extra commentary. Be specific (e.g. 'Cream linen sofa' not just 'sofa'). Include furniture, lighting, rugs, hardware, accessories, and any other purchasable items visible or called out."}
+      ]}]
     })
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 8v4l3 3"/></svg> Analyze pic'; }
-    if (!data.content || !data.content[0]) { showToast("AI returned no result"); return; }
-    var text = data.content[0].text || "";
-    var lines = text.split("\n").map(function(l){ return l.replace(/^\d+[\.\)]\s*/, "").trim(); }).filter(function(l){ return l.length > 0; });
-    if (!lines.length) { showToast("No items found in the image"); return; }
-    var added = 0;
+    if (btn) { btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic'; }
+    if (!data.content || !data.content[0]) { showToast("AI returned nothing — try again"); return; }
+    var lines = (data.content[0].text||"").split("\n")
+      .map(function(l){ return l.replace(/^\d+[\.\)]\s*/,"").trim(); })
+      .filter(function(l){ return l.length > 0; });
+    if (!lines.length) { showToast("No items detected"); return; }
     for (var i=0; i<lines.length; i++) {
-      var id = Date.now() + Math.random() + i;
-      room.items.push({id:id, name:lines[i], purchased:false, store:"", date:""});
-      added++;
+      pic.items.push({id:Date.now()+Math.random()+i, name:lines[i], purchased:false, store:"", date:""});
     }
-    saveOd();
-    renderOrders();
-    showToast(added + " items added from design pic");
+    saveOd(); renderOrders();
+    showToast(lines.length + " items added");
   })
-  .catch(function(e) {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 8v4l3 3"/></svg> Analyze pic'; }
+  .catch(function(){
+    if (btn) { btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic'; }
     showToast("AI error — check your API key");
-    document.getElementById("odApiHint").style.display = "block";
+    document.getElementById("odKeyBanner").style.display = "block";
   });
 }
 
-function renderOrders() {
-  var tabsWrap   = document.getElementById("odRoomTabs");
-  var panelsWrap = document.getElementById("odRoomPanels");
-
-  // clear tabs (keep the Add room button)
-  var addBtn = tabsWrap.querySelector(".od-rtab-add");
-  while (tabsWrap.firstChild) tabsWrap.removeChild(tabsWrap.firstChild);
-
-  while (panelsWrap.firstChild) panelsWrap.removeChild(panelsWrap.firstChild);
-
-  if (!odData.rooms.length) {
-    var empty = document.createElement("div");
-    empty.className = "wt-empty";
-    empty.textContent = 'No rooms yet — tap "+ Add room" to get started.';
-    panelsWrap.appendChild(empty);
-    if (addBtn) tabsWrap.appendChild(addBtn);
-    updateOdProgress();
-    return;
-  }
-
-  for (var i=0; i<odData.rooms.length; i++) {
-    var room = odData.rooms[i];
-    var isActive = (room.id == odData.activeRoomId);
-
-    var tab = document.createElement("button");
-    tab.className = "od-rtab" + (isActive ? " active" : "");
-    var purchCount = room.items.filter(function(x){ return x.purchased; }).length;
-    tab.textContent = (room.name || "Room " + (i+1)) + " (" + purchCount + "/" + room.items.length + ")";
-    (function(id){ tab.onclick = function(){ switchOdRoom(id); }; })(room.id);
-    tabsWrap.appendChild(tab);
-
-    var panel = buildOdRoomPanel(room, i);
-    panel.className = "od-room-panel" + (isActive ? " active" : "");
-    panelsWrap.appendChild(panel);
-  }
-
-  if (addBtn) tabsWrap.appendChild(addBtn);
-  updateOdProgress();
-}
-
-function buildOdRoomPanel(room, idx) {
-  var panel = document.createElement("div");
-
-  // Top: room name + delete
-  var top = document.createElement("div");
-  top.className = "od-room-top";
-
-  var nameRow = document.createElement("div");
-  nameRow.className = "od-room-name-row";
-  var nameInp = document.createElement("input");
-  nameInp.className = "od-room-name";
-  nameInp.placeholder = "Room name (e.g. Master Bedroom)";
-  nameInp.value = room.name;
-  nameInp.id = "odn-" + room.id;
-  (function(r){ nameInp.oninput = function(){ r.name = nameInp.value; saveOd(); renderOrders(); }; })(room);
-  var delRoom = document.createElement("button");
-  delRoom.className = "del-btn";
-  delRoom.title = "Delete room";
-  delRoom.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
-  (function(id){ delRoom.onclick = function(){ deleteOdRoom(id); }; })(room.id);
-  nameRow.appendChild(nameInp); nameRow.appendChild(delRoom);
-
-  // Photo + AI row
-  var aiRow = document.createElement("div");
-  aiRow.className = "od-ai-row";
-
-  if (room.photo) {
-    var picWrap = document.createElement("div");
-    picWrap.className = "od-design-pic";
-    var picImg = document.createElement("img");
-    picImg.src = room.photo;
-    (function(src){ picImg.onclick = function(){ openLightbox(src); }; })(room.photo);
-    var picDel = document.createElement("button");
-    picDel.className = "od-design-pic-del";
-    picDel.innerHTML = "&#10005;";
-    picDel.title = "Remove photo";
-    (function(r){ picDel.onclick = function(e){ e.stopPropagation(); r.photo=null; saveOd(); renderOrders(); }; })(room);
-    picWrap.appendChild(picImg); picWrap.appendChild(picDel);
-    aiRow.appendChild(picWrap);
-
-    var analyzeBtn = document.createElement("button");
-    analyzeBtn.className = "od-analyze-btn";
-    analyzeBtn.id = "od-analyze-" + room.id;
-    analyzeBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic';
-    (function(id){ analyzeBtn.onclick = function(){ analyzeOdPhoto(id); }; })(room.id);
-    aiRow.appendChild(analyzeBtn);
-  } else {
-    var uploadLabel = document.createElement("label");
-    uploadLabel.className = "od-upload-label";
-    uploadLabel.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Upload design pic';
-    var fileInp = document.createElement("input");
-    fileInp.type = "file"; fileInp.accept = "image/*"; fileInp.style.display = "none";
-    (function(r){ fileInp.onchange = function(){ handleOdPhoto(r, this); }; })(room);
-    uploadLabel.appendChild(fileInp);
-    aiRow.appendChild(uploadLabel);
-  }
-
-  top.appendChild(nameRow);
-  top.appendChild(aiRow);
-  panel.appendChild(top);
-
-  // Item list
-  var itemsWrap = document.createElement("div");
-  itemsWrap.className = "od-items-wrap";
-  if (!room.items.length) {
-    var hint = document.createElement("div");
-    hint.style.cssText = "font-size:13px;color:#bbb;text-align:center;padding:12px 0";
-    hint.textContent = room.photo ? "Tap \"Analyze pic\" to auto-generate items, or add manually below." : "Upload a design pic to auto-detect items, or add items manually.";
-    itemsWrap.appendChild(hint);
-  }
-  for (var j=0; j<room.items.length; j++) {
-    itemsWrap.appendChild(buildOdItemRow(room, room.items[j]));
-  }
-  panel.appendChild(itemsWrap);
-
-  // Add item manually
-  var addItem = document.createElement("button");
-  addItem.className = "od-add-item-btn";
-  addItem.textContent = "+ Add item manually";
-  (function(id){ addItem.onclick = function(){ addOdItem(id); }; })(room.id);
-  panel.appendChild(addItem);
-
-  // Room progress bar
-  var prog = document.createElement("div");
-  prog.className = "od-room-progress";
-  var progBar = document.createElement("div"); progBar.className = "od-room-prog-bar";
-  var progFill = document.createElement("div"); progFill.className = "od-room-prog-fill";
-  var purchased = room.items.filter(function(x){ return x.purchased; }).length;
-  var pct = room.items.length ? Math.round(purchased/room.items.length*100) : 0;
-  progFill.style.width = pct + "%";
-  progBar.appendChild(progFill);
-  var progLbl = document.createElement("span"); progLbl.className = "od-room-prog-label";
-  progLbl.textContent = purchased + "/" + room.items.length + " purchased";
-  prog.appendChild(progBar); prog.appendChild(progLbl);
-  panel.appendChild(prog);
-
-  return panel;
-}
-
-function buildOdItemRow(room, item) {
-  var row = document.createElement("div");
-  row.className = "od-row" + (item.purchased ? " purchased" : "");
-
-  var check = document.createElement("div");
-  check.className = "od-buy-check" + (item.purchased ? " checked" : "");
-  (function(rid, iid){ check.onclick = function(){ toggleOdPurchased(rid, iid); }; })(room.id, item.id);
-
-  var fields = document.createElement("div");
-  fields.className = "od-fields";
-
-  var name = document.createElement("input");
-  name.className = "od-name";
-  name.placeholder = "Item name...";
-  name.value = item.name;
-  name.id = "odi-" + item.id;
-  (function(it){ name.oninput = function(){ it.name = name.value; saveOd(); }; })(item);
-
-  var meta = document.createElement("div");
-  meta.className = "od-meta";
-  var store = document.createElement("input");
-  store.placeholder = "Purchased from...";
-  store.value = item.store;
-  (function(it){ store.oninput = function(){ it.store = store.value; saveOd(); }; })(item);
-  var date = document.createElement("input");
-  date.type = "date"; date.value = item.date;
-  (function(it){ date.oninput = function(){ it.date = date.value; saveOd(); }; })(item);
-  meta.appendChild(store); meta.appendChild(date);
-  fields.appendChild(name); fields.appendChild(meta);
-
-  var delBtn = document.createElement("button");
-  delBtn.className = "del-btn";
-  delBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
-  (function(rid, iid){ delBtn.onclick = function(){ deleteOdItem(rid, iid); }; })(room.id, item.id);
-
-  row.appendChild(check); row.appendChild(fields); row.appendChild(delBtn);
-  return row;
-}
-
-function handleOdPhoto(room, input) {
+function handleOdPhoto(prop, pic, input) {
   var file = input.files[0]; if (!file) return;
   var reader = new FileReader();
   reader.onload = function(e) {
     var img = new Image();
     img.onload = function() {
       var canvas = document.createElement("canvas");
-      var max = 1600, w = img.width, h = img.height;
-      if (w > max || h > max) { if (w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} }
+      var max=1600, w=img.width, h=img.height;
+      if (w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} }
       canvas.width=w; canvas.height=h;
       canvas.getContext("2d").drawImage(img,0,0,w,h);
-      room.photo = canvas.toDataURL("image/jpeg", 0.85);
+      pic.photo = canvas.toDataURL("image/jpeg", 0.85);
       saveOd(); renderOrders();
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
   input.value = "";
+}
+
+function renderOrders() {
+  var tabsWrap   = document.getElementById("odPropTabs");
+  var panelsWrap = document.getElementById("odPropPanels");
+  while (tabsWrap.firstChild) tabsWrap.removeChild(tabsWrap.firstChild);
+  while (panelsWrap.firstChild) panelsWrap.removeChild(panelsWrap.firstChild);
+
+  // show/hide API key banner
+  document.getElementById("odKeyBanner").style.display = getOdApiKey() ? "none" : "block";
+
+  // Build property tabs
+  for (var i=0; i<odData.properties.length; i++) {
+    var prop = odData.properties[i];
+    var isActive = (prop.id == odData.activePropId);
+    var tab = document.createElement("button");
+    tab.className = "od-ptab" + (isActive ? " active" : "");
+    var total=0, done=0;
+    for (var j=0; j<prop.pics.length; j++) {
+      total += prop.pics[j].items.length;
+      done  += prop.pics[j].items.filter(function(x){ return x.purchased; }).length;
+    }
+    tab.textContent = (prop.addr || "Property " + (i+1)) + " (" + done + "/" + total + ")";
+    (function(id){ tab.onclick = function(){ odData.activePropId=id; renderOrders(); }; })(prop.id);
+    tabsWrap.appendChild(tab);
+  }
+
+  // Add property button
+  var addPropBtn = document.createElement("button");
+  addPropBtn.className = "od-ptab-add";
+  addPropBtn.textContent = "+ Add property";
+  addPropBtn.onclick = addOdProperty;
+  tabsWrap.appendChild(addPropBtn);
+
+  var activeProp = getActiveProp();
+  if (!activeProp) {
+    var empty = document.createElement("div");
+    empty.className = "wt-empty";
+    empty.textContent = 'Tap "+ Add property" to get started.';
+    panelsWrap.appendChild(empty);
+    return;
+  }
+
+  // Property panel
+  var panel = document.createElement("div");
+  panel.className = "od-prop-panel active";
+
+  // Address row
+  var head = document.createElement("div");
+  head.className = "od-prop-head";
+  var addrInp = document.createElement("input");
+  addrInp.className = "od-prop-addr-inp";
+  addrInp.placeholder = "Property address";
+  addrInp.value = activeProp.addr;
+  addrInp.id = "odpa-" + activeProp.id;
+  (function(p){ addrInp.oninput = function(){ p.addr=addrInp.value; saveOd(); renderOrders(); }; })(activeProp);
+  var delPropBtn = document.createElement("button");
+  delPropBtn.className = "del-btn";
+  delPropBtn.title = "Delete property";
+  delPropBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+  (function(id){ delPropBtn.onclick = function(){ deleteOdProperty(id); }; })(activeProp.id);
+  head.appendChild(addrInp); head.appendChild(delPropBtn);
+  panel.appendChild(head);
+
+  // Room cards (one per pic)
+  for (var j=0; j<activeProp.pics.length; j++) {
+    panel.appendChild(buildOdPicCard(activeProp, activeProp.pics[j], j));
+  }
+
+  // Add room button
+  var addRoomBtn = document.createElement("button");
+  addRoomBtn.className = "od-add-room-btn";
+  addRoomBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add room';
+  (function(p){ addRoomBtn.onclick = function(){ addOdPic(p); }; })(activeProp);
+  panel.appendChild(addRoomBtn);
+
+  panelsWrap.appendChild(panel);
+}
+
+function buildOdPicCard(prop, pic, idx) {
+  var card = document.createElement("div");
+  card.className = "od-room-card";
+
+  // Card header: room name + delete
+  var cardHead = document.createElement("div");
+  cardHead.className = "od-room-card-head";
+  var roomNameInp = document.createElement("input");
+  roomNameInp.className = "od-room-name-inp";
+  roomNameInp.placeholder = "Room name (e.g. Kitchen, Master Bedroom)";
+  roomNameInp.value = pic.roomName;
+  roomNameInp.id = "odrn-" + pic.id;
+  (function(p){ roomNameInp.oninput = function(){ p.roomName=roomNameInp.value; saveOd(); }; })(pic);
+  var picDoneCount = pic.items.filter(function(x){ return x.purchased; }).length;
+  var countLbl = document.createElement("span");
+  countLbl.style.cssText = "font-size:12px;font-weight:600;color:#1D9E75;white-space:nowrap;flex-shrink:0";
+  countLbl.textContent = picDoneCount + "/" + pic.items.length;
+  var delPicBtn = document.createElement("button");
+  delPicBtn.className = "del-btn";
+  delPicBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+  (function(pr, id){ delPicBtn.onclick = function(){ deleteOdPic(pr, id); }; })(prop, pic.id);
+  cardHead.appendChild(roomNameInp); cardHead.appendChild(countLbl); cardHead.appendChild(delPicBtn);
+  card.appendChild(cardHead);
+
+  // Card body
+  var body = document.createElement("div");
+  body.className = "od-room-card-body";
+
+  // Upload / photo + analyze zone
+  var uploadZone = document.createElement("div");
+  uploadZone.className = "od-upload-zone";
+
+  if (pic.photo) {
+    var thumb = document.createElement("div");
+    thumb.className = "od-design-thumb";
+    var thumbImg = document.createElement("img"); thumbImg.src = pic.photo;
+    (function(src){ thumbImg.onclick = function(){ openLightbox(src); }; })(pic.photo);
+    var thumbDel = document.createElement("button");
+    thumbDel.className = "od-design-thumb-del"; thumbDel.innerHTML = "&#10005;";
+    (function(pr, p){ thumbDel.onclick = function(e){ e.stopPropagation(); p.photo=null; saveOd(); renderOrders(); }; })(prop, pic);
+    thumb.appendChild(thumbImg); thumb.appendChild(thumbDel);
+    uploadZone.appendChild(thumb);
+
+    var aiBtn = document.createElement("button");
+    aiBtn.className = "od-ai-btn";
+    aiBtn.id = "od-ai-" + pic.id;
+    aiBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic';
+    (function(pr, p){ aiBtn.onclick = function(){ analyzeOdPic(pr, p); }; })(prop, pic);
+    uploadZone.appendChild(aiBtn);
+  } else {
+    var upLabel = document.createElement("label");
+    upLabel.className = "od-upload-btn";
+    upLabel.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Upload design pic';
+    var fileInp = document.createElement("input");
+    fileInp.type="file"; fileInp.accept="image/*"; fileInp.style.display="none";
+    (function(pr, p){ fileInp.onchange = function(){ handleOdPhoto(pr, p, this); }; })(prop, pic);
+    upLabel.appendChild(fileInp);
+    uploadZone.appendChild(upLabel);
+  }
+  body.appendChild(uploadZone);
+
+  // Items list
+  var itemsList = document.createElement("div");
+  itemsList.className = "od-items-list";
+  if (!pic.items.length) {
+    var hint = document.createElement("div");
+    hint.style.cssText = "font-size:13px;color:#bbb;padding:4px 0";
+    hint.textContent = pic.photo ? "Tap \"Analyze pic\" to auto-generate the list, or add items below." : "Upload a design pic, then tap Analyze — or add items manually.";
+    itemsList.appendChild(hint);
+  }
+  for (var k=0; k<pic.items.length; k++) {
+    itemsList.appendChild(buildOdItemRow(prop, pic, pic.items[k]));
+  }
+  body.appendChild(itemsList);
+
+  var addItemBtn = document.createElement("button");
+  addItemBtn.className = "od-add-item-link";
+  addItemBtn.textContent = "+ Add item";
+  (function(pr, p){ addItemBtn.onclick = function(){ addOdItem(pr, p); }; })(prop, pic);
+  body.appendChild(addItemBtn);
+
+  card.appendChild(body);
+  return card;
+}
+
+function buildOdItemRow(prop, pic, item) {
+  var row = document.createElement("div");
+  row.className = "od-item-row" + (item.purchased ? " purchased" : "");
+
+  var check = document.createElement("div");
+  check.className = "od-buy-check" + (item.purchased ? " checked" : "");
+  (function(p, iid){ check.onclick = function(){ toggleOdPurchased(p, iid); }; })(pic, item.id);
+
+  var fields = document.createElement("div");
+  fields.className = "od-item-fields";
+
+  var name = document.createElement("input");
+  name.className = "od-item-name";
+  name.placeholder = "Item name...";
+  name.value = item.name;
+  name.id = "odi-" + item.id;
+  (function(it){ name.oninput = function(){ it.name=name.value; saveOd(); }; })(item);
+
+  var meta = document.createElement("div");
+  meta.className = "od-item-meta";
+  var store = document.createElement("input");
+  store.placeholder = "Purchased from...";
+  store.value = item.store;
+  (function(it){ store.oninput = function(){ it.store=store.value; saveOd(); }; })(item);
+  var date = document.createElement("input");
+  date.type="date"; date.value=item.date;
+  (function(it){ date.oninput = function(){ it.date=date.value; saveOd(); }; })(item);
+  meta.appendChild(store); meta.appendChild(date);
+  fields.appendChild(name); fields.appendChild(meta);
+
+  var delBtn = document.createElement("button");
+  delBtn.className = "del-btn";
+  delBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+  (function(p, iid){ delBtn.onclick = function(){ deleteOdItem(p, iid); }; })(pic, item.id);
+
+  row.appendChild(check); row.appendChild(fields); row.appendChild(delBtn);
+  return row;
 }
 
 // ===== CLOUD SYNC (whole app, all devices) =====
@@ -1945,9 +1937,8 @@ function applyCloudWalkthrough() {
   renderWalkthrough();
 }
 function applyCloudOrders() {
-  if (!odData.rooms) odData.rooms = [];
+  if (!odData.properties) odData.properties = [];
   try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) {}
-  document.getElementById("odAddr").value = odData.addr || "";
   renderOrders();
 }
 
