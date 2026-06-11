@@ -123,6 +123,23 @@ h1{font-size:18px;font-weight:600;color:#111}
 .wt-prog-bar{flex:1;height:8px;background:#f0f0ed;border-radius:4px;overflow:hidden}
 .wt-prog-fill{height:100%;background:#1D9E75;border-radius:4px;transition:width .3s}
 .wt-prog-label{font-size:13px;font-weight:600;color:#1D9E75;white-space:nowrap}
+/* ORDERS */
+.od-room{background:#fff;border:1px solid #e5e5e2;border-radius:12px;overflow:hidden}
+.od-room-head{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fafaf8;border-bottom:1px solid #f0f0ed}
+.od-room-name{flex:1;font-size:15px;font-weight:600;border:none;background:transparent;color:#111;outline:none;font-family:inherit;min-width:0}
+.od-room-name::placeholder{color:#bbb}
+.od-room-count{font-size:12px;font-weight:600;color:#1D9E75;white-space:nowrap}
+.od-room-body{padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.od-row{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid #f0f0ed;border-radius:10px;background:#fff}
+.od-row.ordered{border-color:#a7f3d0;background:#f6fdf9}
+.od-row.ordered .od-name{text-decoration:line-through;color:#999}
+.od-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.od-name{width:100%;font-size:14px;font-weight:500;padding:7px 10px;border:1px solid #e0e0dc;border-radius:8px;background:#fff;color:#1a1a1a;outline:none;font-family:inherit}
+.od-name:focus{border-color:#1D9E75}
+.od-meta{display:flex;gap:6px}
+.od-meta input{flex:1;min-width:0;font-size:12px;padding:6px 9px;border:1px solid #e0e0dc;border-radius:8px;background:#fff;color:#555;outline:none;font-family:inherit}
+.od-meta input:focus{border-color:#1D9E75}
+.od-add-item{align-self:flex-start;font-size:13px;font-weight:600;color:#1D9E75;background:none;border:none;cursor:pointer;padding:4px 0;font-family:inherit;-webkit-tap-highlight-color:transparent}
 </style>
 </head>
 <body>
@@ -130,6 +147,7 @@ h1{font-size:18px;font-weight:600;color:#111}
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('sheet')">Repair Sheet</button>
   <button class="tab-btn" onclick="switchTab('walkthrough')">Walkthrough</button>
+  <button class="tab-btn" onclick="switchTab('orders')">Orders</button>
 </div>
 <div class="tab-spacer"></div>
 <div id="tab-sheet" class="tab-content active">
@@ -210,6 +228,36 @@ h1{font-size:18px;font-weight:600;color:#111}
   </button>
 </div>
 </div><!-- /tab-walkthrough -->
+
+<div id="tab-orders" class="tab-content">
+<div class="page">
+  <div class="wt-header">
+    <div class="wt-title-row">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="wt-title">Orders</span>
+    </div>
+    <div class="wt-subtitle">Add a room with the design pic, list the items in it, and check each one off as you order it.</div>
+    <div class="prop-grid" style="margin-bottom:1rem">
+      <input id="odAddr" placeholder="Property address" oninput="saveOd()" />
+    </div>
+    <div class="wt-progress"><div class="wt-prog-bar"><div class="wt-prog-fill" id="odProgFill" style="width:0%"></div></div><span class="wt-prog-label" id="odProgLabel">0 / 0 ordered</span></div>
+    <div class="wt-actions">
+      <button class="btn btn-red" onclick="clearOrders()">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+        Clear all
+      </button>
+    </div>
+  </div>
+  <div class="wt-items" id="odRooms"></div>
+  <div class="footer" style="margin-top:1.5rem;margin-bottom:5rem">Apex Homes LLC &nbsp;&middot;&nbsp; Auto-saves in your browser</div>
+</div>
+<div id="odBottomBar" style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5e2;padding:12px 16px;display:none;gap:10px;z-index:100;box-shadow:0 -4px 16px rgba(0,0,0,0.08)">
+  <button class="btn btn-green" style="flex:1;justify-content:center" onclick="addOdRoom()">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add room
+  </button>
+</div>
+</div><!-- /tab-orders -->
 
 <!-- Contractor view (shown when ?wt=UUID in URL) -->
 <div id="contractor-view" style="display:none">
@@ -873,15 +921,16 @@ document.getElementById("propDate").addEventListener("input", save);
 
 // TAB SWITCHING
 function switchTab(tab) {
-  var tabs = ["sheet","walkthrough"];
+  var tabs = ["sheet","walkthrough","orders"];
+  var btns = document.querySelectorAll(".tab-btn");
   for (var i=0; i<tabs.length; i++) {
     document.getElementById("tab-"+tabs[i]).classList.toggle("active", tabs[i]===tab);
+    if (btns[i]) btns[i].classList.toggle("active", tabs[i]===tab);
   }
-  var btns = document.querySelectorAll(".tab-btn");
-  btns[0].classList.toggle("active", tab==="sheet");
-  btns[1].classList.toggle("active", tab==="walkthrough");
   var bar = document.getElementById("wtBottomBar");
   if (bar) bar.style.display = tab==="walkthrough" ? "flex" : "none";
+  var obar = document.getElementById("odBottomBar");
+  if (obar) obar.style.display = tab==="orders" ? "flex" : "none";
   localStorage.setItem("apexLastTab", tab);
   if (tab==="walkthrough") { syncFromSupabase(); }
 }
@@ -1397,7 +1446,282 @@ function syncFromSupabase() {
   }).catch(function(){ renderWalkthrough(); });
 }
 
+// ORDERS STATE — standalone, organized by room within one property
+var odData = {addr:"", rooms:[]};
+// room: {id, name, photos:[dataUrl,...], items:[{id, name, ordered, store, date}]}
+
+function saveOd() {
+  odData.addr = document.getElementById("odAddr").value;
+  try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) { storageWarn(); }
+  updateOdProgress();
+}
+
+function loadOd() {
+  try {
+    var s = localStorage.getItem("apexOrders");
+    if (s) { var d = JSON.parse(s); if (d && d.rooms) odData = d; }
+  } catch(e) {}
+  if (!odData.rooms) odData.rooms = [];
+  for (var i=0; i<odData.rooms.length; i++) {
+    var r = odData.rooms[i];
+    r.name = (typeof r.name === "string") ? r.name : "";
+    if (!Array.isArray(r.photos)) r.photos = [];
+    if (!Array.isArray(r.items)) r.items = [];
+    for (var j=0; j<r.items.length; j++) {
+      var it = r.items[j];
+      it.name    = (typeof it.name  === "string") ? it.name  : "";
+      it.store   = (typeof it.store === "string") ? it.store : "";
+      it.date    = (typeof it.date  === "string") ? it.date  : "";
+      it.ordered = !!it.ordered;
+    }
+  }
+  document.getElementById("odAddr").value = odData.addr || "";
+}
+
+function updateOdProgress() {
+  var total = 0, done = 0;
+  for (var i=0; i<odData.rooms.length; i++) {
+    total += odData.rooms[i].items.length;
+    done += odData.rooms[i].items.filter(function(x){ return x.ordered; }).length;
+  }
+  var pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById("odProgFill").style.width = pct + "%";
+  document.getElementById("odProgLabel").textContent = done + " / " + total + " ordered";
+}
+
+function addOdRoom() {
+  var id = Date.now() + Math.random();
+  odData.rooms.push({id:id, name:"", photos:[], items:[]});
+  saveOd();
+  renderOrders();
+  var el = document.getElementById("odn-"+id);
+  if (el) { el.focus(); el.scrollIntoView({block:"center"}); }
+}
+
+function deleteOdRoom(id) {
+  if (!confirm("Delete this room and all its items?")) return;
+  odData.rooms = odData.rooms.filter(function(x){ return x.id != id; });
+  saveOd();
+  renderOrders();
+}
+
+function clearOrders() {
+  if (!confirm("Clear the whole order list?")) return;
+  odData = {addr:"", rooms:[]};
+  document.getElementById("odAddr").value = "";
+  saveOd();
+  renderOrders();
+}
+
+function findOdRoom(id) {
+  for (var i=0; i<odData.rooms.length; i++) if (odData.rooms[i].id == id) return odData.rooms[i];
+  return null;
+}
+
+function addOdItem(roomId) {
+  var room = findOdRoom(roomId); if (!room) return;
+  var id = Date.now() + Math.random();
+  room.items.push({id:id, name:"", ordered:false, store:"", date:""});
+  saveOd();
+  renderOrders();
+  var el = document.getElementById("odi-"+id);
+  if (el) el.focus();
+}
+
+function deleteOdItem(roomId, itemId) {
+  var room = findOdRoom(roomId); if (!room) return;
+  room.items = room.items.filter(function(x){ return x.id != itemId; });
+  saveOd();
+  renderOrders();
+}
+
+function toggleOdOrdered(roomId, itemId) {
+  var room = findOdRoom(roomId); if (!room) return;
+  for (var j=0; j<room.items.length; j++) {
+    if (room.items[j].id == itemId) {
+      room.items[j].ordered = !room.items[j].ordered;
+      // stamp the date automatically the first time it's checked off
+      if (room.items[j].ordered && !room.items[j].date) {
+        room.items[j].date = new Date().toISOString().slice(0,10);
+      }
+      break;
+    }
+  }
+  saveOd();
+  renderOrders();
+}
+
+function renderOrders() {
+  var container = document.getElementById("odRooms");
+  while (container.firstChild) container.removeChild(container.firstChild);
+  if (!odData.rooms.length) {
+    var empty = document.createElement("div");
+    empty.className = "wt-empty";
+    empty.textContent = 'No rooms yet. Tap "Add room" to add the first design pic.';
+    container.appendChild(empty);
+    updateOdProgress();
+    return;
+  }
+  for (var i=0; i<odData.rooms.length; i++) {
+    container.appendChild(buildOdRoom(odData.rooms[i]));
+  }
+  updateOdProgress();
+}
+
+function buildOdRoom(room) {
+  var el = document.createElement("div");
+  el.className = "od-room";
+
+  var head = document.createElement("div");
+  head.className = "od-room-head";
+
+  var name = document.createElement("input");
+  name.className = "od-room-name";
+  name.placeholder = "Room name (e.g. Kitchen)...";
+  name.value = room.name;
+  name.id = "odn-" + room.id;
+  (function(id){ name.oninput = function(){
+    var r = findOdRoom(id); if (r) r.name = name.value;
+    saveOd();
+  }; })(room.id);
+
+  var count = document.createElement("span");
+  count.className = "od-room-count";
+  var done = room.items.filter(function(x){ return x.ordered; }).length;
+  count.textContent = done + "/" + room.items.length;
+
+  var delBtn = document.createElement("button");
+  delBtn.className = "del-btn";
+  delBtn.title = "Delete room";
+  delBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+  (function(id){ delBtn.onclick = function(){ deleteOdRoom(id); }; })(room.id);
+
+  head.appendChild(name); head.appendChild(count); head.appendChild(delBtn);
+  el.appendChild(head);
+
+  var body = document.createElement("div");
+  body.className = "od-room-body";
+
+  var photosWrap = document.createElement("div");
+  photosWrap.className = "wt-photos";
+  var addPhoto = document.createElement("label");
+  addPhoto.className = "wt-add-photo";
+  addPhoto.innerHTML = '<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 0 2-2l1-3h16l1 3a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Design pic';
+  var fileInput = document.createElement("input");
+  fileInput.type = "file"; fileInput.accept = "image/*";
+  fileInput.style.display = "none";
+  (function(id, pw){ fileInput.onchange = function(){ handleOdPhoto(id, this, pw); }; })(room.id, photosWrap);
+  addPhoto.appendChild(fileInput);
+  photosWrap.appendChild(addPhoto);
+  renderOdPhotos(photosWrap, room.id);
+  body.appendChild(photosWrap);
+
+  for (var j=0; j<room.items.length; j++) {
+    body.appendChild(buildOdItemRow(room, room.items[j]));
+  }
+
+  var addItem = document.createElement("button");
+  addItem.className = "od-add-item";
+  addItem.textContent = "+ Add item";
+  (function(id){ addItem.onclick = function(){ addOdItem(id); }; })(room.id);
+  body.appendChild(addItem);
+
+  el.appendChild(body);
+  return el;
+}
+
+function buildOdItemRow(room, item) {
+  var row = document.createElement("div");
+  row.className = "od-row" + (item.ordered ? " ordered" : "");
+
+  var check = document.createElement("div");
+  check.className = "wt-check" + (item.ordered ? " checked" : "");
+  check.style.cursor = "pointer";
+  (function(rid, iid){ check.onclick = function(){ toggleOdOrdered(rid, iid); }; })(room.id, item.id);
+
+  var fields = document.createElement("div");
+  fields.className = "od-fields";
+
+  var name = document.createElement("input");
+  name.className = "od-name";
+  name.placeholder = "Item (e.g. pendant light)...";
+  name.value = item.name;
+  name.id = "odi-" + item.id;
+  (function(it){ name.oninput = function(){ it.name = name.value; saveOd(); }; })(item);
+
+  var meta = document.createElement("div");
+  meta.className = "od-meta";
+  var store = document.createElement("input");
+  store.placeholder = "Ordered from...";
+  store.value = item.store;
+  (function(it){ store.oninput = function(){ it.store = store.value; saveOd(); }; })(item);
+  var date = document.createElement("input");
+  date.type = "date";
+  date.value = item.date;
+  (function(it){ date.oninput = function(){ it.date = date.value; saveOd(); }; })(item);
+  meta.appendChild(store); meta.appendChild(date);
+
+  fields.appendChild(name); fields.appendChild(meta);
+
+  var delBtn = document.createElement("button");
+  delBtn.className = "del-btn";
+  delBtn.title = "Remove item";
+  delBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+  (function(rid, iid){ delBtn.onclick = function(){ deleteOdItem(rid, iid); }; })(room.id, item.id);
+
+  row.appendChild(check); row.appendChild(fields); row.appendChild(delBtn);
+  return row;
+}
+
+function renderOdPhotos(container, roomId) {
+  var room = findOdRoom(roomId); if (!room) return;
+  var addBtn = container.querySelector("label");
+  var thumbs = container.querySelectorAll(".wt-photo-thumb");
+  for (var i=0; i<thumbs.length; i++) container.removeChild(thumbs[i]);
+  for (var i=0; i<room.photos.length; i++) {
+    (function(idx, dataUrl) {
+      var thumb = document.createElement("div");
+      thumb.className = "wt-photo-thumb";
+      var img = document.createElement("img"); img.src = dataUrl; img.style.cursor = "zoom-in";
+      img.onclick = function(){ openLightbox(dataUrl); };
+      var del = document.createElement("button");
+      del.className = "wt-photo-del"; del.innerHTML = "&#10005;";
+      del.onclick = function(e) {
+        e.stopPropagation();
+        room.photos.splice(idx,1);
+        saveOd(); renderOdPhotos(container, roomId);
+      };
+      thumb.appendChild(img); thumb.appendChild(del);
+      if (addBtn) container.insertBefore(thumb, addBtn); else container.appendChild(thumb);
+    })(i, room.photos[i]);
+  }
+}
+
+function handleOdPhoto(roomId, input, photosWrap) {
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement("canvas");
+      // design pics need more detail than walkthrough photos — keep them larger
+      var max = 1200, w = img.width, h = img.height;
+      if (w > max || h > max) { if (w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} }
+      canvas.width=w; canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      var dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+      var room = findOdRoom(roomId);
+      if (room) { room.photos.push(dataUrl); saveOd(); renderOdPhotos(photosWrap, roomId); }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value = "";
+}
+
 loadWt();
+loadOd();
+renderOrders();
 
 // Contractor link takes priority over everything else
 var wtParam = new URLSearchParams(window.location.search).get('wt');
@@ -1406,7 +1730,7 @@ if (wtParam) {
 } else {
   // Restore last active tab
   var lastTab = localStorage.getItem("apexLastTab");
-  if (lastTab === "walkthrough") switchTab("walkthrough");
+  if (lastTab === "walkthrough" || lastTab === "orders") switchTab(lastTab);
 }
 </script>
 </body>
