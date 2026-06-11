@@ -82,11 +82,12 @@ h1{font-size:18px;font-weight:600;color:#111}
   .del-btn{order:1;flex-shrink:0}
 }
 /* TABS */
-.tab-bar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;background:#143d2e;box-shadow:0 2px 8px rgba(0,0,0,.12)}
-.tab-spacer{height:44px}
-.tab-btn{padding:12px 0;font-size:14px;font-weight:600;border:none;border-radius:0;cursor:pointer;font-family:inherit;background:transparent;color:rgba(255,255,255,.65);transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;flex:1;text-align:center}
-.tab-btn.active{background:rgba(255,255,255,.08);color:#fff;box-shadow:0 -3px 0 #2dd896 inset}
-.tab-btn:hover:not(.active){color:#fff}
+.tab-bar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;gap:8px;padding:10px 12px;background:#fff;border-bottom:1px solid #e5e5e2;box-shadow:0 2px 10px rgba(0,0,0,.05);overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-spacer{height:58px}
+.tab-btn{padding:9px 18px;font-size:13px;font-weight:700;border:2px solid #e0e0dc;border-radius:999px;cursor:pointer;font-family:inherit;background:#fff;color:#777;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;white-space:nowrap;flex-shrink:0}
+.tab-btn.active{background:#1D9E75;border-color:#1D9E75;color:#fff;box-shadow:0 2px 8px rgba(29,158,117,.35)}
+.tab-btn:hover:not(.active){border-color:#1D9E75;color:#1D9E75}
 .tab-content{display:none}.tab-content.active{display:block}
 /* WALKTHROUGH */
 .wt-header{background:#fff;border-radius:16px;border:1px solid #e5e5e2;padding:1.5rem;margin-bottom:1rem}
@@ -175,7 +176,7 @@ h1{font-size:18px;font-weight:600;color:#111}
   <button class="tab-btn active" onclick="switchTab('sheet')">Repair Sheet</button>
   <button class="tab-btn" onclick="switchTab('walkthrough')">Walkthrough</button>
   <button class="tab-btn" onclick="switchTab('orders')">Orders</button>
-  <button class="tab-btn" style="flex:0 0 auto;padding:12px 18px" title="Cloud sync" onclick="openSyncModal()" id="syncBtn">&#10227; Sync</button>
+  <button class="tab-btn" style="margin-left:auto;border-style:dashed" title="Cloud sync" onclick="openSyncModal()" id="syncBtn">&#10227; Sync</button>
 </div>
 <div class="tab-spacer"></div>
 <div id="tab-sheet" class="tab-content active">
