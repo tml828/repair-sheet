@@ -1510,6 +1510,7 @@ function loadOd() {
       for (var k=0; k<pic.items.length; k++) {
         var it = pic.items[k];
         it.name      = (typeof it.name  === "string") ? it.name  : "";
+        it.img       = (typeof it.img   === "string") ? it.img   : null;
         it.store     = (typeof it.store === "string") ? it.store : "";
         it.date      = (typeof it.date  === "string") ? it.date  : "";
         it.purchased = !!it.purchased;
@@ -1632,6 +1633,14 @@ function analyzeOdPic(prop, pic) {
   var base64 = pic.photo.split(",")[1];
   var mediaType = pic.photo.startsWith("data:image/png") ? "image/png" : "image/jpeg";
 
+  // measure the pic so the AI can return pixel bounding boxes
+  var meas = new Image();
+  meas.onload = function() { odAiRequest(prop, pic, base64, mediaType, meas.width, meas.height); };
+  meas.src = pic.photo;
+}
+
+function odAiRequest(prop, pic, base64, mediaType, imgW, imgH) {
+  var key = getOdApiKey();
   fetch("https://api.anthropic.com/v1/messages", {
     method:"POST",
     headers:{
@@ -1642,10 +1651,10 @@ function analyzeOdPic(prop, pic) {
     },
     body: JSON.stringify({
       model:"claude-opus-4-8",
-      max_tokens:1024,
+      max_tokens:2048,
       messages:[{role:"user", content:[
         {type:"image", source:{type:"base64", media_type:mediaType, data:base64}},
-        {type:"text", text:"This is an interior design spec sheet or mood board. First line of your reply must be exactly 'ROOM: <room name>' (the room this design is for, e.g. Kitchen, Master Bedroom — use 'Design' if unclear). Then list every distinct item that needs to be ordered/purchased as a plain numbered list, one item per line, no extra commentary. Be specific (e.g. 'Cream linen sofa' not just 'sofa'). Include furniture, lighting, rugs, hardware, accessories, and any other purchasable items visible or called out."}
+        {type:"text", text:"This is an interior design spec sheet or mood board. The image is exactly " + imgW + " pixels wide and " + imgH + " pixels tall. Find every distinct purchasable item (furniture, lighting, rugs, hardware, accessories). Reply with ONLY this JSON, no other text or markdown fences: {\"room\":\"<room name, e.g. Kitchen, Master Bedroom — use 'Design' if unclear>\",\"items\":[{\"box\":[x1,y1,x2,y2]}]} where each box is the tight pixel bounding box around one item's picture in the image (x1,y1 = top-left, x2,y2 = bottom-right)."}
       ]}]
     })
   })
@@ -1653,26 +1662,48 @@ function analyzeOdPic(prop, pic) {
   .then(function(data) {
     if (data.error) { aiFail(pic, "AI error: " + (data.error.message || data.error.type)); return; }
     if (!data.content || !data.content[0]) { aiFail(pic, "AI returned nothing — try again"); return; }
-    var lines = (data.content[0].text||"").split("\n")
-      .map(function(l){ return l.trim(); })
-      .filter(function(l){ return l.length > 0; });
-    if (lines.length && /^ROOM:/i.test(lines[0])) {
-      pic.roomName = lines[0].replace(/^ROOM:\s*/i, "").trim() || "Design";
-      lines.shift();
-    }
-    lines = lines.map(function(l){ return l.replace(/^\d+[\.\)]\s*/,"").trim(); })
-                 .filter(function(l){ return l.length > 0; });
-    if (!pic.roomName) pic.roomName = "Design";
-    if (!lines.length) { aiFail(pic, "No items detected"); return; }
-    for (var i=0; i<lines.length; i++) {
-      pic.items.push({id:Date.now()+Math.random()+i, name:lines[i], purchased:false, store:"", date:""});
-    }
-    saveOd(); renderOrders();
-    showToast(lines.length + " items added — " + pic.roomName);
+    var txt = (data.content[0].text||"").replace(/```json|```/g, "").trim();
+    var parsed = null;
+    try {
+      var s = txt.indexOf("{"), e = txt.lastIndexOf("}");
+      if (s >= 0 && e > s) parsed = JSON.parse(txt.slice(s, e+1));
+    } catch(err) {}
+    if (!parsed || !Array.isArray(parsed.items) || !parsed.items.length) { aiFail(pic, "No items detected"); return; }
+    pic.roomName = (typeof parsed.room === "string" && parsed.room.trim()) ? parsed.room.trim() : "Design";
+    var img = new Image();
+    img.onload = function() {
+      var added = 0;
+      for (var i=0; i<parsed.items.length; i++) {
+        var crop = cropOdItem(img, parsed.items[i].box);
+        if (!crop) continue;
+        pic.items.push({id:Date.now()+Math.random()+i, name:"", img:crop, purchased:false, store:"", date:""});
+        added++;
+      }
+      if (!added) { aiFail(pic, "No items detected"); return; }
+      saveOd(); renderOrders();
+      showToast(added + " items added — " + pic.roomName);
+    };
+    img.src = pic.photo;
   })
   .catch(function(){
     aiFail(pic, "AI error — check connection and API key");
   });
+}
+
+function cropOdItem(img, box) {
+  if (!Array.isArray(box) || box.length !== 4) return null;
+  var x1 = Math.max(0, Math.min(img.width,  box[0]));
+  var y1 = Math.max(0, Math.min(img.height, box[1]));
+  var x2 = Math.max(0, Math.min(img.width,  box[2]));
+  var y2 = Math.max(0, Math.min(img.height, box[3]));
+  var w = x2 - x1, h = y2 - y1;
+  if (w < 10 || h < 10) return null;
+  var canvas = document.createElement("canvas");
+  var max = 400, cw = w, ch = h;
+  if (cw > max || ch > max) { if (cw > ch) { ch = Math.round(ch*max/cw); cw = max; } else { cw = Math.round(cw*max/ch); ch = max; } }
+  canvas.width = cw; canvas.height = ch;
+  canvas.getContext("2d").drawImage(img, x1, y1, w, h, 0, 0, cw, ch);
+  try { return canvas.toDataURL("image/jpeg", 0.8); } catch(e) { return null; }
 }
 
 function aiFail(pic, msg) {
@@ -1820,12 +1851,21 @@ function buildOdItemRow(prop, pic, item) {
   var fields = document.createElement("div");
   fields.className = "od-item-fields";
 
-  var name = document.createElement("input");
-  name.className = "od-item-name";
-  name.placeholder = "Item name...";
-  name.value = item.name;
-  name.id = "odi-" + item.id;
-  (function(it){ name.oninput = function(){ it.name=name.value; saveOd(); }; })(item);
+  if (item.img) {
+    // AI-cropped item pic — tap to enlarge
+    var itemPic = document.createElement("img");
+    itemPic.src = item.img;
+    itemPic.style.cssText = "width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #eee;cursor:pointer;background:#fafafa";
+    (function(src){ itemPic.onclick = function(){ openLightbox(src); }; })(item.img);
+    fields.appendChild(itemPic);
+  } else {
+    var name = document.createElement("input");
+    name.className = "od-item-name";
+    name.placeholder = "Item name...";
+    name.value = item.name;
+    name.id = "odi-" + item.id;
+    (function(it){ name.oninput = function(){ it.name=name.value; saveOd(); }; })(item);
+  }
 
   var meta = document.createElement("div");
   meta.className = "od-item-meta";
@@ -1837,7 +1877,8 @@ function buildOdItemRow(prop, pic, item) {
   date.type="date"; date.value=item.date;
   (function(it){ date.oninput = function(){ it.date=date.value; saveOd(); }; })(item);
   meta.appendChild(store); meta.appendChild(date);
-  fields.appendChild(name); fields.appendChild(meta);
+  if (!item.img) fields.appendChild(name);
+  fields.appendChild(meta);
 
   var delBtn = document.createElement("button");
   delBtn.className = "del-btn";
