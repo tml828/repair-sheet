@@ -1616,7 +1616,7 @@ function analyzeOdPic(prop, pic) {
     headers:{
       "x-api-key":key,
       "anthropic-version":"2023-06-01",
-      "anthropic-dangerous-allow-browser":"true",
+      "anthropic-dangerous-direct-browser-access":"true",
       "content-type":"application/json"
     },
     body: JSON.stringify({
@@ -1631,6 +1631,7 @@ function analyzeOdPic(prop, pic) {
   .then(function(r){ return r.json(); })
   .then(function(data) {
     if (btn) { btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic'; }
+    if (data.error) { showToast("AI error: " + (data.error.message || data.error.type)); return; }
     if (!data.content || !data.content[0]) { showToast("AI returned nothing — try again"); return; }
     var lines = (data.content[0].text||"").split("\n")
       .map(function(l){ return l.replace(/^\d+[\.\)]\s*/,"").trim(); })
