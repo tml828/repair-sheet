@@ -269,15 +269,7 @@ h1{font-size:18px;font-weight:600;color:#111}
 <div id="tab-orders" class="tab-content">
 <div class="page" style="padding-bottom:2rem">
 
-  <!-- AI Key banner (shown when no key set) -->
-  <div id="odKeyBanner" class="od-key-banner" style="display:none">
-    <div class="od-key-banner-title">&#128273; Add your Anthropic API key to enable AI item detection</div>
-    <div class="od-key-banner-row">
-      <input id="odApiKeyInput" class="od-key-inp" type="password" placeholder="sk-ant-api03-..." />
-      <button class="od-key-save" onclick="saveOdApiKey()">Save key</button>
-    </div>
-    <div style="font-size:11px;color:#92400e">Saved only in your browser — only sent to Anthropic when you tap "Analyze".</div>
-  </div>
+  <div id="odKeyBanner" style="display:none"></div>
 
   <!-- Property tabs -->
   <div class="od-prop-tabs" id="odPropTabs"></div>
@@ -1583,13 +1575,7 @@ function toggleOdPurchased(pic, itemId) {
   saveOd(); renderOrders();
 }
 
-function saveOdApiKey() {
-  var val = document.getElementById("odApiKeyInput").value.trim();
-  if (!val) return;
-  try { localStorage.setItem("apexAnthropicKey", val); } catch(e) {}
-  document.getElementById("odKeyBanner").style.display = "none";
-  showToast("API key saved");
-}
+function saveOdApiKey() {}
 
 function getOdApiKey() {
   try { return localStorage.getItem("apexAnthropicKey") || ""; } catch(e) { return ""; }
@@ -1599,8 +1585,7 @@ function analyzeOdPic(prop, pic) {
   if (!pic.photo) return;
   var key = getOdApiKey();
   if (!key) {
-    document.getElementById("odKeyBanner").style.display = "block";
-    document.getElementById("odKeyBanner").scrollIntoView({block:"nearest"});
+    showToast("AI key not configured");
     return;
   }
   var btn = document.getElementById("od-ai-"+pic.id);
@@ -1643,7 +1628,7 @@ function analyzeOdPic(prop, pic) {
   .catch(function(){
     if (btn) { btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic'; }
     showToast("AI error — check your API key");
-    document.getElementById("odKeyBanner").style.display = "block";
+    showToast("AI error — check connection and try again");
   });
 }
 
@@ -1674,7 +1659,7 @@ function renderOrders() {
   while (panelsWrap.firstChild) panelsWrap.removeChild(panelsWrap.firstChild);
 
   // show/hide API key banner
-  document.getElementById("odKeyBanner").style.display = getOdApiKey() ? "none" : "block";
+  document.getElementById("odKeyBanner").style.display = "none";
 
   // Build property tabs
   for (var i=0; i<odData.properties.length; i++) {
