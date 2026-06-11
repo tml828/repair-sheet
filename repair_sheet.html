@@ -134,12 +134,14 @@ h1{font-size:18px;font-weight:600;color:#111}
 /* ORDERS */
 .od-prop-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:1rem;padding-bottom:2px}
 .od-prop-tabs::-webkit-scrollbar{display:none}
-.od-ptab{flex-shrink:0;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;border:2px solid #e0e0dc;background:#fff;color:#777;cursor:pointer;font-family:inherit;transition:all .15s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
-.od-ptab.active{background:#143d2e;border-color:#143d2e;color:#fff}
-.od-ptab-add{flex-shrink:0;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;border:2px dashed #1D9E75;background:transparent;color:#1D9E75;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;white-space:nowrap}
-.od-prop-panel{display:none}.od-prop-panel.active{display:block}
-.od-prop-head{background:#fff;border:1px solid #e5e5e2;border-radius:14px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
-.od-prop-addr-inp{flex:1;font-size:15px;font-weight:600;border:none;background:transparent;color:#111;outline:none;font-family:inherit;min-width:0}
+.od-add-prop-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border:2px dashed #1D9E75;border-radius:14px;background:#f6fdf9;color:#1D9E75;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:12px;-webkit-tap-highlight-color:transparent}
+.od-prop-card{background:#fff;border:1px solid #e5e5e2;border-radius:14px;overflow:hidden;margin-bottom:10px}
+.od-prop-card-head{display:flex;align-items:center;gap:10px;padding:13px 16px;background:#fafaf8;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.od-prop-card.open .od-prop-card-head{border-bottom:1px solid #f0f0ed}
+.od-prop-chev{flex-shrink:0;transition:transform .15s;color:#9ca3af;display:flex}
+.od-prop-card.open .od-prop-chev{transform:rotate(90deg)}
+.od-prop-card-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.od-prop-addr-inp{flex:1;font-size:15px;font-weight:700;border:none;background:transparent;color:#111;outline:none;font-family:inherit;min-width:0}
 .od-prop-addr-inp::placeholder{color:#ccc;font-weight:400}
 .od-prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .od-room-card{background:#fff;border:1px solid #e5e5e2;border-radius:14px;overflow:hidden;margin-bottom:10px}
@@ -275,14 +277,16 @@ h1{font-size:18px;font-weight:600;color:#111}
       <input id="odApiKeyInput" class="od-key-inp" type="password" placeholder="sk-ant-api03-..." />
       <button class="od-key-save" onclick="saveOdApiKey()">Save key</button>
     </div>
-    <div style="font-size:11px;color:#92400e">Saved only in your browser — only sent to Anthropic when you tap Analyze.</div>
+    <div style="font-size:11px;color:#92400e">Saved only in your browser — only sent to Anthropic when you upload a pic.</div>
   </div>
 
-  <!-- Property tabs -->
-  <div class="od-prop-tabs" id="odPropTabs"></div>
+  <button class="od-add-prop-btn" onclick="addOdProperty()">
+    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add Property
+  </button>
 
-  <!-- Property panels -->
-  <div id="odPropPanels"></div>
+  <!-- Property cards -->
+  <div id="odPropList"></div>
 
   <div class="footer" style="margin-top:1rem">Apex Homes LLC &nbsp;&middot;&nbsp; Auto-saves in your browser</div>
 </div>
@@ -1496,6 +1500,7 @@ function loadOd() {
   for (var i=0; i<odData.properties.length; i++) {
     var p = odData.properties[i];
     p.addr = (typeof p.addr === "string") ? p.addr : "";
+    p.open = !!p.open;
     if (!Array.isArray(p.pics)) p.pics = [];
     for (var j=0; j<p.pics.length; j++) {
       var pic = p.pics[j];
@@ -1530,7 +1535,7 @@ function getActiveProp() {
 
 function addOdProperty() {
   var id = Date.now() + Math.random();
-  odData.properties.push({id:id, addr:"", pics:[], activePicId:null});
+  odData.properties.push({id:id, addr:"", pics:[], open:true});
   odData.activePropId = id;
   saveOd();
   renderOrders();
@@ -1545,17 +1550,31 @@ function deleteOdProperty(id) {
   saveOd(); renderOrders();
 }
 
-function addOdPic(prop) {
-  var id = Date.now() + Math.random();
-  prop.pics.push({id:id, roomName:"", photo:null, items:[]});
-  prop.activePicId = id;
-  saveOd(); renderOrders();
-  var el = document.getElementById("odrn-"+id);
-  if (el) el.focus();
+function handleOdUpload(prop, input) {
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement("canvas");
+      var max=1600, w=img.width, h=img.height;
+      if (w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} }
+      canvas.width=w; canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      var pic = {id: Date.now() + Math.random(), roomName:"", photo: canvas.toDataURL("image/jpeg", 0.85), items:[]};
+      prop.pics.push(pic);
+      prop.open = true;
+      saveOd(); renderOrders();
+      analyzeOdPic(prop, pic);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value = "";
 }
 
 function deleteOdPic(prop, picId) {
-  if (!confirm("Delete this room pic and all its items?")) return;
+  if (!confirm("Delete this pic and all its items?")) return;
   prop.pics = prop.pics.filter(function(x){ return x.id != picId; });
   if (prop.activePicId == picId) prop.activePicId = prop.pics.length ? prop.pics[0].id : null;
   saveOd(); renderOrders();
@@ -1602,11 +1621,13 @@ function analyzeOdPic(prop, pic) {
   if (!pic.photo) return;
   var key = getOdApiKey();
   if (!key) {
-    showToast("AI key not configured");
+    pic.roomName = pic.roomName || "New pic";
+    saveOd(); renderOrders();
+    showToast("Add your API key (yellow banner) to auto-detect items");
     return;
   }
-  var btn = document.getElementById("od-ai-"+pic.id);
-  if (btn) { btn.disabled = true; btn.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> Analyzing…'; }
+  var lbl = document.getElementById("od-room-"+pic.id);
+  if (lbl) lbl.textContent = "Analyzing…";
 
   var base64 = pic.photo.split(",")[1];
   var mediaType = pic.photo.startsWith("data:image/png") ? "image/png" : "image/jpeg";
@@ -1624,214 +1645,168 @@ function analyzeOdPic(prop, pic) {
       max_tokens:1024,
       messages:[{role:"user", content:[
         {type:"image", source:{type:"base64", media_type:mediaType, data:base64}},
-        {type:"text", text:"This is an interior design spec sheet or mood board. List every distinct item that needs to be ordered/purchased. Output ONLY a plain numbered list, one item per line, no extra commentary. Be specific (e.g. 'Cream linen sofa' not just 'sofa'). Include furniture, lighting, rugs, hardware, accessories, and any other purchasable items visible or called out."}
+        {type:"text", text:"This is an interior design spec sheet or mood board. First line of your reply must be exactly 'ROOM: <room name>' (the room this design is for, e.g. Kitchen, Master Bedroom — use 'Design' if unclear). Then list every distinct item that needs to be ordered/purchased as a plain numbered list, one item per line, no extra commentary. Be specific (e.g. 'Cream linen sofa' not just 'sofa'). Include furniture, lighting, rugs, hardware, accessories, and any other purchasable items visible or called out."}
       ]}]
     })
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
-    if (btn) { btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic'; }
-    if (data.error) { showToast("AI error: " + (data.error.message || data.error.type)); return; }
-    if (!data.content || !data.content[0]) { showToast("AI returned nothing — try again"); return; }
+    if (data.error) { aiFail(pic, "AI error: " + (data.error.message || data.error.type)); return; }
+    if (!data.content || !data.content[0]) { aiFail(pic, "AI returned nothing — try again"); return; }
     var lines = (data.content[0].text||"").split("\n")
-      .map(function(l){ return l.replace(/^\d+[\.\)]\s*/,"").trim(); })
+      .map(function(l){ return l.trim(); })
       .filter(function(l){ return l.length > 0; });
-    if (!lines.length) { showToast("No items detected"); return; }
+    if (lines.length && /^ROOM:/i.test(lines[0])) {
+      pic.roomName = lines[0].replace(/^ROOM:\s*/i, "").trim() || "Design";
+      lines.shift();
+    }
+    lines = lines.map(function(l){ return l.replace(/^\d+[\.\)]\s*/,"").trim(); })
+                 .filter(function(l){ return l.length > 0; });
+    if (!pic.roomName) pic.roomName = "Design";
+    if (!lines.length) { aiFail(pic, "No items detected"); return; }
     for (var i=0; i<lines.length; i++) {
       pic.items.push({id:Date.now()+Math.random()+i, name:lines[i], purchased:false, store:"", date:""});
     }
     saveOd(); renderOrders();
-    showToast(lines.length + " items added");
+    showToast(lines.length + " items added — " + pic.roomName);
   })
   .catch(function(){
-    if (btn) { btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic'; }
-    showToast("AI error — check connection and API key");
+    aiFail(pic, "AI error — check connection and API key");
   });
 }
 
-function handleOdPhoto(prop, pic, input) {
-  var file = input.files[0]; if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var img = new Image();
-    img.onload = function() {
-      var canvas = document.createElement("canvas");
-      var max=1600, w=img.width, h=img.height;
-      if (w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} }
-      canvas.width=w; canvas.height=h;
-      canvas.getContext("2d").drawImage(img,0,0,w,h);
-      pic.photo = canvas.toDataURL("image/jpeg", 0.85);
-      saveOd(); renderOrders();
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-  input.value = "";
+function aiFail(pic, msg) {
+  if (!pic.roomName) pic.roomName = "New pic";
+  saveOd(); renderOrders();
+  showToast(msg);
 }
 
 function renderOrders() {
-  var tabsWrap   = document.getElementById("odPropTabs");
-  var panelsWrap = document.getElementById("odPropPanels");
-  while (tabsWrap.firstChild) tabsWrap.removeChild(tabsWrap.firstChild);
-  while (panelsWrap.firstChild) panelsWrap.removeChild(panelsWrap.firstChild);
+  var listWrap = document.getElementById("odPropList");
+  while (listWrap.firstChild) listWrap.removeChild(listWrap.firstChild);
 
   // show/hide API key banner
   document.getElementById("odKeyBanner").style.display = getOdApiKey() ? "none" : "block";
 
-  // Build property tabs
-  for (var i=0; i<odData.properties.length; i++) {
-    var prop = odData.properties[i];
-    var isActive = (prop.id == odData.activePropId);
-    var tab = document.createElement("button");
-    tab.className = "od-ptab" + (isActive ? " active" : "");
-    var total=0, done=0;
-    for (var j=0; j<prop.pics.length; j++) {
-      total += prop.pics[j].items.length;
-      done  += prop.pics[j].items.filter(function(x){ return x.purchased; }).length;
-    }
-    tab.textContent = (prop.addr || "Property " + (i+1)) + " (" + done + "/" + total + ")";
-    (function(id){ tab.onclick = function(){ odData.activePropId=id; renderOrders(); }; })(prop.id);
-    tabsWrap.appendChild(tab);
-  }
-
-  // Add property button
-  var addPropBtn = document.createElement("button");
-  addPropBtn.className = "od-ptab-add";
-  addPropBtn.textContent = "+ Add property";
-  addPropBtn.onclick = addOdProperty;
-  tabsWrap.appendChild(addPropBtn);
-
-  var activeProp = getActiveProp();
-  if (!activeProp) {
+  if (!odData.properties.length) {
     var empty = document.createElement("div");
     empty.className = "wt-empty";
-    empty.textContent = 'Tap "+ Add property" to get started.';
-    panelsWrap.appendChild(empty);
+    empty.textContent = 'Tap "+ Add Property" to get started.';
+    listWrap.appendChild(empty);
     return;
   }
 
-  // Property panel
-  var panel = document.createElement("div");
-  panel.className = "od-prop-panel active";
+  for (var i=0; i<odData.properties.length; i++) {
+    listWrap.appendChild(buildOdPropCard(odData.properties[i], i));
+  }
+}
 
-  // Address row
+function buildOdPropCard(prop, idx) {
+  var card = document.createElement("div");
+  card.className = "od-prop-card" + (prop.open ? " open" : "");
+
+  // Header: chevron + address + count + delete (tap header to expand/collapse)
   var head = document.createElement("div");
-  head.className = "od-prop-head";
+  head.className = "od-prop-card-head";
+  (function(p){ head.onclick = function(){ p.open = !p.open; saveOd(); renderOrders(); }; })(prop);
+
+  var chev = document.createElement("span");
+  chev.className = "od-prop-chev";
+  chev.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  head.appendChild(chev);
+
   var addrInp = document.createElement("input");
   addrInp.className = "od-prop-addr-inp";
   addrInp.placeholder = "Property address";
-  addrInp.value = activeProp.addr;
-  addrInp.id = "odpa-" + activeProp.id;
-  (function(p){
-    addrInp.oninput = function(){ p.addr=addrInp.value; saveOd(); };
-    addrInp.onblur  = function(){ renderOrders(); }; // refresh tab label after typing is done
-  })(activeProp);
+  addrInp.value = prop.addr;
+  addrInp.id = "odpa-" + prop.id;
+  addrInp.onclick = function(e){ e.stopPropagation(); };
+  (function(p){ addrInp.oninput = function(){ p.addr=addrInp.value; saveOd(); }; })(prop);
+  head.appendChild(addrInp);
+
+  var total=0, done=0;
+  for (var j=0; j<prop.pics.length; j++) {
+    total += prop.pics[j].items.length;
+    done  += prop.pics[j].items.filter(function(x){ return x.purchased; }).length;
+  }
+  var countLbl = document.createElement("span");
+  countLbl.style.cssText = "font-size:12px;font-weight:600;color:#1D9E75;white-space:nowrap;flex-shrink:0";
+  countLbl.textContent = done + "/" + total;
+  head.appendChild(countLbl);
+
   var delPropBtn = document.createElement("button");
   delPropBtn.className = "del-btn";
   delPropBtn.title = "Delete property";
   delPropBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
-  (function(id){ delPropBtn.onclick = function(){ deleteOdProperty(id); }; })(activeProp.id);
-  head.appendChild(addrInp); head.appendChild(delPropBtn);
-  panel.appendChild(head);
+  (function(id){ delPropBtn.onclick = function(e){ e.stopPropagation(); deleteOdProperty(id); }; })(prop.id);
+  head.appendChild(delPropBtn);
+  card.appendChild(head);
 
-  // Room cards (one per pic)
-  for (var j=0; j<activeProp.pics.length; j++) {
-    panel.appendChild(buildOdPicCard(activeProp, activeProp.pics[j], j));
+  if (!prop.open) return card;
+
+  // Body: uploaded pics with their item lists, then the upload button
+  var body = document.createElement("div");
+  body.className = "od-prop-card-body";
+
+  for (var j=0; j<prop.pics.length; j++) {
+    body.appendChild(buildOdPicBlock(prop, prop.pics[j]));
   }
 
-  // Add room button
-  var addRoomBtn = document.createElement("button");
-  addRoomBtn.className = "od-add-room-btn";
-  addRoomBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add room';
-  (function(p){ addRoomBtn.onclick = function(){ addOdPic(p); }; })(activeProp);
-  panel.appendChild(addRoomBtn);
+  var upLabel = document.createElement("label");
+  upLabel.className = "od-upload-btn";
+  upLabel.style.justifyContent = "center";
+  upLabel.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Upload design pic';
+  var fileInp = document.createElement("input");
+  fileInp.type="file"; fileInp.accept="image/*"; fileInp.style.display="none";
+  (function(p){ fileInp.onchange = function(){ handleOdUpload(p, this); }; })(prop);
+  upLabel.appendChild(fileInp);
+  body.appendChild(upLabel);
 
-  panelsWrap.appendChild(panel);
+  card.appendChild(body);
+  return card;
 }
 
-function buildOdPicCard(prop, pic, idx) {
-  var card = document.createElement("div");
-  card.className = "od-room-card";
+function buildOdPicBlock(prop, pic) {
+  var block = document.createElement("div");
+  block.style.cssText = "border:1px solid #f0f0ed;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px";
 
-  // Card header: room name + delete
-  var cardHead = document.createElement("div");
-  cardHead.className = "od-room-card-head";
-  var roomNameInp = document.createElement("input");
-  roomNameInp.className = "od-room-name-inp";
-  roomNameInp.placeholder = "Room name (e.g. Kitchen, Master Bedroom)";
-  roomNameInp.value = pic.roomName;
-  roomNameInp.id = "odrn-" + pic.id;
-  (function(p){ roomNameInp.oninput = function(){ p.roomName=roomNameInp.value; saveOd(); }; })(pic);
-  var picDoneCount = pic.items.filter(function(x){ return x.purchased; }).length;
-  var countLbl = document.createElement("span");
-  countLbl.style.cssText = "font-size:12px;font-weight:600;color:#1D9E75;white-space:nowrap;flex-shrink:0";
-  countLbl.textContent = picDoneCount + "/" + pic.items.length;
+  // Top row: thumbnail + room name + delete
+  var top = document.createElement("div");
+  top.style.cssText = "display:flex;align-items:center;gap:10px";
+  if (pic.photo) {
+    var thumb = document.createElement("img");
+    thumb.src = pic.photo;
+    thumb.style.cssText = "width:52px;height:52px;object-fit:cover;border-radius:8px;cursor:pointer;flex-shrink:0";
+    (function(src){ thumb.onclick = function(){ openLightbox(src); }; })(pic.photo);
+    top.appendChild(thumb);
+  }
+  var roomLbl = document.createElement("div");
+  roomLbl.style.cssText = "flex:1;min-width:0;font-size:14px;font-weight:700;color:#111";
+  roomLbl.id = "od-room-" + pic.id;
+  roomLbl.textContent = pic.roomName || "Analyzing…";
+  top.appendChild(roomLbl);
   var delPicBtn = document.createElement("button");
   delPicBtn.className = "del-btn";
   delPicBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
   (function(pr, id){ delPicBtn.onclick = function(){ deleteOdPic(pr, id); }; })(prop, pic.id);
-  cardHead.appendChild(roomNameInp); cardHead.appendChild(countLbl); cardHead.appendChild(delPicBtn);
-  card.appendChild(cardHead);
+  top.appendChild(delPicBtn);
+  block.appendChild(top);
 
-  // Card body
-  var body = document.createElement("div");
-  body.className = "od-room-card-body";
-
-  // Upload / photo + analyze zone
-  var uploadZone = document.createElement("div");
-  uploadZone.className = "od-upload-zone";
-
-  if (pic.photo) {
-    var thumb = document.createElement("div");
-    thumb.className = "od-design-thumb";
-    var thumbImg = document.createElement("img"); thumbImg.src = pic.photo;
-    (function(src){ thumbImg.onclick = function(){ openLightbox(src); }; })(pic.photo);
-    var thumbDel = document.createElement("button");
-    thumbDel.className = "od-design-thumb-del"; thumbDel.innerHTML = "&#10005;";
-    (function(pr, p){ thumbDel.onclick = function(e){ e.stopPropagation(); p.photo=null; saveOd(); renderOrders(); }; })(prop, pic);
-    thumb.appendChild(thumbImg); thumb.appendChild(thumbDel);
-    uploadZone.appendChild(thumb);
-
-    var aiBtn = document.createElement("button");
-    aiBtn.className = "od-ai-btn";
-    aiBtn.id = "od-ai-" + pic.id;
-    aiBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M9 12l2 2 4-4"/></svg> Analyze pic';
-    (function(pr, p){ aiBtn.onclick = function(){ analyzeOdPic(pr, p); }; })(prop, pic);
-    uploadZone.appendChild(aiBtn);
-  } else {
-    var upLabel = document.createElement("label");
-    upLabel.className = "od-upload-btn";
-    upLabel.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Upload design pic';
-    var fileInp = document.createElement("input");
-    fileInp.type="file"; fileInp.accept="image/*"; fileInp.style.display="none";
-    (function(pr, p){ fileInp.onchange = function(){ handleOdPhoto(pr, p, this); }; })(prop, pic);
-    upLabel.appendChild(fileInp);
-    uploadZone.appendChild(upLabel);
-  }
-  body.appendChild(uploadZone);
-
-  // Items list
+  // Items
   var itemsList = document.createElement("div");
   itemsList.className = "od-items-list";
-  if (!pic.items.length) {
-    var hint = document.createElement("div");
-    hint.style.cssText = "font-size:13px;color:#bbb;padding:4px 0";
-    hint.textContent = pic.photo ? "Tap \"Analyze pic\" to auto-generate the list, or add items below." : "Upload a design pic, then tap Analyze — or add items manually.";
-    itemsList.appendChild(hint);
-  }
   for (var k=0; k<pic.items.length; k++) {
     itemsList.appendChild(buildOdItemRow(prop, pic, pic.items[k]));
   }
-  body.appendChild(itemsList);
+  block.appendChild(itemsList);
 
   var addItemBtn = document.createElement("button");
   addItemBtn.className = "od-add-item-link";
   addItemBtn.textContent = "+ Add item";
   (function(pr, p){ addItemBtn.onclick = function(){ addOdItem(pr, p); }; })(prop, pic);
-  body.appendChild(addItemBtn);
+  block.appendChild(addItemBtn);
 
-  card.appendChild(body);
-  return card;
+  return block;
 }
 
 function buildOdItemRow(prop, pic, item) {
