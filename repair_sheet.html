@@ -175,6 +175,7 @@ h1{font-size:18px;font-weight:600;color:#111}
   <button class="tab-btn active" onclick="switchTab('sheet')">Repair Sheet</button>
   <button class="tab-btn" onclick="switchTab('walkthrough')">Walkthrough</button>
   <button class="tab-btn" onclick="switchTab('orders')">Orders</button>
+  <button class="tab-btn" style="flex:0 0 auto;padding:12px 18px" title="Cloud sync" onclick="openSyncModal()" id="syncBtn">&#10227; Sync</button>
 </div>
 <div class="tab-spacer"></div>
 <div id="tab-sheet" class="tab-content active">
@@ -442,6 +443,7 @@ function save() {
   state.date    = document.getElementById("propDate").value;
   try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) { storageWarn(); }
   updateSummary();
+  cloudMark("sheet");
 }
 
 function updateSummary() {
@@ -983,6 +985,7 @@ function saveWt() {
   wtData.date = document.getElementById("wtDate").value;
   try { localStorage.setItem("apexWalkthrough", JSON.stringify(wtData)); } catch(e) { storageWarn(); }
   updateWtProgress();
+  cloudMark("walkthrough");
 }
 
 function loadWt() {
@@ -1492,6 +1495,7 @@ function saveOd() {
   odData.addr = document.getElementById("odAddr").value;
   try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) { storageWarn(); }
   updateOdProgress();
+  cloudMark("orders");
 }
 
 function loadOd() {
@@ -1864,9 +1868,192 @@ function handleOdPhoto(room, input) {
   input.value = "";
 }
 
+// ===== CLOUD SYNC (whole app, all devices) =====
+// One row in app_state holds all three sections; per-section timestamps so the
+// newest edit wins per tab, never clobbering a newer change from another device.
+var cloudMeta = {id:null, sheet_at:0, walkthrough_at:0, orders_at:0};
+
+function loadCloudMeta() {
+  try { var s = localStorage.getItem("apexCloudSync"); if (s) { var d = JSON.parse(s); if (d && d.id) cloudMeta = d; } } catch(e) {}
+}
+function saveCloudMeta() {
+  try { localStorage.setItem("apexCloudSync", JSON.stringify(cloudMeta)); } catch(e) {}
+}
+
+var cloudTimer = null;
+function cloudMark(section) {
+  if (!cloudMeta.id) return;
+  cloudMeta[section + "_at"] = Date.now();
+  saveCloudMeta();
+  clearTimeout(cloudTimer);
+  cloudTimer = setTimeout(cloudPush, 2000);
+}
+
+function cloudPush() {
+  if (!cloudMeta.id) return;
+  // pull first so we never overwrite a newer change from another device
+  cloudPullMerge(function() {
+    sbFetch('PATCH', 'app_state?id=eq.' + cloudMeta.id, {
+      sheet: state, walkthrough: wtData, orders: odData,
+      sheet_at: cloudMeta.sheet_at, walkthrough_at: cloudMeta.walkthrough_at, orders_at: cloudMeta.orders_at
+    }).then(function(res) {
+      if (!res.ok) showToast("Sync failed — changes saved on this device only");
+    }).catch(function(){ showToast("Offline — changes saved on this device only"); });
+  });
+}
+
+function cloudPullMerge(done) {
+  if (!cloudMeta.id) { if (done) done(); return; }
+  sbFetch('GET', 'app_state?id=eq.' + cloudMeta.id + '&limit=1').then(function(res) {
+    if (res.ok && res.data && res.data[0]) {
+      var row = res.data[0];
+      var changed = false;
+      if ((row.sheet_at||0) > (cloudMeta.sheet_at||0) && row.sheet) {
+        state = row.sheet; cloudMeta.sheet_at = row.sheet_at; applyCloudSheet(); changed = true;
+      }
+      if ((row.walkthrough_at||0) > (cloudMeta.walkthrough_at||0) && row.walkthrough) {
+        wtData = row.walkthrough; cloudMeta.walkthrough_at = row.walkthrough_at; applyCloudWalkthrough(); changed = true;
+      }
+      if ((row.orders_at||0) > (cloudMeta.orders_at||0) && row.orders) {
+        odData = row.orders; cloudMeta.orders_at = row.orders_at; applyCloudOrders(); changed = true;
+      }
+      if (changed) { saveCloudMeta(); showToast("Synced from cloud"); }
+    }
+    if (done) done();
+  }).catch(function(){ if (done) done(); });
+}
+
+function applyCloudSheet() {
+  if (!state.repairs) state.repairs = {};
+  if (!state.open) state.open = {};
+  for (var i=0; i<ALL_SECTIONS.length; i++) {
+    if (!state.repairs[ALL_SECTIONS[i].id]) state.repairs[ALL_SECTIONS[i].id] = [];
+  }
+  try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) {}
+  document.getElementById("propAddr").value = state.address || "";
+  document.getElementById("propCity").value = state.city || "";
+  document.getElementById("propDate").value = state.date || "";
+  renderAll();
+}
+function applyCloudWalkthrough() {
+  if (!wtData.items) wtData.items = [];
+  try { localStorage.setItem("apexWalkthrough", JSON.stringify(wtData)); } catch(e) {}
+  document.getElementById("wtAddr").value = wtData.addr || "";
+  document.getElementById("wtCity").value = wtData.city || "";
+  document.getElementById("wtDate").value = wtData.date || "";
+  renderWalkthrough();
+}
+function applyCloudOrders() {
+  if (!odData.rooms) odData.rooms = [];
+  try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) {}
+  document.getElementById("odAddr").value = odData.addr || "";
+  renderOrders();
+}
+
+function startCloudSync() {
+  var now = Date.now();
+  cloudMeta.sheet_at = now; cloudMeta.walkthrough_at = now; cloudMeta.orders_at = now;
+  sbFetch('POST', 'app_state', {
+    sheet: state, walkthrough: wtData, orders: odData,
+    sheet_at: now, walkthrough_at: now, orders_at: now
+  }).then(function(res) {
+    if (res.ok && res.data && res.data[0] && res.data[0].id) {
+      cloudMeta.id = res.data[0].id;
+      saveCloudMeta();
+      updateSyncBtn();
+      openSyncModal(); // re-open showing the code
+    } else {
+      alert("Could not start sync. Make sure the app_state table exists in Supabase (see setup SQL).");
+    }
+  }).catch(function(){ alert("Network error — could not reach Supabase."); });
+}
+
+function joinCloudSync() {
+  var code = prompt("Paste the sync code from your other device:");
+  if (!code) return;
+  code = code.trim();
+  sbFetch('GET', 'app_state?id=eq.' + encodeURIComponent(code) + '&limit=1').then(function(res) {
+    if (res.ok && res.data && res.data[0]) {
+      cloudMeta = {id: code, sheet_at: 0, walkthrough_at: 0, orders_at: 0};
+      saveCloudMeta();
+      cloudPullMerge(function() {
+        updateSyncBtn();
+        showToast("Connected — data synced from cloud");
+      });
+    } else {
+      alert("Code not found. Double-check it and try again.");
+    }
+  }).catch(function(){ alert("Network error — could not reach Supabase."); });
+}
+
+function stopCloudSync() {
+  if (!confirm("Stop syncing on this device? Your data stays here and on other devices, but changes will no longer be shared.")) return;
+  cloudMeta = {id:null, sheet_at:0, walkthrough_at:0, orders_at:0};
+  saveCloudMeta();
+  updateSyncBtn();
+  showToast("Sync off on this device");
+}
+
+function updateSyncBtn() {
+  var b = document.getElementById("syncBtn");
+  if (b) b.innerHTML = cloudMeta.id ? "&#10227; Sync &#10003;" : "&#10227; Sync";
+}
+
+function openSyncModal() {
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:flex-end;justify-content:center";
+  var sheet = document.createElement("div");
+  sheet.style.cssText = "background:#fff;border-radius:18px 18px 0 0;padding:20px 18px 28px;width:100%;max-width:520px;box-shadow:0 -8px 40px rgba(0,0,0,.25)";
+  function close(){ if (overlay.parentNode) document.body.removeChild(overlay); }
+  overlay.onclick = function(e){ if (e.target === overlay) close(); };
+
+  var title = document.createElement("div");
+  title.style.cssText = "font-size:16px;font-weight:700;color:#111;margin-bottom:6px";
+  var sub = document.createElement("div");
+  sub.style.cssText = "font-size:13px;color:#888;margin-bottom:16px";
+  sheet.appendChild(title); sheet.appendChild(sub);
+
+  function makeBtn(label, bg, fg, fn) {
+    var b = document.createElement("button");
+    b.textContent = label;
+    b.style.cssText = "display:block;width:100%;padding:13px;margin-bottom:10px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;background:"+bg+";color:"+fg;
+    b.onclick = function(){ close(); fn(); };
+    sheet.appendChild(b);
+  }
+
+  if (cloudMeta.id) {
+    title.textContent = "Sync is ON";
+    sub.textContent = "All three tabs sync across devices. Enter this code on another device to connect it:";
+    var codeBox = document.createElement("div");
+    codeBox.style.cssText = "font-family:monospace;font-size:13px;background:#f0f0ed;border-radius:10px;padding:12px;word-break:break-all;color:#111;margin-bottom:14px;user-select:all";
+    codeBox.textContent = cloudMeta.id;
+    sheet.appendChild(codeBox);
+    makeBtn("Copy sync code", "#1D9E75", "#fff", function(){ copyText(cloudMeta.id); });
+    makeBtn("Sync now", "#143d2e", "#fff", function(){ cloudPullMerge(function(){ showToast("Up to date"); }); });
+    makeBtn("Stop syncing on this device", "#fee2e2", "#b91c1c", stopCloudSync);
+  } else {
+    title.textContent = "Cloud Sync";
+    sub.textContent = "Sync the Repair Sheet, Walkthrough, and Orders across your devices.";
+    makeBtn("Turn on sync (this is my first device)", "#1D9E75", "#fff", startCloudSync);
+    makeBtn("I have a code from another device", "#143d2e", "#fff", joinCloudSync);
+  }
+  makeBtn("Close", "#f0f0ed", "#555", function(){});
+
+  overlay.appendChild(sheet);
+  document.body.appendChild(overlay);
+}
+
 loadWt();
 loadOd();
 renderOrders();
+loadCloudMeta();
+updateSyncBtn();
+cloudPullMerge();
+
+// re-check the cloud whenever the app comes back to the foreground
+document.addEventListener("visibilitychange", function() {
+  if (!document.hidden) cloudPullMerge();
+});
 
 // Contractor link takes priority over everything else
 var wtParam = new URLSearchParams(window.location.search).get('wt');

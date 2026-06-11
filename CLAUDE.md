@@ -20,7 +20,14 @@
 - Project URL: `https://ehlipciasutoderxgptx.supabase.co`
 - Anon key: stored in `SB_KEY` var in the HTML file
 - Table: `walkthroughs` — columns: `id uuid pk`, `address text`, `city text`, `date text`, `items jsonb`, `created_at timestamptz`
-- RLS: anyone can read/insert/update (required for contractor link to work)
+- Table: `app_state` — whole-app cross-device sync: `id uuid pk default gen_random_uuid()`, `sheet jsonb`, `walkthrough jsonb`, `orders jsonb`, `sheet_at bigint`, `walkthrough_at bigint`, `orders_at bigint`
+- RLS: anyone can read/insert/update on both tables (required for contractor link + sync codes)
+
+## Cloud Sync
+- "Sync" button in tab bar → `openSyncModal()`; sync code = `app_state` row UUID, stored in localStorage `apexCloudSync`
+- `cloudMark(section)` called from save()/saveWt()/saveOd(); debounced 2s push, pull-before-push
+- Per-section `_at` timestamps: newest wins per tab, never whole-row clobber
+- Pull on load + `visibilitychange`
 
 ## Key Features
 1. **Repair Sheet tab** — checklist with notes, photos, categories; saved to localStorage
