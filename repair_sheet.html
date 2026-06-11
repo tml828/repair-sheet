@@ -1512,6 +1512,7 @@ function loadOd() {
         var it = pic.items[k];
         it.name      = (typeof it.name  === "string") ? it.name  : "";
         it.img       = (typeof it.img   === "string") ? it.img   : null;
+        it.qty       = (typeof it.qty   === "number" && it.qty >= 1) ? it.qty : 1;
         it.store     = (typeof it.store === "string") ? it.store : "";
         it.date      = (typeof it.date  === "string") ? it.date  : "";
         it.purchased = !!it.purchased;
@@ -1584,7 +1585,7 @@ function deleteOdPic(prop, picId) {
 
 function addOdItem(prop, pic) {
   var id = Date.now() + Math.random();
-  pic.items.push({id:id, name:"", purchased:false, store:"", date:""});
+  pic.items.push({id:id, name:"", qty:1, purchased:false, store:"", date:""});
   saveOd(); renderOrders();
   var el = document.getElementById("odi-"+id);
   if (el) el.focus();
@@ -1655,7 +1656,7 @@ function odAiRequest(prop, pic, base64, mediaType, imgW, imgH) {
       max_tokens:2048,
       messages:[{role:"user", content:[
         {type:"image", source:{type:"base64", media_type:mediaType, data:base64}},
-        {type:"text", text:"This is an interior design spec sheet or mood board. The image is exactly " + imgW + " pixels wide and " + imgH + " pixels tall. Find every distinct purchasable item (furniture, lighting, rugs, hardware, accessories). Reply with ONLY this JSON, no other text or markdown fences: {\"room\":\"<room name, e.g. Kitchen, Master Bedroom — use 'Design' if unclear>\",\"items\":[{\"box\":[x1,y1,x2,y2]}]} where each box is the tight pixel bounding box around one item's picture in the image (x1,y1 = top-left, x2,y2 = bottom-right)."}
+        {type:"text", text:"This is an interior design spec sheet or mood board. The image is exactly " + imgW + " pixels wide and " + imgH + " pixels tall. Find every distinct purchasable item (furniture, lighting, rugs, hardware, accessories). If the same item appears more than once in the image (duplicates, pairs, or the same product shown again), include it only ONCE — one box for the clearest instance. Reply with ONLY this JSON, no other text or markdown fences: {\"room\":\"<room name, e.g. Kitchen, Master Bedroom — use 'Design' if unclear>\",\"items\":[{\"box\":[x1,y1,x2,y2]}]} where each box is the tight pixel bounding box around one item's picture in the image (x1,y1 = top-left, x2,y2 = bottom-right)."}
       ]}]
     })
   })
@@ -1677,7 +1678,7 @@ function odAiRequest(prop, pic, base64, mediaType, imgW, imgH) {
       for (var i=0; i<parsed.items.length; i++) {
         var crop = cropOdItem(img, parsed.items[i].box);
         if (!crop) continue;
-        pic.items.push({id:Date.now()+Math.random()+i, name:"", img:crop, purchased:false, store:"", date:""});
+        pic.items.push({id:Date.now()+Math.random()+i, name:"", img:crop, qty:1, purchased:false, store:"", date:""});
         added++;
       }
       if (!added) { aiFail(pic, "No items detected"); return; }
@@ -1852,13 +1853,36 @@ function buildOdItemRow(prop, pic, item) {
   var fields = document.createElement("div");
   fields.className = "od-item-fields";
 
+  // Qty stepper: − count +
+  var qtyWrap = document.createElement("div");
+  qtyWrap.style.cssText = "display:flex;align-items:center;gap:0;border:1px solid #2B2B33;border-radius:8px;overflow:hidden;background:#101013;flex-shrink:0;align-self:flex-start";
+  function qtyBtn(txt) {
+    var b = document.createElement("button");
+    b.textContent = txt;
+    b.style.cssText = "width:28px;height:28px;border:none;background:transparent;color:#E9C964;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;line-height:1";
+    return b;
+  }
+  var minusB = qtyBtn("−"), plusB = qtyBtn("+");
+  var qtyVal = document.createElement("span");
+  qtyVal.style.cssText = "min-width:24px;text-align:center;font-size:13px;font-weight:700;color:#F5F2E9";
+  qtyVal.textContent = item.qty || 1;
+  (function(it, v){
+    minusB.onclick = function(){ it.qty = Math.max(1, (it.qty||1) - 1); v.textContent = it.qty; saveOd(); };
+    plusB.onclick  = function(){ it.qty = (it.qty||1) + 1; v.textContent = it.qty; saveOd(); };
+  })(item, qtyVal);
+  qtyWrap.appendChild(minusB); qtyWrap.appendChild(qtyVal); qtyWrap.appendChild(plusB);
+
   if (item.img) {
     // AI-cropped item pic — tap to enlarge
+    var picRow = document.createElement("div");
+    picRow.style.cssText = "display:flex;align-items:flex-start;gap:10px";
     var itemPic = document.createElement("img");
     itemPic.src = item.img;
     itemPic.style.cssText = "width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #2B2B33;cursor:pointer;background:#101013";
     (function(src){ itemPic.onclick = function(){ openLightbox(src); }; })(item.img);
-    fields.appendChild(itemPic);
+    picRow.appendChild(itemPic);
+    picRow.appendChild(qtyWrap);
+    fields.appendChild(picRow);
   } else {
     var name = document.createElement("input");
     name.className = "od-item-name";
@@ -1878,7 +1902,13 @@ function buildOdItemRow(prop, pic, item) {
   date.type="date"; date.value=item.date;
   (function(it){ date.oninput = function(){ it.date=date.value; saveOd(); }; })(item);
   meta.appendChild(store); meta.appendChild(date);
-  if (!item.img) fields.appendChild(name);
+  if (!item.img) {
+    var nameRow = document.createElement("div");
+    nameRow.style.cssText = "display:flex;align-items:center;gap:8px";
+    nameRow.appendChild(name);
+    nameRow.appendChild(qtyWrap);
+    fields.appendChild(nameRow);
+  }
   fields.appendChild(meta);
 
   var delBtn = document.createElement("button");
