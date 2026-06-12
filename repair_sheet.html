@@ -1394,6 +1394,7 @@ function openLightbox(src) {
   var i = document.createElement("img");
   i.src = src;
   i.style.cssText = "max-width:95vw;max-height:85vh;border-radius:8px;box-shadow:0 4px 40px rgba(0,0,0,.6)";
+  o.onclick = function(e){ if (e.target === o) document.body.removeChild(o); };
   o.appendChild(x);
   o.appendChild(i);
   document.body.appendChild(o);
@@ -1428,7 +1429,7 @@ function syncFromSupabase() {
 
 // ORDERS — multi-property, room-per-pic, AI item detection
 // odData.properties: [{id, addr, activePicId, pics:[{id, photo, roomName, items:[{id,name,purchased,store,date}]}]}]
-var odData = {properties:[], activePropId:null};
+var odData = {properties:[]};
 
 function saveOd() {
   try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) { storageWarn(); }
@@ -1448,7 +1449,7 @@ function loadOd() {
     if (!Array.isArray(p.pics)) p.pics = [];
     for (var j=0; j<p.pics.length; j++) {
       var pic = p.pics[j];
-      pic.roomName = (typeof pic.roomName === "string") ? pic.roomName : "";
+      pic.roomName = (typeof pic.roomName === "string" && pic.roomName) ? pic.roomName : "New pic";
       pic.photo    = (typeof pic.photo    === "string") ? pic.photo    : null;
       if (!Array.isArray(pic.items)) pic.items = [];
       for (var k=0; k<pic.items.length; k++) {
@@ -1462,23 +1463,11 @@ function loadOd() {
       }
     }
   }
-  // ensure activePropId always points to an existing property
-  var validProp = false;
-  for (var i=0; i<odData.properties.length; i++) { if (odData.properties[i].id == odData.activePropId) { validProp=true; break; } }
-  if (!validProp) odData.activePropId = odData.properties.length ? odData.properties[0].id : null;
 }
-
-function applyCloudOrders() {
-  if (!odData.properties) odData.properties = [];
-  try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) {}
-  renderOrders();
-}
-
 
 function addOdProperty() {
   var id = Date.now() + Math.random();
   odData.properties.push({id:id, addr:"", pics:[], open:true});
-  odData.activePropId = id;
   saveOd();
   renderOrders();
   var el = document.getElementById("odpa-"+id);
@@ -1488,7 +1477,6 @@ function addOdProperty() {
 function deleteOdProperty(id) {
   if (!confirm("Delete this property and all its rooms/items?")) return;
   odData.properties = odData.properties.filter(function(x){ return x.id != id; });
-  if (odData.activePropId == id) odData.activePropId = odData.properties.length ? odData.properties[0].id : null;
   saveOd(); renderOrders();
 }
 
