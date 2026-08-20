@@ -11,8 +11,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .page{max-width:880px;margin:0 auto;padding:1.25rem 1rem 4rem}
 @media(max-width:480px){
   .page{padding:1rem .75rem 4rem}
-  .od-item-meta{flex-direction:column}
-  .od-meta{flex-direction:column}
   .prop-grid{grid-template-columns:1fr}
 }
 .header{background:#17171B;border-radius:16px;border:1px solid #2B2B33;padding:1.5rem;margin-bottom:1rem}
@@ -95,6 +93,8 @@ h1{font-size:18px;font-weight:600;color:#F5F2E9;letter-spacing:.3px}
 .tab-btn.active{background:linear-gradient(135deg,#E9C964,#C9A032);border-color:#C9A032;color:#141414;box-shadow:0 2px 12px rgba(212,175,55,.35)}
 .tab-btn:hover:not(.active){border-color:#D4AF37;color:#E9C964}
 #syncBtn{flex:0 0 auto;padding:8px 10px;font-size:12px;border-style:dashed;margin-left:2px}
+#syncBtn.sync-on{border-color:rgba(34,197,94,.6);color:#22c563;border-style:solid}
+#syncBtn.sync-off{border-color:rgba(248,113,113,.5);color:#F87171;border-style:solid}
 .tab-content{display:none}.tab-content.active{display:block}
 /* WALKTHROUGH */
 .wt-header{background:#17171B;border-radius:16px;border:1px solid #2B2B33;padding:1.5rem;margin-bottom:1rem}
@@ -107,6 +107,7 @@ h1{font-size:18px;font-weight:600;color:#F5F2E9;letter-spacing:.3px}
 .wt-item.done{border-color:rgba(212,175,55,.45);opacity:.65}
 .wt-item-head{display:flex;align-items:center;gap:12px;padding:14px 16px}
 .wt-check-wrap{display:flex;align-items:center;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.wt-check-wrap.has-checked .wt-check-label{color:#E9C964}
 .wt-check{width:28px;height:28px;border-radius:8px;border:2px solid #3A3A44;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#101013}
 .wt-check.checked{background:linear-gradient(135deg,#E9C964,#C9A032);border-color:#C9A032}
 .wt-check.checked::after{content:"\2713";color:#141414;font-size:15px;font-weight:700}
@@ -114,8 +115,6 @@ h1{font-size:18px;font-weight:600;color:#F5F2E9;letter-spacing:.3px}
 .wt-check-wrap:has(.checked) .wt-check-label{color:#E9C964}
 .wt-item-info{flex:1;min-width:0}
 .wt-item-area{font-size:11px;font-weight:600;color:#D4AF37;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
-.wt-item-desc{font-size:14px;font-weight:500;color:#F5F2E9}
-.wt-item-party{font-size:11px;color:#8A887E;margin-top:2px}
 .wt-item-body{border-top:1px solid #232329;padding:12px 16px;background:#131316;display:flex;flex-direction:column;gap:10px}
 .wt-photos{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
 .wt-photo-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid #2B2B33}
@@ -133,37 +132,17 @@ h1{font-size:18px;font-weight:600;color:#F5F2E9;letter-spacing:.3px}
 .wt-prog-bar{flex:1;height:8px;background:#232329;border-radius:4px;overflow:hidden}
 .wt-prog-fill{height:100%;background:linear-gradient(90deg,#C9A032,#E9C964);border-radius:4px;transition:width .3s}
 .wt-prog-label{font-size:13px;font-weight:600;color:#E9C964;white-space:nowrap}
-/* ORDERS */
-.od-add-prop-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border:2px dashed rgba(212,175,55,.55);border-radius:14px;background:rgba(212,175,55,.07);color:#E9C964;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:12px;-webkit-tap-highlight-color:transparent}
-.od-prop-card{background:#17171B;border:1px solid #2B2B33;border-radius:14px;overflow:hidden;margin-bottom:10px}
-.od-prop-card-head{display:flex;align-items:center;gap:10px;padding:13px 16px;background:#1D1D22;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.od-prop-card.open .od-prop-card-head{border-bottom:1px solid #232329}
-.od-prop-chev{flex-shrink:0;transition:transform .15s;color:#B8902A;display:flex}
-.od-prop-card.open .od-prop-chev{transform:rotate(90deg)}
-.od-prop-card-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-.od-prop-addr-inp{flex:1;font-size:15px;font-weight:700;border:none;background:transparent;color:#F5F2E9;outline:none;font-family:inherit;min-width:0}
-.od-prop-addr-inp::placeholder{color:#5C5A52;font-weight:400}
-.od-upload-btn{display:flex;align-items:center;gap:7px;padding:11px 14px;border:2px dashed rgba(212,175,55,.55);border-radius:10px;background:rgba(212,175,55,.07);color:#E9C964;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;-webkit-tap-highlight-color:transparent}
-.od-upload-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.od-items-list{display:flex;flex-direction:column;gap:7px}
-.od-item-row{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid #232329;border-radius:10px;background:#131316}
-.od-item-row.purchased{border-color:rgba(212,175,55,.45);background:rgba(212,175,55,.06)}
-.od-item-row.purchased .od-item-name{text-decoration:line-through;color:#6B6962}
-.od-buy-check{width:26px;height:26px;border-radius:7px;border:2px solid #3A3A44;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#101013;transition:all .15s;margin-top:1px}
-.od-buy-check.checked{background:linear-gradient(135deg,#E9C964,#C9A032);border-color:#C9A032}
-.od-buy-check.checked::after{content:"\2713";color:#141414;font-size:13px;font-weight:800}
-.od-item-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
-.od-item-name{width:100%;font-size:14px;padding:6px 9px;border:1px solid #2B2B33;border-radius:7px;background:#17171B;color:#F5F2E9;outline:none;font-family:inherit}
-.od-item-name:focus{border-color:#D4AF37}
-.od-item-meta{display:flex;gap:6px}
-.od-item-meta input{flex:1;min-width:0;font-size:12px;padding:5px 9px;border:1px solid #2B2B33;border-radius:7px;background:#17171B;color:#CFCDC4;outline:none;font-family:inherit;color-scheme:dark}
-.od-item-meta input:focus{border-color:#D4AF37}
-.od-add-item-link{align-self:flex-start;font-size:13px;font-weight:700;color:#E9C964;background:none;border:none;cursor:pointer;padding:2px 0;font-family:inherit;-webkit-tap-highlight-color:transparent}
-.od-key-banner{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.4);border-radius:12px;padding:14px 16px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px}
-.od-key-banner-title{font-size:13px;font-weight:700;color:#E9C964}
-.od-key-banner-row{display:flex;gap:8px}
-.od-key-inp{flex:1;font-size:13px;padding:8px 11px;border:1px solid rgba(212,175,55,.4);border-radius:8px;outline:none;font-family:inherit;background:#101013;color:#F5F2E9}
-.od-key-save{padding:8px 14px;background:linear-gradient(135deg,#E9C964,#C9A032);color:#141414;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+/* SETTINGS */
+.set-section{background:#17171B;border:1px solid #2B2B33;border-radius:14px;padding:20px;margin-bottom:12px}
+.set-section-title{font-size:13px;font-weight:700;color:#E9C964;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #1D1D22}
+.set-row:last-child{border-bottom:none;padding-bottom:0}
+.set-row-label{font-size:14px;color:#F5F2E9;font-weight:500}
+.set-row-sub{font-size:12px;color:#6B6962;margin-top:2px}
+.set-inp{flex:1;max-width:260px;font-size:13px;padding:8px 11px;border:1px solid #2B2B33;border-radius:8px;background:#101013;color:#F5F2E9;outline:none;font-family:inherit}
+.set-inp:focus{border-color:#D4AF37}
+.set-btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.set-code-box{font-family:monospace;font-size:12px;background:#101013;border:1px solid rgba(212,175,55,.4);border-radius:10px;padding:10px 14px;word-break:break-all;color:#E9C964;user-select:all;margin-top:8px}
 input,textarea{color-scheme:dark}
 </style>
 </head>
@@ -172,7 +151,7 @@ input,textarea{color-scheme:dark}
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('sheet')">Repair Sheet</button>
   <button class="tab-btn" onclick="switchTab('walkthrough')">Walkthrough</button>
-  <button class="tab-btn" onclick="switchTab('orders')">Orders</button>
+  <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
   <button class="tab-btn" title="Cloud sync" onclick="openSyncModal()" id="syncBtn">&#10227; Sync</button>
 </div>
 <div class="tab-spacer"></div>
@@ -231,7 +210,7 @@ input,textarea{color-scheme:dark}
       <input id="wtCity" placeholder="City, State, ZIP" oninput="saveWt()" />
       <input id="wtDate" type="date" oninput="saveWt()" />
     </div>
-    <div class="wt-progress"><div class="wt-prog-bar"><div class="wt-prog-fill" id="wtProgFill" style="width:0%"></div></div><span class="wt-prog-label" id="wtProgLabel">0 / 0 done</span></div>
+    <div class="wt-progress"><div class="wt-prog-bar"><div class="wt-prog-fill" id="wtProgFill" style="width:0%"></div></div><span class="wt-prog-label" id="wtProgLabel">No items yet</span></div>
     <div class="wt-actions">
       <button class="btn btn-red" onclick="clearWalkthrough()">
         <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
@@ -255,29 +234,35 @@ input,textarea{color-scheme:dark}
 </div>
 </div><!-- /tab-walkthrough -->
 
-<div id="tab-orders" class="tab-content">
-<div class="page" style="padding-bottom:2rem">
-
-  <div id="odKeyBanner" class="od-key-banner" style="display:none">
-    <div class="od-key-banner-title">&#128273; Add your Anthropic API key to enable AI item detection</div>
-    <div class="od-key-banner-row">
-      <input id="odApiKeyInput" class="od-key-inp" type="password" placeholder="sk-ant-api03-..." />
-      <button class="od-key-save" onclick="saveOdApiKey()">Save key</button>
+<div id="tab-settings" class="tab-content">
+<div class="page">
+  <div class="header" style="margin-bottom:1rem">
+    <div class="logo-row">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <h1>Settings</h1>
     </div>
-    <div style="font-size:11px;color:#B8A572">Saved only in your browser — only sent to Anthropic when you upload a pic.</div>
   </div>
 
-  <button class="od-add-prop-btn" onclick="addOdProperty()">
-    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Add Property
-  </button>
+  <!-- Cloud Sync -->
+  <div class="set-section" id="setSyncSection">
+    <div class="set-section-title">&#10227; Cloud Sync</div>
+    <div id="setSyncBody"></div>
+  </div>
 
-  <!-- Property cards -->
-  <div id="odPropList"></div>
+  <!-- About -->
+  <div class="set-section">
+    <div class="set-section-title">About</div>
+    <div class="set-row">
+      <div><div class="set-row-label">Apex Repair Sheet</div><div class="set-row-sub">Auto-saves in your browser &middot; No login required</div></div>
+    </div>
+    <div class="set-row">
+      <div><div class="set-row-label">Live app</div><div class="set-row-sub">tml828.github.io/repair-sheet/repair_sheet.html</div></div>
+    </div>
+  </div>
 
-  <div class="footer" style="margin-top:1rem">Apex Homes LLC &nbsp;&middot;&nbsp; Auto-saves in your browser</div>
+  <div class="footer">Apex Homes LLC</div>
 </div>
-</div><!-- /tab-orders -->
+</div><!-- /tab-settings -->
 
 <!-- Contractor view (shown when ?wt=UUID in URL) -->
 <div id="contractor-view" style="display:none">
@@ -290,7 +275,7 @@ input,textarea{color-scheme:dark}
     <div id="cv-meta" style="font-size:14px;color:#9C9A90;margin-bottom:.75rem"></div>
     <div class="wt-progress"><div class="wt-prog-bar"><div class="wt-prog-fill" id="cv-prog-fill" style="width:0%"></div></div><span class="wt-prog-label" id="cv-prog-label">0 / 0 done</span></div>
   </div>
-  <div id="cv-items"></div>
+  <div id="cv-items"><div class="wt-empty">Loading checklist…</div></div>
   <div class="footer" style="margin-top:1.5rem">Tap items to check off &nbsp;·&nbsp; Tap photos to zoom &nbsp;·&nbsp; Apex Homes LLC</div>
 </div>
 </div><!-- /contractor-view -->
@@ -312,7 +297,7 @@ function sbFetch(method, path, body) {
     headers: headers,
     body: body ? JSON.stringify(body) : undefined
   }).then(function(r){
-    // PATCH returns 204 with empty body — r.json() would throw, so parse text safely
+    // PATCH returns 204 with empty body — r.json() would throw
     return r.text().then(function(t){
       var data = null;
       try { data = t ? JSON.parse(t) : null; } catch(e) {}
@@ -395,14 +380,15 @@ function load() {
       var ek = Object.keys(state.repairs || {});
       for (var i=0;i<lk.length;i++) lc += (local.repairs[lk[i]]||[]).length;
       for (var i=0;i<ek.length;i++) ec += (state.repairs[ek[i]]||[]).length;
-      if (lc >= ec) state = local;
+      // only prefer local when it actually has content (lc > 0 prevents a blank
+      // localStorage save from permanently shadowing the embedded defaults)
+      if (lc > ec || (lc === ec && lc > 0)) state = local;
     }
   } catch(e) {}
   if (!state.repairs) state.repairs = {};
   if (!state.open) state.open = {};
   for (var i = 0; i < ALL_SECTIONS.length; i++) {
     if (!state.repairs[ALL_SECTIONS[i].id]) state.repairs[ALL_SECTIONS[i].id] = [];
-    // normalize rows so a missing field from an old save can never crash a render
     var arr = state.repairs[ALL_SECTIONS[i].id];
     for (var j = 0; j < arr.length; j++) {
       arr[j].desc  = (typeof arr[j].desc  === "string") ? arr[j].desc  : "";
@@ -448,7 +434,7 @@ function updateSummary() {
 
 function addRepair(sid) {
   if (!state.repairs[sid]) state.repairs[sid] = [];
-  state.repairs[sid].push({id: Date.now() + Math.random(), desc:"", party:"", notes:""});
+  state.repairs[sid].push({id: genId(), desc:"", party:"", notes:""});
   save(); renderSection(sid);
 }
 
@@ -494,6 +480,11 @@ function makeSvg(paths) {
   svg.setAttribute("viewBox","0 0 24 24");
   svg.innerHTML = paths;
   return svg;
+}
+
+// Unique ID with enough entropy to avoid collisions on rapid taps
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
 function renderSection(sid) {
@@ -657,6 +648,8 @@ function clearAll() {
   document.getElementById("propCity").value = "";
   document.getElementById("propDate").value = "";
   save(); renderAll();
+  // bump timestamp so cloud sync won't restore the old data
+  cloudMark("sheet");
 }
 
 function showToast(msg) {
@@ -735,7 +728,14 @@ function shareSheet() {
   }
 
   var emailBtn = makeBtn("Email", "#D4AF37", function() {
-    window.location.href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(text);
+    // mailto has ~2000 char URL limit; truncate body with a note if needed
+    var body = text;
+    var uri = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    if (uri.length > 1800) {
+      var truncated = text.substring(0, 600) + "\n\n[...truncated — use Save working copy on desktop for the full sheet]";
+      uri = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(truncated);
+    }
+    window.location.href = uri;
   });
 
   var smsBtn = makeBtn("Text message", "#2563eb", function() {
@@ -875,6 +875,9 @@ function downloadPDF() {
 }
 
 function downloadFile() {
+  if (cloudMeta.id) {
+    if (!confirm("Note: the exported file won't be connected to your cloud sync. Changes made in the exported file won't appear on other devices. Continue?")) return;
+  }
   var stateJson = JSON.stringify(state);
   var tag = document.getElementById("saved-state");
   var old = tag.textContent;
@@ -901,7 +904,7 @@ document.getElementById("propDate").addEventListener("input", save);
 
 // TAB SWITCHING
 function switchTab(tab) {
-  var tabs = ["sheet","walkthrough","orders"];
+  var tabs = ["sheet","walkthrough","settings"];
   var btns = document.querySelectorAll(".tab-btn");
   for (var i=0; i<tabs.length; i++) {
     document.getElementById("tab-"+tabs[i]).classList.toggle("active", tabs[i]===tab);
@@ -911,12 +914,58 @@ function switchTab(tab) {
   if (bar) bar.style.display = tab==="walkthrough" ? "flex" : "none";
   localStorage.setItem("apexLastTab", tab);
   if (tab==="walkthrough") { syncFromSupabase(); }
-  if (tab==="orders") { renderOrders(); }
+  if (tab==="settings") { renderSettings(); }
 }
 
-// WALKTHROUGH STATE — standalone, not connected to repair sheet
+// SETTINGS TAB
+function renderSettings() {
+  var body = document.getElementById("setSyncBody");
+  if (!body) return;
+  body.innerHTML = "";
+
+  if (cloudMeta.id) {
+    var statusRow = document.createElement("div");
+    statusRow.className = "set-row";
+    statusRow.innerHTML = '<div><div class="set-row-label" style="color:#22c563">&#10003; Sync is ON</div><div class="set-row-sub">All tabs sync across devices automatically.</div></div>';
+    body.appendChild(statusRow);
+
+    var codeBox = document.createElement("div");
+    codeBox.className = "set-code-box";
+    codeBox.textContent = cloudMeta.id;
+    body.appendChild(codeBox);
+
+    function sBtn(label, bg, fg, fn) {
+      var b = document.createElement("button");
+      b.className = "set-btn";
+      b.textContent = label;
+      b.style.cssText = "display:block;width:100%;margin-top:8px;background:"+bg+";color:"+fg;
+      b.onclick = fn;
+      body.appendChild(b);
+    }
+    sBtn("Copy sync code", "linear-gradient(135deg,#E9C964,#C9A032)", "#141414", function(){ copyText(cloudMeta.id); });
+    sBtn("Sync now", "#2B2B33", "#F5F2E9", function(){ cloudPullMerge(function(){ showToast("Up to date"); }); });
+    sBtn("Stop syncing on this device", "rgba(248,113,113,.12)", "#F87171", stopCloudSync);
+  } else {
+    var offRow = document.createElement("div");
+    offRow.className = "set-row";
+    offRow.innerHTML = '<div><div class="set-row-label" style="color:#F87171">&#9679; Sync is OFF</div><div class="set-row-sub">Turn on to keep all tabs in sync across your devices.</div></div>';
+    body.appendChild(offRow);
+
+    function sBtn(label, bg, fg, fn) {
+      var b = document.createElement("button");
+      b.className = "set-btn";
+      b.textContent = label;
+      b.style.cssText = "display:block;width:100%;margin-top:8px;background:"+bg+";color:"+fg;
+      b.onclick = fn;
+      body.appendChild(b);
+    }
+    sBtn("Turn on sync (this is my first device)", "linear-gradient(135deg,#E9C964,#C9A032)", "#141414", startCloudSync);
+    sBtn("I have a code from another device", "#2B2B33", "#F5F2E9", joinCloudSync);
+  }
+}
+
+// WALKTHROUGH STATE
 var wtData = {addr:"", city:"", date:"", items:[]};
-// each item: {id, desc, note, done, photos:[dataUrl,...]}
 
 function saveWt() {
   wtData.addr = document.getElementById("wtAddr").value;
@@ -932,7 +981,6 @@ function loadWt() {
     var s = localStorage.getItem("apexWalkthrough");
     if (s) { var d = JSON.parse(s); if (d && d.items) wtData = d; }
   } catch(e) {}
-  // normalize so old saves can never crash a render
   if (!wtData.items) wtData.items = [];
   for (var i = 0; i < wtData.items.length; i++) {
     var it = wtData.items[i];
@@ -942,18 +990,16 @@ function loadWt() {
     it.doneAt = it.doneAt || 0;
     if (!Array.isArray(it.photos)) it.photos = [];
   }
-  // restore the header inputs — without this the next save() wipes them
   document.getElementById("wtAddr").value = wtData.addr || "";
   document.getElementById("wtCity").value = wtData.city || "";
   document.getElementById("wtDate").value = wtData.date || "";
 }
 
 function addWtItem() {
-  var id = Date.now() + Math.random();
-  wtData.items.push({id:id, desc:"", note:"", done:false, photos:[]});
+  var id = genId();
+  wtData.items.push({id:id, desc:"", note:"", done:false, doneAt:0, photos:[]});
   saveWt();
   renderWalkthrough();
-  // focus the note textarea for the new item
   var el = document.getElementById("wtn-"+id);
   if (el) el.focus();
 }
@@ -967,7 +1013,7 @@ function deleteWtItem(id) {
 function clearWalkthrough() {
   if (!confirm("Clear all walkthrough items?")) return;
   wtData.items = [];
-  wtData.supabaseId = null; // next Send creates a NEW checklist instead of wiping the old one
+  wtData.supabaseId = null;
   wtData.addr = ""; wtData.city = ""; wtData.date = "";
   document.getElementById("wtAddr").value = "";
   document.getElementById("wtCity").value = "";
@@ -981,7 +1027,7 @@ function updateWtProgress() {
   var done = wtData.items.filter(function(x){ return x.done; }).length;
   var pct = total ? Math.round(done/total*100) : 0;
   document.getElementById("wtProgFill").style.width = pct + "%";
-  document.getElementById("wtProgLabel").textContent = done + " / " + total + " done";
+  document.getElementById("wtProgLabel").textContent = total ? (done + " / " + total + " done") : "No items yet";
 }
 
 function renderWalkthrough() {
@@ -1010,7 +1056,7 @@ function buildWtItem(item, idx) {
   head.className = "wt-item-head";
 
   var checkWrap = document.createElement("div");
-  checkWrap.className = "wt-check-wrap";
+  checkWrap.className = "wt-check-wrap" + (item.done ? " has-checked" : "");
   var check = document.createElement("div");
   check.className = "wt-check" + (item.done ? " checked" : "");
   var checkLbl = document.createElement("span");
@@ -1102,6 +1148,9 @@ function handleWtPhoto(itemId, input, photosWrap) {
   var reader = new FileReader();
   reader.onload = function(e) {
     var img = new Image();
+    img.onerror = function() {
+      showToast("Could not read image — try a different file.");
+    };
     img.onload = function() {
       var canvas = document.createElement("canvas");
       var max = 800, w = img.width, h = img.height;
@@ -1132,11 +1181,12 @@ function toggleWtDone(itemId) {
     el.className = "wt-item" + (item.done ? " done" : "");
     var check = el.querySelector(".wt-check");
     if (check) check.className = "wt-check" + (item.done ? " checked" : "");
+    var wrap = el.querySelector(".wt-check-wrap");
+    if (wrap) wrap.className = "wt-check-wrap" + (item.done ? " has-checked" : "");
     var lbl = el.querySelector(".wt-check-label");
     if (lbl) lbl.textContent = item.done ? "Done" : "Mark done";
   }
   updateWtProgress();
-  // keep the shared checklist in sync so the contractor sees owner check-offs too
   if (wtData.supabaseId) {
     sbFetch('PATCH', 'walkthroughs?id=eq.' + wtData.supabaseId, { items: wtData.items }).then(function(res){
       if (!res.ok) showToast('Cloud sync failed — will retry next time');
@@ -1153,10 +1203,16 @@ function sendToContractor() {
     date: wtData.date || '',
     items: wtData.items
   };
-  // Re-sending updates the SAME checklist so the contractor's existing link stays live
   var req = wtData.supabaseId
     ? sbFetch('PATCH', 'walkthroughs?id=eq.' + wtData.supabaseId, payload).then(function(res){
-        if (!res.ok) { wtData.supabaseId = null; return sbFetch('POST', 'walkthroughs', payload); }
+        if (!res.ok) {
+          // old row gone — create new; old link is now invalid
+          wtData.supabaseId = null;
+          return sbFetch('POST', 'walkthroughs', payload).then(function(r){
+            if (r.ok) showToast('Previous link expired — share the new link with your contractor.');
+            return r;
+          });
+        }
         return res;
       })
     : sbFetch('POST', 'walkthroughs', payload);
@@ -1176,7 +1232,6 @@ function sendToContractor() {
   });
 }
 
-// Buttons inside the modal are fresh user gestures, so iOS allows share/clipboard from them
 function showShareModal(link) {
   var overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:9998;display:flex;align-items:flex-end';
@@ -1244,7 +1299,7 @@ function loadContractorView(wtId) {
   document.querySelector('.tab-spacer').style.display = 'none';
   document.getElementById('tab-sheet').style.display = 'none';
   document.getElementById('tab-walkthrough').style.display = 'none';
-  document.getElementById('tab-orders').style.display = 'none';
+  document.getElementById('tab-settings').style.display = 'none';
   document.getElementById('wtBottomBar').style.display = 'none';
   document.getElementById('contractor-view').style.display = 'block';
 
@@ -1296,10 +1351,7 @@ function buildContractorItem(item, idx, wtId, allItems) {
   var num = document.createElement('div');
   num.className = 'wt-item-area';
   num.textContent = 'Item ' + (idx + 1);
-  var desc = document.createElement('div');
-  desc.className = 'wt-item-desc';
-  desc.textContent = item.desc || '(No description)';
-  info.appendChild(num); info.appendChild(desc);
+  info.appendChild(num);
 
   head.appendChild(checkWrap); head.appendChild(info);
   el.appendChild(head);
@@ -1348,7 +1400,6 @@ function toggleContractorDone(item, wtId, allItems) {
   }).catch(function(){ revertCvToggle(item, allItems); });
 }
 
-// If the save didn't reach the server, undo the checkmark so the UI never lies
 function revertCvToggle(item, allItems) {
   item.done = !item.done;
   refreshCvItem(item);
@@ -1398,15 +1449,20 @@ function syncFromSupabase() {
     if (res.ok && res.data && res.data[0] && res.data[0].items) {
       var remoteItems = res.data[0].items;
       var changed = false;
+      // merge done status using newest-wins timestamp
       for (var i=0; i<wtData.items.length; i++) {
         var local = wtData.items[i];
         for (var j=0; j<remoteItems.length; j++) {
           var remote = remoteItems[j];
-          if (local.id == remote.id && local.done !== remote.done) {
-            // newest change wins — owner check-offs are no longer clobbered by stale remote data
-            if ((remote.doneAt || 0) > (local.doneAt || 0)) {
+          if (local.id == remote.id) {
+            if (local.done !== remote.done && (remote.doneAt || 0) > (local.doneAt || 0)) {
               local.done = remote.done;
               local.doneAt = remote.doneAt || 0;
+              changed = true;
+            }
+            // also pull in notes if contractor added any
+            if (remote.note && remote.note !== local.note) {
+              local.note = remote.note;
               changed = true;
             }
             break;
@@ -1419,439 +1475,21 @@ function syncFromSupabase() {
   }).catch(function(){ renderWalkthrough(); });
 }
 
-// ORDERS — multi-property, room-per-pic, AI item detection
-// odData.properties: [{id, addr, activePicId, pics:[{id, photo, roomName, items:[{id,name,purchased,store,date}]}]}]
-var odData = {properties:[]};
-
-function saveOd() {
-  try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) { storageWarn(); }
-  cloudMark("orders");
-}
-
-function loadOd() {
-  try {
-    var s = localStorage.getItem("apexOrders");
-    if (s) { var d = JSON.parse(s); if (d) odData = d; }
-  } catch(e) {}
-  if (!Array.isArray(odData.properties)) odData.properties = [];
-  for (var i=0; i<odData.properties.length; i++) {
-    var p = odData.properties[i];
-    p.addr = (typeof p.addr === "string") ? p.addr : "";
-    p.open = !!p.open;
-    if (!Array.isArray(p.pics)) p.pics = [];
-    for (var j=0; j<p.pics.length; j++) {
-      var pic = p.pics[j];
-      pic.roomName = (typeof pic.roomName === "string" && pic.roomName) ? pic.roomName : "New pic";
-      pic.photo    = (typeof pic.photo    === "string") ? pic.photo    : null;
-      if (!Array.isArray(pic.items)) pic.items = [];
-      for (var k=0; k<pic.items.length; k++) {
-        var it = pic.items[k];
-        it.name      = (typeof it.name  === "string") ? it.name  : "";
-        it.img       = (typeof it.img   === "string") ? it.img   : null;
-        it.qty       = (typeof it.qty   === "number" && it.qty >= 1) ? it.qty : 1;
-        it.store     = (typeof it.store === "string") ? it.store : "";
-        it.date      = (typeof it.date  === "string") ? it.date  : "";
-        it.purchased = !!it.purchased;
-      }
-    }
-  }
-}
-
-function addOdProperty() {
-  var id = Date.now() + Math.random();
-  odData.properties.push({id:id, addr:"", pics:[], open:true});
-  saveOd();
-  renderOrders();
-  var el = document.getElementById("odpa-"+id);
-  if (el) el.focus();
-}
-
-function deleteOdProperty(id) {
-  if (!confirm("Delete this property and all its rooms/items?")) return;
-  odData.properties = odData.properties.filter(function(x){ return x.id != id; });
-  saveOd(); renderOrders();
-}
-
-function handleOdUpload(prop, input) {
-  var file = input.files[0]; if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var img = new Image();
-    img.onload = function() {
-      var canvas = document.createElement("canvas");
-      var max=1600, w=img.width, h=img.height;
-      if (w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;} }
-      canvas.width=w; canvas.height=h;
-      canvas.getContext("2d").drawImage(img,0,0,w,h);
-      var pic = {id: Date.now() + Math.random(), roomName:"", photo: canvas.toDataURL("image/jpeg", 0.85), items:[]};
-      prop.pics.push(pic);
-      prop.open = true;
-      saveOd(); renderOrders();
-      analyzeOdPic(prop, pic);
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-  input.value = "";
-}
-
-function deleteOdPic(prop, picId) {
-  if (!confirm("Delete this pic and all its items?")) return;
-  prop.pics = prop.pics.filter(function(x){ return x.id != picId; });
-  saveOd(); renderOrders();
-}
-
-function addOdItem(prop, pic) {
-  var id = Date.now() + Math.random();
-  pic.items.push({id:id, name:"", qty:1, purchased:false, store:"", date:""});
-  saveOd(); renderOrders();
-  var el = document.getElementById("odi-"+id);
-  if (el) el.focus();
-}
-
-function deleteOdItem(pic, itemId) {
-  pic.items = pic.items.filter(function(x){ return x.id != itemId; });
-  saveOd(); renderOrders();
-}
-
-function toggleOdPurchased(pic, itemId) {
-  for (var j=0; j<pic.items.length; j++) {
-    if (pic.items[j].id == itemId) {
-      pic.items[j].purchased = !pic.items[j].purchased;
-      if (pic.items[j].purchased && !pic.items[j].date)
-        pic.items[j].date = new Date().toISOString().slice(0,10);
-      break;
-    }
-  }
-  saveOd(); renderOrders();
-}
-
-function saveOdApiKey() {
-  var val = document.getElementById("odApiKeyInput").value.trim();
-  if (!val) return;
-  try { localStorage.setItem("apexAnthropicKey", val); } catch(e) {}
-  document.getElementById("odKeyBanner").style.display = "none";
-  showToast("API key saved");
-}
-
-function getOdApiKey() {
-  try { return localStorage.getItem("apexAnthropicKey") || ""; } catch(e) { return ""; }
-}
-
-function analyzeOdPic(prop, pic) {
-  if (!pic.photo) return;
-  var key = getOdApiKey();
-  if (!key) {
-    pic.roomName = pic.roomName || "New pic";
-    saveOd(); renderOrders();
-    showToast("Add your API key (gold banner on Orders tab) to auto-detect items");
-    return;
-  }
-  var lbl = document.getElementById("od-room-"+pic.id);
-  if (lbl) lbl.textContent = "Analyzing…";
-
-  var base64 = pic.photo.split(",")[1];
-  var mediaType = pic.photo.startsWith("data:image/png") ? "image/png" : "image/jpeg";
-
-  // measure the pic so the AI can return pixel bounding boxes
-  var meas = new Image();
-  meas.onload = function() { odAiRequest(prop, pic, base64, mediaType, meas.width, meas.height); };
-  meas.onerror = function() { aiFail(pic, "Could not read the photo — try uploading again"); };
-  meas.src = pic.photo;
-}
-
-function odAiRequest(prop, pic, base64, mediaType, imgW, imgH) {
-  var key = getOdApiKey();
-  fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST",
-    headers:{
-      "x-api-key":key,
-      "anthropic-version":"2023-06-01",
-      "anthropic-dangerous-direct-browser-access":"true",
-      "content-type":"application/json"
-    },
-    body: JSON.stringify({
-      model:"claude-opus-4-8",
-      max_tokens:4096,
-      messages:[{role:"user", content:[
-        {type:"image", source:{type:"base64", media_type:mediaType, data:base64}},
-        {type:"text", text:"This is an interior design spec sheet or mood board. The image is exactly " + imgW + " pixels wide and " + imgH + " pixels tall. Find every distinct purchasable item (furniture, lighting, rugs, hardware, accessories). If the same item appears more than once in the image (duplicates, pairs, or the same product shown again), include it only ONCE — one box for the clearest instance. Reply with ONLY this JSON, no other text or markdown fences: {\"room\":\"<room name, e.g. Kitchen, Master Bedroom — use 'Design' if unclear>\",\"items\":[{\"box\":[x1,y1,x2,y2]}]} where each box is the tight pixel bounding box around one item's picture in the image (x1,y1 = top-left, x2,y2 = bottom-right)."}
-      ]}]
-    })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data) {
-    if (data.error) { aiFail(pic, "AI error: " + (data.error.message || data.error.type)); return; }
-    if (!data.content || !data.content[0]) { aiFail(pic, "AI returned nothing — try again"); return; }
-    var txt = (data.content[0].text||"").replace(/```json|```/g, "").trim();
-    var parsed = null;
-    try {
-      var s = txt.indexOf("{"), e = txt.lastIndexOf("}");
-      if (s >= 0 && e > s) parsed = JSON.parse(txt.slice(s, e+1));
-    } catch(err) {}
-    if (!parsed || !Array.isArray(parsed.items) || !parsed.items.length) { aiFail(pic, "No items detected"); return; }
-    pic.roomName = (typeof parsed.room === "string" && parsed.room.trim()) ? parsed.room.trim() : "Design";
-    var img = new Image();
-    img.onload = function() {
-      if (!odPicStillExists(prop, pic)) return; // deleted while analyzing
-      var added = 0;
-      for (var i=0; i<parsed.items.length; i++) {
-        var crop = cropOdItem(img, parsed.items[i].box);
-        if (!crop) continue;
-        pic.items.push({id:Date.now()+Math.random()+i, name:"", img:crop, qty:1, purchased:false, store:"", date:""});
-        added++;
-      }
-      if (!added) { aiFail(pic, "No items detected"); return; }
-      saveOd(); renderOrders();
-      showToast(added + " items added — " + pic.roomName);
-    };
-    img.src = pic.photo;
-  })
-  .catch(function(){
-    aiFail(pic, "AI error — check connection and API key");
-  });
-}
-
-function odPicStillExists(prop, pic) {
-  if (odData.properties.indexOf(prop) === -1) return false;
-  return prop.pics.indexOf(pic) !== -1;
-}
-
-function cropOdItem(img, box) {
-  if (!Array.isArray(box) || box.length !== 4) return null;
-  var x1 = Math.max(0, Math.min(img.width,  box[0]));
-  var y1 = Math.max(0, Math.min(img.height, box[1]));
-  var x2 = Math.max(0, Math.min(img.width,  box[2]));
-  var y2 = Math.max(0, Math.min(img.height, box[3]));
-  var w = x2 - x1, h = y2 - y1;
-  if (w < 10 || h < 10) return null;
-  var canvas = document.createElement("canvas");
-  var max = 400, cw = w, ch = h;
-  if (cw > max || ch > max) { if (cw > ch) { ch = Math.round(ch*max/cw); cw = max; } else { cw = Math.round(cw*max/ch); ch = max; } }
-  canvas.width = cw; canvas.height = ch;
-  canvas.getContext("2d").drawImage(img, x1, y1, w, h, 0, 0, cw, ch);
-  try { return canvas.toDataURL("image/jpeg", 0.8); } catch(e) { return null; }
-}
-
-function aiFail(pic, msg) {
-  if (!pic.roomName) pic.roomName = "New pic";
-  saveOd(); renderOrders();
-  showToast(msg);
-}
-
-function renderOrders() {
-  var listWrap = document.getElementById("odPropList");
-  while (listWrap.firstChild) listWrap.removeChild(listWrap.firstChild);
-
-  // show/hide API key banner
-  document.getElementById("odKeyBanner").style.display = getOdApiKey() ? "none" : "block";
-
-  if (!odData.properties.length) {
-    var empty = document.createElement("div");
-    empty.className = "wt-empty";
-    empty.textContent = 'Tap "+ Add Property" to get started.';
-    listWrap.appendChild(empty);
-    return;
-  }
-
-  for (var i=0; i<odData.properties.length; i++) {
-    listWrap.appendChild(buildOdPropCard(odData.properties[i], i));
-  }
-}
-
-function buildOdPropCard(prop, idx) {
-  var card = document.createElement("div");
-  card.className = "od-prop-card" + (prop.open ? " open" : "");
-
-  // Header: chevron + address + count + delete (tap header to expand/collapse)
-  var head = document.createElement("div");
-  head.className = "od-prop-card-head";
-  (function(p){ head.onclick = function(){ p.open = !p.open; saveOd(); renderOrders(); }; })(prop);
-
-  var chev = document.createElement("span");
-  chev.className = "od-prop-chev";
-  chev.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
-  head.appendChild(chev);
-
-  var addrInp = document.createElement("input");
-  addrInp.className = "od-prop-addr-inp";
-  addrInp.placeholder = "Property address";
-  addrInp.value = prop.addr;
-  addrInp.id = "odpa-" + prop.id;
-  addrInp.onclick = function(e){ e.stopPropagation(); };
-  (function(p){ addrInp.oninput = function(){ p.addr=addrInp.value; saveOd(); }; })(prop);
-  head.appendChild(addrInp);
-
-  var total=0, done=0;
-  for (var j=0; j<prop.pics.length; j++) {
-    total += prop.pics[j].items.length;
-    done  += prop.pics[j].items.filter(function(x){ return x.purchased; }).length;
-  }
-  var countLbl = document.createElement("span");
-  countLbl.style.cssText = "font-size:12px;font-weight:600;color:#E9C964;white-space:nowrap;flex-shrink:0";
-  countLbl.textContent = done + "/" + total;
-  head.appendChild(countLbl);
-
-  var delPropBtn = document.createElement("button");
-  delPropBtn.className = "del-btn";
-  delPropBtn.title = "Delete property";
-  delPropBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
-  (function(id){ delPropBtn.onclick = function(e){ e.stopPropagation(); deleteOdProperty(id); }; })(prop.id);
-  head.appendChild(delPropBtn);
-  card.appendChild(head);
-
-  if (!prop.open) return card;
-
-  // Body: uploaded pics with their item lists, then the upload button
-  var body = document.createElement("div");
-  body.className = "od-prop-card-body";
-
-  for (var j=0; j<prop.pics.length; j++) {
-    body.appendChild(buildOdPicBlock(prop, prop.pics[j]));
-  }
-
-  var upLabel = document.createElement("label");
-  upLabel.className = "od-upload-btn";
-  upLabel.style.justifyContent = "center";
-  upLabel.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Upload design pic';
-  var fileInp = document.createElement("input");
-  fileInp.type="file"; fileInp.accept="image/*"; fileInp.style.display="none";
-  (function(p){ fileInp.onchange = function(){ handleOdUpload(p, this); }; })(prop);
-  upLabel.appendChild(fileInp);
-  body.appendChild(upLabel);
-
-  card.appendChild(body);
-  return card;
-}
-
-function buildOdPicBlock(prop, pic) {
-  var block = document.createElement("div");
-  block.style.cssText = "border:1px solid #2B2B33;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;background:#131316";
-
-  // Top row: thumbnail + room name + delete
-  var top = document.createElement("div");
-  top.style.cssText = "display:flex;align-items:center;gap:10px";
-  if (pic.photo) {
-    var thumb = document.createElement("img");
-    thumb.src = pic.photo;
-    thumb.style.cssText = "width:52px;height:52px;object-fit:cover;border-radius:8px;cursor:pointer;flex-shrink:0";
-    (function(src){ thumb.onclick = function(){ openLightbox(src); }; })(pic.photo);
-    top.appendChild(thumb);
-  }
-  var roomLbl = document.createElement("div");
-  roomLbl.style.cssText = "flex:1;min-width:0;font-size:14px;font-weight:700;color:#F5F2E9";
-  roomLbl.id = "od-room-" + pic.id;
-  roomLbl.textContent = pic.roomName || "Analyzing…";
-  top.appendChild(roomLbl);
-  var delPicBtn = document.createElement("button");
-  delPicBtn.className = "del-btn";
-  delPicBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
-  (function(pr, id){ delPicBtn.onclick = function(){ deleteOdPic(pr, id); }; })(prop, pic.id);
-  top.appendChild(delPicBtn);
-  block.appendChild(top);
-
-  // Items
-  var itemsList = document.createElement("div");
-  itemsList.className = "od-items-list";
-  for (var k=0; k<pic.items.length; k++) {
-    itemsList.appendChild(buildOdItemRow(prop, pic, pic.items[k]));
-  }
-  block.appendChild(itemsList);
-
-  var addItemBtn = document.createElement("button");
-  addItemBtn.className = "od-add-item-link";
-  addItemBtn.textContent = "+ Add item";
-  (function(pr, p){ addItemBtn.onclick = function(){ addOdItem(pr, p); }; })(prop, pic);
-  block.appendChild(addItemBtn);
-
-  return block;
-}
-
-function buildOdItemRow(prop, pic, item) {
-  var row = document.createElement("div");
-  row.className = "od-item-row" + (item.purchased ? " purchased" : "");
-
-  var check = document.createElement("div");
-  check.className = "od-buy-check" + (item.purchased ? " checked" : "");
-  (function(p, iid){ check.onclick = function(){ toggleOdPurchased(p, iid); }; })(pic, item.id);
-
-  var fields = document.createElement("div");
-  fields.className = "od-item-fields";
-
-  // Qty stepper: − count +
-  var qtyWrap = document.createElement("div");
-  qtyWrap.style.cssText = "display:flex;align-items:center;gap:0;border:1px solid #2B2B33;border-radius:8px;overflow:hidden;background:#101013;flex-shrink:0;align-self:flex-start";
-  function qtyBtn(txt) {
-    var b = document.createElement("button");
-    b.textContent = txt;
-    b.style.cssText = "width:28px;height:28px;border:none;background:transparent;color:#E9C964;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;line-height:1";
-    return b;
-  }
-  var minusB = qtyBtn("−"), plusB = qtyBtn("+");
-  var qtyVal = document.createElement("span");
-  qtyVal.style.cssText = "min-width:24px;text-align:center;font-size:13px;font-weight:700;color:#F5F2E9";
-  qtyVal.textContent = item.qty || 1;
-  (function(it, v){
-    minusB.onclick = function(){ it.qty = Math.max(1, (it.qty||1) - 1); v.textContent = it.qty; saveOd(); };
-    plusB.onclick  = function(){ it.qty = (it.qty||1) + 1; v.textContent = it.qty; saveOd(); };
-  })(item, qtyVal);
-  qtyWrap.appendChild(minusB); qtyWrap.appendChild(qtyVal); qtyWrap.appendChild(plusB);
-
-  if (item.img) {
-    // AI-cropped item pic — tap to enlarge
-    var picRow = document.createElement("div");
-    picRow.style.cssText = "display:flex;align-items:flex-start;gap:10px";
-    var itemPic = document.createElement("img");
-    itemPic.src = item.img;
-    itemPic.style.cssText = "width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #2B2B33;cursor:pointer;background:#101013";
-    (function(src){ itemPic.onclick = function(){ openLightbox(src); }; })(item.img);
-    picRow.appendChild(itemPic);
-    picRow.appendChild(qtyWrap);
-    fields.appendChild(picRow);
-  } else {
-    var name = document.createElement("input");
-    name.className = "od-item-name";
-    name.placeholder = "Item name...";
-    name.value = item.name;
-    name.id = "odi-" + item.id;
-    (function(it){ name.oninput = function(){ it.name=name.value; saveOd(); }; })(item);
-  }
-
-  var meta = document.createElement("div");
-  meta.className = "od-item-meta";
-  var store = document.createElement("input");
-  store.placeholder = "Purchased from...";
-  store.value = item.store;
-  (function(it){ store.oninput = function(){ it.store=store.value; saveOd(); }; })(item);
-  var date = document.createElement("input");
-  date.type="date"; date.value=item.date;
-  (function(it){ date.oninput = function(){ it.date=date.value; saveOd(); }; })(item);
-  meta.appendChild(store); meta.appendChild(date);
-  if (!item.img) {
-    var nameRow = document.createElement("div");
-    nameRow.style.cssText = "display:flex;align-items:center;gap:8px";
-    nameRow.appendChild(name);
-    nameRow.appendChild(qtyWrap);
-    fields.appendChild(nameRow);
-  }
-  fields.appendChild(meta);
-
-  var delBtn = document.createElement("button");
-  delBtn.className = "del-btn";
-  delBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
-  (function(p, iid){ delBtn.onclick = function(){ deleteOdItem(p, iid); }; })(pic, item.id);
-
-  row.appendChild(check); row.appendChild(fields); row.appendChild(delBtn);
-  return row;
-}
-
-// ===== CLOUD SYNC (whole app, all devices) =====
-// One row in app_state holds all three sections; per-section timestamps so the
-// newest edit wins per tab, never clobbering a newer change from another device.
-var cloudMeta = {id:null, sheet_at:0, walkthrough_at:0, orders_at:0};
+// ===== CLOUD SYNC =====
+var cloudMeta = {id:null, sheet_at:0, walkthrough_at:0};
 
 function loadCloudMeta() {
-  try { var s = localStorage.getItem("apexCloudSync"); if (s) { var d = JSON.parse(s); if (d && d.id) cloudMeta = d; } } catch(e) {}
+  try {
+    var s = localStorage.getItem("apexCloudSync");
+    if (s) {
+      var d = JSON.parse(s);
+      if (d && d.id) {
+        cloudMeta.id = d.id;
+        cloudMeta.sheet_at = d.sheet_at || 0;
+        cloudMeta.walkthrough_at = d.walkthrough_at || 0;
+      }
+    }
+  } catch(e) {}
 }
 function saveCloudMeta() {
   try { localStorage.setItem("apexCloudSync", JSON.stringify(cloudMeta)); } catch(e) {}
@@ -1868,19 +1506,21 @@ function cloudMark(section) {
 
 function cloudPush() {
   if (!cloudMeta.id) return;
-  // pull first so we never overwrite a newer change from another device
   cloudPullMerge(function() {
     sbFetch('PATCH', 'app_state?id=eq.' + cloudMeta.id, {
-      sheet: state, walkthrough: wtData, orders: odData,
-      sheet_at: cloudMeta.sheet_at, walkthrough_at: cloudMeta.walkthrough_at, orders_at: cloudMeta.orders_at
+      sheet: state, walkthrough: wtData,
+      sheet_at: cloudMeta.sheet_at, walkthrough_at: cloudMeta.walkthrough_at
     }).then(function(res) {
       if (!res.ok) showToast("Sync failed — changes saved on this device only");
     }).catch(function(){ showToast("Offline — changes saved on this device only"); });
   });
 }
 
+var _pulling = false;
 function cloudPullMerge(done) {
   if (!cloudMeta.id) { if (done) done(); return; }
+  if (_pulling) { if (done) done(); return; }
+  _pulling = true;
   sbFetch('GET', 'app_state?id=eq.' + cloudMeta.id + '&limit=1').then(function(res) {
     if (res.ok && res.data && res.data[0]) {
       var row = res.data[0];
@@ -1891,18 +1531,14 @@ function cloudPullMerge(done) {
       if ((row.walkthrough_at||0) > (cloudMeta.walkthrough_at||0) && row.walkthrough) {
         wtData = row.walkthrough; cloudMeta.walkthrough_at = row.walkthrough_at; applyCloudWalkthrough(); changed = true;
       }
-      if ((row.orders_at||0) > (cloudMeta.orders_at||0) && row.orders) {
-        odData = row.orders; cloudMeta.orders_at = row.orders_at; applyCloudOrders(); changed = true;
-      }
       if (changed) { saveCloudMeta(); showToast("Synced from cloud"); }
     }
+    _pulling = false;
     if (done) done();
-  }).catch(function(){ if (done) done(); });
+  }).catch(function(){ _pulling = false; if (done) done(); });
 }
 
 function applyCloudSheet() {
-  // persist, then run load() so cloud data gets the exact same normalization
-  // as a local save — a malformed row from another device can never crash a render
   try { localStorage.setItem(SK, JSON.stringify(state)); } catch(e) {}
   load();
   document.getElementById("propAddr").value = state.address || "";
@@ -1913,30 +1549,25 @@ function applyCloudSheet() {
 function applyCloudWalkthrough() {
   if (!wtData.items) wtData.items = [];
   try { localStorage.setItem("apexWalkthrough", JSON.stringify(wtData)); } catch(e) {}
-  loadWt(); // normalizes items + restores header inputs
+  loadWt();
   renderWalkthrough();
-}
-function applyCloudOrders() {
-  if (!Array.isArray(odData.properties)) odData.properties = [];
-  try { localStorage.setItem("apexOrders", JSON.stringify(odData)); } catch(e) {}
-  loadOd(); // normalizes properties/pics/items
-  renderOrders();
 }
 
 function startCloudSync() {
   var now = Date.now();
-  cloudMeta.sheet_at = now; cloudMeta.walkthrough_at = now; cloudMeta.orders_at = now;
+  cloudMeta.sheet_at = now; cloudMeta.walkthrough_at = now;
   sbFetch('POST', 'app_state', {
-    sheet: state, walkthrough: wtData, orders: odData,
-    sheet_at: now, walkthrough_at: now, orders_at: now
+    sheet: state, walkthrough: wtData,
+    sheet_at: now, walkthrough_at: now
   }).then(function(res) {
     if (res.ok && res.data && res.data[0] && res.data[0].id) {
       cloudMeta.id = res.data[0].id;
       saveCloudMeta();
       updateSyncBtn();
-      openSyncModal(); // re-open showing the code
+      renderSettings();
+      openSyncModal();
     } else {
-      alert("Could not start sync. Make sure the app_state table exists in Supabase (see setup SQL).");
+      alert("Could not start sync. Make sure the app_state table exists in Supabase.");
     }
   }).catch(function(){ alert("Network error — could not reach Supabase."); });
 }
@@ -1947,10 +1578,11 @@ function joinCloudSync() {
   code = code.trim();
   sbFetch('GET', 'app_state?id=eq.' + encodeURIComponent(code) + '&limit=1').then(function(res) {
     if (res.ok && res.data && res.data[0]) {
-      cloudMeta = {id: code, sheet_at: 0, walkthrough_at: 0, orders_at: 0};
+      cloudMeta = {id: code, sheet_at: 0, walkthrough_at: 0};
       saveCloudMeta();
       cloudPullMerge(function() {
         updateSyncBtn();
+        renderSettings();
         showToast("Connected — data synced from cloud");
       });
     } else {
@@ -1961,15 +1593,23 @@ function joinCloudSync() {
 
 function stopCloudSync() {
   if (!confirm("Stop syncing on this device? Your data stays here and on other devices, but changes will no longer be shared.")) return;
-  cloudMeta = {id:null, sheet_at:0, walkthrough_at:0, orders_at:0};
+  cloudMeta = {id:null, sheet_at:0, walkthrough_at:0};
   saveCloudMeta();
   updateSyncBtn();
+  renderSettings();
   showToast("Sync off on this device");
 }
 
 function updateSyncBtn() {
   var b = document.getElementById("syncBtn");
-  if (b) b.innerHTML = cloudMeta.id ? "&#10227; Sync &#10003;" : "&#10227; Sync";
+  if (!b) return;
+  if (cloudMeta.id) {
+    b.innerHTML = "&#10227; Sync &#10003;";
+    b.className = b.className.replace(/\bsync-off\b/g,"").replace(/\bsync-on\b/g,"").trim() + " sync-on";
+  } else {
+    b.innerHTML = "&#10227; Sync";
+    b.className = b.className.replace(/\bsync-off\b/g,"").replace(/\bsync-on\b/g,"").trim() + " sync-off";
+  }
 }
 
 function openSyncModal() {
@@ -1996,7 +1636,7 @@ function openSyncModal() {
 
   if (cloudMeta.id) {
     title.textContent = "Sync is ON";
-    sub.textContent = "All three tabs sync across devices. Enter this code on another device to connect it:";
+    sub.textContent = "Repair Sheet and Walkthrough sync across devices. Enter this code on another device to connect it:";
     var codeBox = document.createElement("div");
     codeBox.style.cssText = "font-family:monospace;font-size:13px;background:#101013;border:1px solid rgba(212,175,55,.4);border-radius:10px;padding:12px;word-break:break-all;color:#E9C964;margin-bottom:14px;user-select:all";
     codeBox.textContent = cloudMeta.id;
@@ -2006,7 +1646,7 @@ function openSyncModal() {
     makeBtn("Stop syncing on this device", "rgba(248,113,113,.12)", "#F87171", stopCloudSync);
   } else {
     title.textContent = "Cloud Sync";
-    sub.textContent = "Sync the Repair Sheet, Walkthrough, and Orders across your devices.";
+    sub.textContent = "Sync the Repair Sheet and Walkthrough across your devices.";
     makeBtn("Turn on sync (this is my first device)", "#D4AF37", "#141414", startCloudSync);
     makeBtn("I have a code from another device", "#2B2B33", "#F5F2E9", joinCloudSync);
   }
@@ -2017,30 +1657,24 @@ function openSyncModal() {
 }
 
 loadWt();
-loadOd();
-renderOrders();
 loadCloudMeta();
 updateSyncBtn();
 cloudPullMerge();
 
-// re-check the cloud whenever the app comes back to the foreground
 document.addEventListener("visibilitychange", function() {
   if (!document.hidden) cloudPullMerge();
 });
 
-// auto-pull every 30 seconds when sync is enabled
 setInterval(function() {
   if (cloudMeta.id && !document.hidden) cloudPullMerge();
 }, 30000);
 
-// Contractor link takes priority over everything else
 var wtParam = new URLSearchParams(window.location.search).get('wt');
 if (wtParam) {
   loadContractorView(wtParam);
 } else {
-  // Restore last active tab
   var lastTab = localStorage.getItem("apexLastTab");
-  if (lastTab === "walkthrough" || lastTab === "orders") switchTab(lastTab);
+  if (lastTab === "walkthrough" || lastTab === "settings") switchTab(lastTab);
 }
 </script>
 </body>
